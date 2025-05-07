@@ -42,6 +42,8 @@
 | 13   | 低功耗設計與 RTC/WDT 應用             | 電源管理, rtc + wdt                                                                | 電源管理模式、RTC實時時鐘、看門狗計時器        |
 | 14   | Bootloader 實作                 | bootloader                                                                     | 啟動程式實作、韌體更新機制                |
 | 15   | RTOS 入門                       | rtos                                                                           | 即時作業系統基本概念、FreeRTOS 入門應用     |
+| 16   | CMSIS                       | arm-cmsis                                                                           | 跨平台SDK與實作LL、HAL    |
+
 
 ---
 
@@ -49,7 +51,7 @@
 
 | 課程主題                     | 相關影片                               | 備註                |
 | ------------------------ | ---------------------------------- | ----------------- |
-| ARM Cortex-M 指令與CMSIS | arm cortex-m instruction, fpu, arm-cmsis | 優化與高效能運算，視需求學習    |
+| ARM Cortex-M | arm cortex-m instruction, fpu | 優化與高效能運算，視需求學習    |
 | 軟體開發基礎                   | iso-c, unicode, fixed point number | ISO-C 語言標準與特殊數值運算 |
 | 硬體輔助工具                   | swo, crc, rng, ecc                 | 特殊應用工具，視專案需求補充    |
 ---
