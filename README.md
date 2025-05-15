@@ -9,20 +9,51 @@
 * 理解 ARM Cortex-M 系列微控制器架構與運作原理
 * 熟悉開發工具與環境 (CMake, GCC, GDB, STM32CubeMX 等)
 
+## 購買清單
+## ✅ STM32 實作專案購買清單（含數量、用途）
+
+| 品項名稱                      | 類型         | 數量     | 用途/功能說明                    |
+| ------------------------- | ---------- | -------- | -------------------------- |
+| **STM32F103VET6 開發板** | MCU     | 1        | CAN主控、濕度顯示、蜂鳴警報  
+| **STM32F103C8T6 開發板**     | MCU   | 1        | CAN 感測從板，讀取資料並上傳主板           |
+| **SHT30 模組**      | Input   | 1        | 透過 I2C 溫濕度感測主模組                   |
+| **ST7735 模組**       | Output         | 1        | 透過SPI顯示溫濕度、ADC 數值等資料            |
+| **無源蜂鳴器**                 | Output  | 1        | 透過Timer、PWM變頻警報、狀態提示音                 |
+| **TJA1050 CAN 模組**        |  通訊模組  | 2        | STM32 CAN 通訊，主從各 1        |
+| **FT232 USB to UART 模組**  |  通訊模組  | 1        | 電腦下指令、接收 UART 訊息           |
+| **Mini USB 線**            | 線材    | 1        | 給 STM32F407VET6 供電與 USB 通訊 |
+| **Micro USB 線**            | 線材    | 1        | 給 STM32F103C8T6 供電與 USB 通訊 |
+| **杜邦線 母母、公母、公公**           | 線材         | 10    | 各模組與開發板之間接線                |
+| **ST-Link V2 燒錄器**        | 開發工具       | 1        | 燒錄 F103 系列開發板與 Debug 用            |
+| **電阻包**            | 零件包        | 1       | 常見阻值，調試與擴充用，建議120Ω(CAN Bus)、220Ω/330Ω(LED、蜂鳴器)、10kΩ (按鈕、ADC pull-up/down )             |
+
+
+
+
 ## 選用工具
 
 | 項目          | 工具名稱                                                 |
 | ----------- | ---------------------------------------------------- |
-| 微控制器開發板     | STM32F407VET6                                        |
+| 微控制器開發板     | STM32F407VET6(mini USB) 、 STM32f103C8T6 (micro USB)                                       |
 | IDE 與編輯器    | VSCode                                               |
 | VSCode 擴充套件 | C/C++, CMake Tools, Cortex-Debug, Code Spell Checker |
 | 專案生成工具      | STM32CubeMX                                          |
 | 編譯工具        | GCC (arm-none-eabi-gcc)                              |
 | 建構工具        | CMake                                                |
-| 燒錄與除錯       | ST-Link, GDB                                         |
-| 開發環境        | Ubuntu                                               |
+| 燒錄       | ST-Link, OpenOCD                                 |
+| 除錯       | GDB                                  |
+| 開發環境        | Ubuntu 22.04                                     |
 
 ---
+| 周邊功能              | 專案應用                   | 說明                      |
+| ----------------- | ---------------------- | ----------------------- |
+| **I2C - BMP280**  | 讀取室內環境的溫度、濕度、氣壓        | 感測器模組，定時量測              |
+| **SPI - ST7735**  | 實時顯示溫度與濕度              | 顯示感測資料，提升互動性            |
+| **UART - FT232**  | 透過 PC 設定參數，例如資料上報頻率、閾值 | 與電腦雙向通訊，接收/送出指令         |
+| **CAN - TJA1050** | 將資料傳送到另一個節點（或接收）       | CAN 用於多板間通信，類似 RS485 概念 |
+| **Timer / PWM**   | 蜂鳴提示| 用 Timer 定時產生中斷 + PWM 調音 |
+| **Watchdog**      | 確保系統不會死機               | 若系統 Hang 住就自動重啟         |
+
 
 ## 課程規劃
 
@@ -34,7 +65,6 @@
 | 5    | 中斷系統及異常處理機制                   | arm cortex-m interrupt, interrupt handler, thread mode, system crash breakdown | 中斷管理、異常處理、系統模式切換、除錯技巧        |
 | 6    | UART 通訊協定實作                   | uart                                                                           | UART 原理、資料收發、中斷與 DMA 應用      |
 | 7    | Timer 計時器應用                   | timer, pwm                                                                     | 計時器設定、PWM 產生                 |
-| 8    | ADC/DAC 模擬訊號處理                | adc/dac                                                                        | ADC、DAC 基本原理與數據轉換應用          |
 | 9    | SPI 通訊協定實作                    | spi                                                                            | SPI 主從模式、暫存器控制、中斷/DMA傳輸      |
 | 10   | I2C 通訊協定實作                    | i2c                                                                            | I2C 匯流排原理、地址管理、中斷傳輸          |
 | 11   | CAN Bus 應用與實作                 | can bus                                                                        | CAN 原理與應用實作、報文格式與錯誤處理        |
@@ -54,6 +84,7 @@
 | ARM Cortex-M | arm cortex-m instruction, fpu | 優化與高效能運算，視需求學習    |
 | 軟體開發基礎                   | iso-c, unicode, fixed point number | ISO-C 語言標準與特殊數值運算 |
 | 硬體輔助工具                   | swo, crc, rng, ecc                 | 特殊應用工具，視專案需求補充    |
+|ADC/DAC 模擬訊號處理                | adc/dac                                                                        | ADC、DAC 基本原理與數據轉換應用          |
 ---
 
 ## 專案建議與學習方式
