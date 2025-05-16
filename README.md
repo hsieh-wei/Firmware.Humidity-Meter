@@ -35,7 +35,7 @@
 | ---- | ---------------------------------------------------- |
 | IDE  | VSCode                                               |
 | 擴充套件 | C/C++, CMake Tools, Cortex-Debug, Code Spell Checker |
-| 專案生成 | STM32CubeMX                                          |
+| 專案生成 | STM32CubeMX 6.14.1                                         |
 | 編譯工具 | GCC (arm-none-eabi-gcc)                              |
 | 建構工具 | CMake                                                |
 | 燒錄   | ST-Link, OpenOCD                                     |
