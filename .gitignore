@@ -1,0 +1,35 @@
+# STM32CubeMX
+*.log
+*.bak
+
+# Keil MDK
+*.uvoptx
+*.axf
+*.o
+*.crf
+*.d
+*.map
+*.lst
+*.tra
+*.plg
+keil/Objects/
+keil/Listing/
+
+# CMake
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# VSCode
+.vscode/
+
+# others
+*.elf
+*.bin
+*.hex
+*.orig
+*.swp
+*.swo
+*.DS_Store
