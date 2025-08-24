@@ -26,7 +26,7 @@
 | --- | ------------------------------------------------ | ----------------------- | -------------------- |
 | SYS | `Serial Wire (SWD)`                              | 提供 ULINKpro Debug 與燒錄通道 | SWD 僅需 2 線，節省腳位，支援廣泛 |
 | RCC | `HSE = Crystal/Ceramic Resonator` <br> `LSE` 不勾選 | 啟用外部高精度振盪器              | HSE 精準穩定，適合實際硬體時鐘來源  |
-| NVIC | `USART3 Global Interrupt`勾選 (Connectivityg 設定後自動啟用) | 致能 USART3 例外事件              | 使用 USART3 中斷 |
+| NVIC | `USART3 Global Interrupt`勾選 (Connectivityg 設定後才能啟用) | 致能 USART3 例外事件              | 使用 USART3 中斷 |
 
 ### 2.2 System Core GPIO 腳位設定
 | 腳位   | 功能設定    | GPIO Mode                               | Pull 設定 | 備註                                |
@@ -36,7 +36,7 @@
 ### 2.3 Connectivity
 
 * 開啟 USART3 ， 設置成 Asynchronous
-    * 會自動開啟 `PC10` 、 `PC11`
+    * 會自動開啟 `PB10` 、 `PB11`
     * Baud Rate = 115200 bps
     * Word length  = 8 but bits
     * Parity = None
