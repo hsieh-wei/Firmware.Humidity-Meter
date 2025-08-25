@@ -23,8 +23,9 @@ cmake_install.cmake
 Makefile
 
 # VSCode
-.vscode/launch.json
-.settings/
+code/.vscode/launch.json
+code/.settings/
+
 # others
 *.elf
 *.bin
