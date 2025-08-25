@@ -23,7 +23,7 @@ cmake_install.cmake
 Makefile
 
 # VSCode
-.vscode/
+.vscode/launch.json
 
 # others
 *.elf

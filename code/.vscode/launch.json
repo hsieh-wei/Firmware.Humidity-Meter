@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Download Only (ST-LINK GDB Server + cortex-debug)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "stlink",
+      "serverpath": "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.win32_2.2.200.202505060755/tools/bin/ST-LINK_gdbserver.exe",
+      "executable": "${workspaceFolder}/build/Debug/humidity_meter.elf",
+      "device": "STM32F407VE",
+      "interface": "swd",
+      "runToMain": false,
+      "runToEntryPoint": false,
+    }
+  ]
+}
