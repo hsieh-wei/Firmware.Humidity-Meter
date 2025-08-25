@@ -24,7 +24,7 @@ Makefile
 
 # VSCode
 .vscode/launch.json
-
+.settings/
 # others
 *.elf
 *.bin
