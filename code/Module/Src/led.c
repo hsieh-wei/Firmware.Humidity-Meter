@@ -18,5 +18,5 @@ void Led_Toggle(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 void Led_All_Clear(void)
 {
     HAL_GPIO_WritePin (GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin (GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin (GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
 }
