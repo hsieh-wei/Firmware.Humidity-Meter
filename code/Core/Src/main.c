@@ -18,12 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,12 +98,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Led_On(GPIOA, GPIO_PIN_6);
-    Led_Off(GPIOA, GPIO_PIN_7);
-    HAL_Delay(400);
-    Led_Off(GPIOA, GPIO_PIN_6);
-    Led_On(GPIOA, GPIO_PIN_7);
-    HAL_Delay(100);
+    if(Button_Pressed(GPIOE, GPIO_PIN_4) == 0){
+      Led_On(GPIOA, GPIO_PIN_6);
+    }
+    else{
+      Led_Off(GPIOA, GPIO_PIN_6);
+    }
+
+    if(Button_Pressed(GPIOE, GPIO_PIN_3) == 0){
+      // HAL_Delay(100);
+      Led_Toggle(GPIOA, GPIO_PIN_7);
+      while (Button_Pressed(GPIOE, GPIO_PIN_3) == 0) {}
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
