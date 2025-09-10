@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f407xx.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -97,6 +99,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+  
     if(Button_Pressed(GPIOE, GPIO_PIN_4) == 1){
       Led_On(GPIOA, GPIO_PIN_6);
     }
@@ -104,9 +107,9 @@ int main(void)
       Led_Off(GPIOA, GPIO_PIN_6);
     }
 
-    if(Button_Pressed(GPIOE, GPIO_PIN_3) == 0){
+    if(Button_Pressed(GPIOE, GPIO_PIN_3) == 1){
       Led_Toggle(GPIOA, GPIO_PIN_7);
-      while (Button_Pressed(GPIOE, GPIO_PIN_3) == 0) {}
+      while (Button_Pressed(GPIOE, GPIO_PIN_3) == 1) {}
     }
     /* USER CODE END WHILE */
 
