@@ -16,8 +16,8 @@
       // change to your device
       "device": "STM32F407VE",
       "interface": "swd",
-      "runToMain": false,
-      "runToEntryPoint": false,
+      // "runToMain": false,
+      "runToEntryPoint": "false",
     }
   ]
 }
