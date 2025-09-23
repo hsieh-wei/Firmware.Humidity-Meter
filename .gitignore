@@ -47,7 +47,8 @@ CMakeUserPresets.json
 # 忽略 launch.json、tasks.json 等個人化設定
 # -----------------------------
 code/.vscode/launch.json
-
+code/.vscode/c_cpp_properties.json
+code/.vscode/settings.json
 # -----------------------------
 # Clangd 設定與快取
 # -----------------------------
