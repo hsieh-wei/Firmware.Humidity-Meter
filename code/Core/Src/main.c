@@ -100,17 +100,22 @@ int main(void)
   while (1)
   {
   
-    if(Button_Pressed(GPIOE, GPIO_PIN_4) == 1){
-      Led_On(GPIOA, GPIO_PIN_6);
-    }
-    else{
-      Led_Off(GPIOA, GPIO_PIN_6);
-    }
+    // if(Button_Pressed(GPIOE, GPIO_PIN_4) == 1){
+    //   Led_On(GPIOA, GPIO_PIN_6);
+    // }
+    // else{
+    //   Led_Off(GPIOA, GPIO_PIN_6);
+    // }
 
-    if(Button_Pressed(GPIOE, GPIO_PIN_3) == 1){
-      Led_Toggle(GPIOA, GPIO_PIN_7);
-      while (Button_Pressed(GPIOE, GPIO_PIN_3) == 1) {}
-    }
+    // if(Button_Pressed(GPIOE, GPIO_PIN_3) == 1){
+    //   Led_Toggle(GPIOA, GPIO_PIN_7);
+    //   while (Button_Pressed(GPIOE, GPIO_PIN_3) == 1) {}
+    // }
+    Led_On(GPIOA, GPIO_PIN_6);
+    HAL_Delay(500);
+    Led_Off(GPIOA, GPIO_PIN_6);
+    HAL_Delay(500);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
