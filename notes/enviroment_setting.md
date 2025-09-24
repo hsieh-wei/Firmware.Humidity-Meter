@@ -55,26 +55,43 @@ https://www.youtube.com/watch?v=aWMni01XGeI
 
 ```json
 {
-  "version": 4,
-  "configurations": [
-    {
-      "name": "STM32F4",
-      "compilerPath": "C:/ST/STM32CubeCLT_1.19.0/GNU-tools/bin/arm-none-eabi-gcc.exe",
-      "intelliSenseMode": "gcc-arm",
-      "defines": [
-        "USE_HAL_DRIVER",
-        "STM32F407xx"
-      ],
-      "includePath": [
-        "${workspaceFolder}/Core/Inc",
-        "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
-        "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
-        "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
-        "${workspaceFolder}/Drivers/CMSIS/Include"
-        "其他自行編寫的檔案"
-      ]
-    }
-  ]
+    "version": 4,
+    "configurations": [
+        {
+            "name": "STM32F4",
+            "compilerPath": "C:/ST/STM32CubeCLT_1.19.0/GNU-tools/bin/arm-none-eabi-gcc.exe",
+            "intelliSenseMode": "gcc-arm",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerArgs": [
+                "-mcpu=cortex-m4",
+                "-mthumb",
+                "-mfpu=fpv4-sp-d16",
+                "-mfloat-abi=hard"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F407xx"
+            ],
+            "includePath": [
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                // 以下是自己新增的檔案
+                "${workspaceFolder}/Module/Inc"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/Core/Inc",
+                    "${workspaceFolder}/Drivers",
+                    // 以下是自己新增的檔案
+                    "${workspaceFolder}/Module/Inc"
+                ]
+            }
+        }
+    ]
 }
 ```
 
@@ -100,6 +117,7 @@ https://www.youtube.com/watch?v=aWMni01XGeI
       "interface": "swd",
 
       "runToEntryPoint": false,
+      "entryPoint": "main",
 
       "cwd": "${workspaceFolder}",
       // 改成你的gdb路徑
@@ -111,7 +129,40 @@ https://www.youtube.com/watch?v=aWMni01XGeI
   ]
 }
 ```
+## 3.  設定（`settings.json`）
+```json
+{
+  // —— 關閉 Microsoft C/C++ 的語言功能（保留 Debug 也不影響）——
+  "C_Cpp.intelliSenseEngine": "Disabled",
+  "C_Cpp.errorSquiggles": "Disabled",
+  "C_Cpp.autocomplete": "Disabled",
+  "C_Cpp.formatting": "Disabled",
+  "C_Cpp.codeAnalysis.runAutomatically": false,
 
+  // —— 啟用/調整 Clangd（stm32-cube-clangd 內部用的是 clangd）——
+  "clangd.arguments": [
+    "--background-index",
+    "--clang-tidy",
+    "--completion-style=detailed",
+    "--header-insertion=never",
+    "--cross-file-rename",
+    "--all-scopes-completion",
+    // 讓 clangd 信任交叉編譯器，找得到對應標頭
+    "--query-driver=C:/Program Files (x86)/Arm GNU Toolchain/*/bin/arm-none-eabi-*;C:/SysGCC/arm-none-eabi/bin/arm-none-eabi-*;/usr/bin/arm-none-eabi-*;/opt/*/bin/arm-none-eabi-*",
+    // 指向 compile_commands.json 的位置（依你的 build 目錄調整）
+    "--compile-commands-dir=${workspaceFolder}/build"
+  ],
+
+  // —— 只保留一個 formatter，避免再衝突（clangd 會用 clang-format）——
+  "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "main.h": "c",
+    "stm32f407xx.h": "c"
+  }
+}
+
+```
 ---
 
 # 六、編譯與下載流程
