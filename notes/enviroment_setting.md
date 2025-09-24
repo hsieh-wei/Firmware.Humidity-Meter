@@ -90,17 +90,20 @@ https://www.youtube.com/watch?v=aWMni01XGeI
       "request": "launch",
       "servertype": "stlink",
 
+      // 改成你的st link server
       "serverpath": "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.win32_2.2.200.202505060755/tools/bin/ST-LINK_gdbserver.exe",
 
+      // 改成你的.elf  
       "executable": "${workspaceFolder}/build/Debug/humidity_meter.elf",
+      // 改成你的板子
       "device": "STM32F407VE",
       "interface": "swd",
 
       "runToEntryPoint": false,
 
       "cwd": "${workspaceFolder}",
-      "gdbPath": "C:/ST/STM32CubeCLT_1.19.0/GNU-tools/bin/arm-none-eabi-gdb.exe",
-      "preLaunchTask": "cmake-build-debug",
+      // 改成你的gdb路徑
+      "gdbPath": "C:/ST/STM32CubeCLT_1.19.0/GNU-tools-for-STM32/bin/arm-none-eabi-gdb.exe",
 
       "svdFile": "${workspaceFolder}/STM32F407.svd",
       "showDevDebugOutput": "raw"
