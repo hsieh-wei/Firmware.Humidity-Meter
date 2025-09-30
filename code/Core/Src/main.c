@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include "led.h"
 #include "button.h"
+#include "pc_link.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,6 +94,7 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   Led_All_Clear();
+  PC_LINK_Get_Data(pc_link_massage);
   /* USER CODE END 2 */
 
   /* Infinite loop */
