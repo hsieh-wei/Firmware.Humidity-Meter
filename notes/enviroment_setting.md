@@ -59,7 +59,7 @@ https://www.youtube.com/watch?v=aWMni01XGeI
     "configurations": [
         {
             "name": "STM32F4",
-            "compilerPath": "C:/ST/STM32CubeCLT_1.19.0/GNU-tools/bin/arm-none-eabi-gcc.exe",
+            "compilerPath": "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/arm-none-eabi-gcc.exe",
             "intelliSenseMode": "gcc-arm",
             "cStandard": "c11",
             "cppStandard": "c++17",
