@@ -1,12 +1,13 @@
 #ifndef __PC__LINK__H__
 #define __PC__LINK__H__
 
-#include "stm32f4xx.h" 
+#include "stm32f4xx.h"
+#include "stm32f4xx_hal_uart.h"
 #include "usart.h"
 /*===========================================================
 Global massage
 ===========================================================*/
-extern uint8_t pc_link_massage[50];
+extern uint8_t pc_link_massage[64];
 
 /*===========================================================
 API
