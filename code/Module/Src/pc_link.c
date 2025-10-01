@@ -9,7 +9,7 @@ uint8_t pc_link_massage[50];
 API
 ===========================================================*/
 void PC_LINK_Get_Data(){
-    HAL_UART_Receive_DMA(&huart3, pc_link_massage, sizeof(pc_link_massage));
+    HAL_UARTEx_ReceiveToIdle_DMA(&huart3, pc_link_massage, sizeof(pc_link_massage));
 }
 
 void PC_LINK_Send_Data(){
