@@ -26,7 +26,6 @@
 #include "led.h"
 #include "button.h"
 #include "pc_link.h"
-#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,16 +92,15 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   Led_All_Clear();
-  char message[] = "Hello";
-  // uint8_t cmd[2] = {0};
+  uint8_t cmd[2] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // HAL_UART_Receive(&huart3, cmd, 2, HAL_MAX_DELAY);
-    HAL_UART_Transmit(&huart3, (uint8_t*)message, strlen(message), 100);
+    HAL_UART_Receive(&huart3, cmd, 2, HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart3, cmd, 2, 100);
     HAL_Delay(1000);
     /* USER CODE END WHILE */
 
