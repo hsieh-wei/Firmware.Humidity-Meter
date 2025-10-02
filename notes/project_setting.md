@@ -50,8 +50,8 @@
 | 項目            | 設定值              | 說明                             |
 | ------------- | ---------------- | ------------------------------ |
 | PLL Source    | HSE              | 使用外部 8MHz 晶振                   |
-| HSE Frequency | 25 MHz            | 外部晶振頻率                         |
-| PLLM          | 25                | VCO Input = 25 / 25 = 1 MHz      |
+| HSE Frequency | 8 MHz            | 外部晶振頻率                         |
+| PLLM          | 8                | VCO Input = 25 / 25 = 1 MHz      |
 | PLLN          | 336              | VCO Output = 1 × 336 = 336 MHz |
 | PLLP          | 2                | SYSCLK = 336 / 2 = 168 MHz     |
 | PLLQ          | 7                | USB Clock = 336 / 7 = 48 MHz   |
