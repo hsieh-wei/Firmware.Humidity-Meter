@@ -12,9 +12,9 @@ extern uint8_t pc_link_massage[64];
 /*===========================================================
 API
 ===========================================================*/
-void PC_LINK_Get_Data();
+void PC_LINK_StartRx();
 
-void PC_LINK_Send_Data();
+void PC_LINK_Send_Data(uint8_t *tx, uint16_t len);
 
 /*===========================================================
 HAL_UART_IRQHandler Re Declare

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -89,19 +90,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   Led_All_Clear();
-  uint8_t cmd[2] = {0};
+  // PC_LINK_Get_Data();
+  PC_LINK_StartRx();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_UART_Receive(&huart3, cmd, 2, HAL_MAX_DELAY);
-    HAL_UART_Transmit(&huart3, cmd, 2, 100);
-    HAL_Delay(1000);
+    Led_Toggle(GPIOA, GPIO_PIN_6);
+    HAL_Delay(200);
+    Led_Toggle(GPIOA, GPIO_PIN_6);
+    HAL_Delay(200);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
