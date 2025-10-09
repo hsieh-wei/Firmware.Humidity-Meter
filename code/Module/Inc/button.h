@@ -3,6 +3,6 @@
 
 #include "stm32f4xx_hal_gpio.h"
 
-int Button_Pressed(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+int button_pressed(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
 
 #endif

@@ -93,8 +93,6 @@ int main(void)
   MX_DMA_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  Led_All_Clear();
-  // PC_LINK_Get_Data();
   PC_LINK_StartRx();
   /* USER CODE END 2 */
 
@@ -102,9 +100,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Led_Toggle(GPIOA, GPIO_PIN_6);
+    led_toggle(GPIOA, GPIO_PIN_6);
     HAL_Delay(200);
-    Led_Toggle(GPIOA, GPIO_PIN_6);
+    led_toggle(GPIOA, GPIO_PIN_6);
     HAL_Delay(200);
     /* USER CODE END WHILE */
 
