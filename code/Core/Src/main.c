@@ -45,9 +45,12 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /* USER CODE BEGIN PV */
 
+// pc_link 資源（透明 Handle + 上層提供的 RX/TX 緩衝
+static PC_LINK_HANDLE g_pc_link;
+static uint8_t g_pc_rx[64];
+static uint8_t g_pc_tx[64];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +96,15 @@ int main(void)
   MX_DMA_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  PC_LINK_StartRx();
+  /* 將 huart3 與緩衝區注入 pc_link，啟動 DMA ReceiveToIdle */
+  g_pc_link.huart  = &huart3;
+  g_pc_link.rx_buf = g_pc_rx;  
+  g_pc_link.rx_len = sizeof(g_pc_rx);
+  g_pc_link.tx_buf = g_pc_tx;  
+  g_pc_link.tx_len = sizeof(g_pc_tx);
+
+  (void)pc_link_init(&g_pc_link);
+  (void)pc_link_rx(&g_pc_link);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -157,7 +168,17 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+// HAL rx idle or full buffer
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  pc_link_irq_rx_event(&g_pc_link, huart, Size);
+}
 
+// HAL Tx complete send
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+  pc_link_irq_tx_cplt(&g_pc_link, huart);
+}
 /* USER CODE END 4 */
 
 /**

@@ -1,23 +1,34 @@
-#ifndef __PC__LINK__H__
-#define __PC__LINK__H__
+#ifndef PC_LINK_H
+#define PC_LINK_H
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_hal_uart.h"
-#include "usart.h"
-/*===========================================================
-Global massage
-===========================================================*/
-extern uint8_t pc_link_massage[64];
+#include <stdint.h>
+#include <stdbool.h>
+#include "stm32f4xx_hal.h"
 
-/*===========================================================
-API
-===========================================================*/
-void PC_LINK_StartRx();
+// -------- Error Codes -------- 
+typedef enum {
+    PC_LINK_SUCCESS  = 0,
+    PC_LINK_ERROR    = -1,
+} PC_LINK_ERR_t;
 
-void PC_LINK_Send_Data(uint8_t *tx, uint16_t len);
+// -------- Handle -------- 
 
-/*===========================================================
-HAL_UART_IRQHandler Re Declare
-===========================================================*/
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size);
-#endif
+typedef struct {
+    UART_HandleTypeDef *huart;  // UART HAL handle（EX：&huart3） 
+    uint8_t  *rx_buf;           // rx buffer DMA 
+    uint16_t  rx_len;           // rx buffer length 
+    uint8_t  *tx_buf;           // tx buffer DMA 
+    uint16_t  tx_len;           // tx buffer length 
+
+    volatile uint8_t busy_tx;   // driver using, do not change in main 
+} PC_LINK_HANDLE;
+
+// -------- Public API -------- 
+int  pc_link_init(PC_LINK_HANDLE *h);
+int  pc_link_rx(PC_LINK_HANDLE *h);
+int  pc_link_tx_dma(PC_LINK_HANDLE *h, const uint8_t *data, uint16_t len);
+
+// HAL RxEventCallback, using in main
+void pc_link_irq_rx_event(PC_LINK_HANDLE *h, UART_HandleTypeDef *huart, uint16_t size);
+void pc_link_irq_tx_cplt(PC_LINK_HANDLE *h, UART_HandleTypeDef *huart);
+#endif // PC_LINK_H 

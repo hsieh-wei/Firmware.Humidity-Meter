@@ -1,7 +1,7 @@
 #ifndef __led_H__
 #define __led_H__
 
-#include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal.h"
 
 void led_on(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
 
