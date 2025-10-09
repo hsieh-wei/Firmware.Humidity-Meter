@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -45,6 +46,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
 /* USER CODE BEGIN PV */
 
 // pc_link 資源（透明 Handle + 上層提供的 RX/TX 緩衝
@@ -95,6 +97,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART3_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   /* 將 huart3 與緩衝區注入 pc_link，啟動 DMA ReceiveToIdle */
   g_pc_link.huart  = &huart3;
