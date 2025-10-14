@@ -1,14 +1,16 @@
 #include <string.h>
 #include "pc_link.h"
 
-// ---- internal helpers ---- 
+// --------------------------------------------------------------------------
+// Internal Helpers 
+// --------------------------------------------------------------------------
 static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
     if (huart && huart->hdmarx) {
         __HAL_DMA_DISABLE_IT(huart->hdmarx, DMA_IT_HT);  // turn off DMA Half-Transfer inerrupt
     }
 }
 
-// ----------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
 int pc_link_init(PC_LINK_HANDLE *h)
