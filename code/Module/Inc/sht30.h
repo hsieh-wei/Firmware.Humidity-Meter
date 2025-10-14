@@ -1,0 +1,24 @@
+#ifndef SHT30_H
+#define SHT30_H
+
+#include "stm32f4xx_hal.h"
+
+// -------- Error Codes -------- 
+typedef enum {
+    SHT30_SUCCESS  = 0,
+    SHT30_ERROR    = -1,
+} SHT30_ERR_t;
+
+// -------- Handle -------- 
+typedef struct {
+    I2C_HandleTypeDef *hi2c;  // I2C HAL handle (EX: &hi2c1) 
+    float humidity;
+    float temperature;
+} SHT30_HANDLE;
+
+// -------- Public API -------- 
+int SHT30_init(SHT30_ERR_t *s);
+
+int SHT30_read(SHT30_ERR_t *s);
+
+#endif // SHT30_H 
