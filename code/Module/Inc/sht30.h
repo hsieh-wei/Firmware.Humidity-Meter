@@ -23,7 +23,7 @@ typedef struct {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
-int SHT30_init(SHT30_ERR_t *s);
-int SHT30_read(SHT30_ERR_t *s);
+int SHT30_init(SHT30_HANDLE *handle);
+int SHT30_read(SHT30_HANDLE *handle);
 
 #endif // SHT30_H 
