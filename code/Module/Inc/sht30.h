@@ -24,7 +24,6 @@ typedef struct {
 // API
 // --------------------------------------------------------------------------
 int SHT30_init(SHT30_ERR_t *s);
-
 int SHT30_read(SHT30_ERR_t *s);
 
 #endif // SHT30_H 
