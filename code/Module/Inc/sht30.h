@@ -16,6 +16,7 @@ typedef enum {
 // --------------------------------------------------------------------------
 typedef struct {
     I2C_HandleTypeDef *hi2c;  // I2C HAL handle (EX: &hi2c1) 
+    uint8_t i2c_address;
     float humidity;
     float temperature;
 } SHT30_HANDLE;
@@ -23,7 +24,7 @@ typedef struct {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
-int SHT30_init(SHT30_HANDLE *handle);
-int SHT30_read(SHT30_HANDLE *handle);
+int sht30_init(SHT30_HANDLE *handle);
+int sht30_read(SHT30_HANDLE *handle);
 
 #endif // SHT30_H 
