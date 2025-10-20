@@ -120,30 +120,29 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-{
-  // measurement temp and humidity
-  int sht30_status = sht30_read(&g_sht30_handle);
+  while (1){
+    // measurement temp and humidity
+    int sht30_status = sht30_read(&g_sht30_handle);
 
-  int snprintf_status = 0;
-  if (sht30_status == 0) {
-    // need to open printf float
-    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
-                              "Temp: %.1f C, Humidity: %.1f %%\r\n",
-                              g_sht30_handle.temperature, g_sht30_handle.humidity);
-  } 
-  else {
-    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
-                              "SHT30 read error: %d\r\n", sht30_status);
-  }
 
-  if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
-    int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle, g_pc_link_buf_tx, (uint16_t)snprintf_status);
-  }
+    // combine tx message
+    int snprintf_status = 0;
+    if (sht30_status == 0) {
+      // need to open printf float
+      snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+                                "Temp: %.1f C, Humidity: %.1f %%\r\n",
+                                g_sht30_handle.temperature, g_sht30_handle.humidity);
+    } 
+    else {
+      snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+                                "SHT30 read error: %d\r\n", sht30_status);
+    }
 
-  HAL_Delay(1000); // 1 Hz measurement
-}
+    if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
+      int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle, g_pc_link_buf_tx, (uint16_t)snprintf_status);
+    }
+
+    HAL_Delay(1000); // 1 Hz measurement
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

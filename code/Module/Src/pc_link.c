@@ -47,8 +47,11 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
         return PC_LINK_ERROR;  // tx is busy
     }
 
+    // safe copy to protect: when dma transmit tx_buf, *data change will not cause error
+    memcpy(handle->tx_buf, data, len); 
+
     handle->busy_tx = 1;
-    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, (uint8_t *)data, len);
+    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
     if (status != HAL_OK) {
         handle->busy_tx = 0;  // if fail clead busy
         return PC_LINK_ERROR;
