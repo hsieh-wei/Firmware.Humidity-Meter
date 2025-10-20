@@ -25,6 +25,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include <string.h>
 #include "led.h"
 #include "button.h"
 #include "pc_link.h"
@@ -51,8 +53,8 @@
 /* USER CODE BEGIN PV */
 // pc_link handle
 static PC_LINK_HANDLE g_pc_link_handle; 
-static uint8_t g_pc_link_rx[64];
-static uint8_t g_pc_link_tx[64];
+static uint8_t g_pc_link_buf_rx[64];
+static uint8_t g_pc_link_buf_tx[64];
 
 // sht30 handle
 static SHT30_HANDLE g_sht30_handle;   
@@ -103,26 +105,45 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   // Inject huart3 and buffer into pc_link handl,then start DMA ReceiveToIdle
-  g_pc_link_handle.huart  = &huart3;
-  g_pc_link_handle.rx_buf = g_pc_link_rx;  
-  g_pc_link_handle.rx_len = sizeof(g_pc_link_rx);
-  g_pc_link_handle.tx_buf = g_pc_link_tx;  
-  g_pc_link_handle.tx_len = sizeof(g_pc_link_tx);
+  g_pc_link_handle.huart      = &huart3;
+  g_pc_link_handle.rx_buf     = g_pc_link_buf_rx;  
+  g_pc_link_handle.rx_buf_len = sizeof(g_pc_link_buf_rx);
+  g_pc_link_handle.tx_buf     = g_pc_link_buf_tx;  
+  g_pc_link_handle.tx_buf_len = sizeof(g_pc_link_buf_tx);
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
   
   // Inject hi2c1 into sht30 handle
   g_sht30_handle.hi2c = &hi2c1;
+  (void)sht30_init(&g_sht30_handle);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    led_toggle(GPIOA, GPIO_PIN_6);
-    HAL_Delay(200);
-    led_toggle(GPIOA, GPIO_PIN_6);
-    HAL_Delay(200);
+{
+  // measurement temp and humidity
+  int sht30_status = sht30_read(&g_sht30_handle);
+
+  int snprintf_status = 0;
+  if (sht30_status == 0) {
+    // need to open printf float
+    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+                              "Temp: %.1f C, Humidity: %.1f %%\r\n",
+                              g_sht30_handle.temperature, g_sht30_handle.humidity);
+  } 
+  else {
+    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+                              "SHT30 read error: %d\r\n", sht30_status);
+  }
+
+  if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
+    int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle, g_pc_link_buf_tx, (uint16_t)snprintf_status);
+  }
+
+  HAL_Delay(1000); // 1 Hz measurement
+}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

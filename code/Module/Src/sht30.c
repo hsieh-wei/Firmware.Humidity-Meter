@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
-#define SHT30_ADDRESS (0x44 << 1)
+#define SHT30_ADDRESS (0x44 << 1) // ADDR connected to logic low
 
 static uint8_t sht30_crc8(const uint8_t *data) {
     uint8_t crc = 0xFF; // Init

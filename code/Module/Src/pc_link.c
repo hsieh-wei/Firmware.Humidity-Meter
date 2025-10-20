@@ -15,7 +15,7 @@ static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
 // --------------------------------------------------------------------------
 int pc_link_init(PC_LINK_HANDLE *handle)
 {
-    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_len == 0) {
+    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_buf_len == 0) {
         return PC_LINK_ERROR;
     }
 
@@ -27,14 +27,14 @@ int pc_link_init(PC_LINK_HANDLE *handle)
 
 int pc_link_rx_dma(PC_LINK_HANDLE *handle)
 {
-    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_len == 0) {
+    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_buf_len == 0) {
         return PC_LINK_ERROR;
     }
 
     //turn off Half-Transfer IT
     pc_link_disable_dma_half_it(handle->huart);
 
-    HAL_StatusTypeDef status = HAL_UARTEx_ReceiveToIdle_DMA(handle->huart, handle->rx_buf, handle->rx_len);
+    HAL_StatusTypeDef status = HAL_UARTEx_ReceiveToIdle_DMA(handle->huart, handle->rx_buf, handle->rx_buf_len);
     return (status == HAL_OK) ? PC_LINK_SUCCESS : PC_LINK_ERROR;
 }
 
@@ -68,7 +68,7 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
 
     if (size > 0) {
         // echo if there is tx_buf
-        if (handle->tx_buf && handle->tx_len > 0) {
+        if (handle->tx_buf && handle->tx_buf_len > 0) {
             memcpy(handle->tx_buf, handle->rx_buf, size);
 
             // If currently busy, this return is skipped
