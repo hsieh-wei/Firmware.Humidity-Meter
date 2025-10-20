@@ -20,6 +20,8 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "stm32f407xx.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -108,7 +110,7 @@ int main(void)
   g_pc_link_handle.huart      = &huart3;
   g_pc_link_handle.rx_buf     = g_pc_link_buf_rx;  
   g_pc_link_handle.rx_buf_len = sizeof(g_pc_link_buf_rx);
-  g_pc_link_handle.tx_buf     = g_pc_link_buf_tx;  
+  g_pc_link_handle.tx_buf     = g_pc_link_buf_tx;  // allocate a memory for tx dma
   g_pc_link_handle.tx_buf_len = sizeof(g_pc_link_buf_tx);
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
@@ -127,11 +129,11 @@ int main(void)
 
     // combine tx message
     int snprintf_status = 0;
-    if (sht30_status == 0) {
+    if (sht30_status == SHT30_SUCCESS) {
       // need to open printf float
       snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
-                                "Temp: %.1f C, Humidity: %.1f %%\r\n",
-                                g_sht30_handle.temperature, g_sht30_handle.humidity);
+                                "Temp: %d C, Humidity: %d %%\r\n",
+                                (int)g_sht30_handle.temperature, (int)g_sht30_handle.humidity);
     } 
     else {
       snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
@@ -140,6 +142,9 @@ int main(void)
 
     if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
       int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle, g_pc_link_buf_tx, (uint16_t)snprintf_status);
+      if (pc_link_tx_status != PC_LINK_SUCCESS) {
+        led_on(GPIOA, GPIO_PIN_6);
+      }
     }
 
     HAL_Delay(1000); // 1 Hz measurement

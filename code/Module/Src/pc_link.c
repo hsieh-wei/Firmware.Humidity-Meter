@@ -72,6 +72,7 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
     if (size > 0) {
         // echo if there is tx_buf
         if (handle->tx_buf && handle->tx_buf_len > 0) {
+            // safe copy to protect: when dma transmit tx_buf, *data change will not cause error
             memcpy(handle->tx_buf, handle->rx_buf, size);
 
             // If currently busy, this return is skipped
