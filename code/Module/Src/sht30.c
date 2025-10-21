@@ -87,7 +87,7 @@ int sht30_read(SHT30_HANDLE *handle){
     // Repeatability High, Disabled Clock Stretching Measurement
     cmd_buf[0] = 0x24; cmd_buf[1] = 0x00;
     if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) {
-        i2c_dump_error(handle, "TX 0x2400");
+        // i2c_dump_error(handle, "TX 0x2400");
         return SHT30_ERROR;
     }
     HAL_Delay(15); // minimal waiting time after high repeatability measurement

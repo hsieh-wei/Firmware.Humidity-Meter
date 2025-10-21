@@ -88,8 +88,8 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
         uint16_t len = size;
         if (len > handle->tx_buf_len) len = handle->tx_buf_len;
         handle->busy_tx = 1; // set tx busy
-        memcpy(handle->tx_buf, handle->rx_buf, len);
-        (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
+        // memcpy(handle->tx_buf, handle->rx_buf, len);
+        // (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
     }
 }
 
