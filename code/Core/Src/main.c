@@ -138,7 +138,7 @@ int main(void)
       (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
     }
 
-    HAL_Delay(1000); // 1 Hz measurement
+    HAL_Delay(2000); // 1 Hz measurement
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

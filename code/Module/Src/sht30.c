@@ -23,7 +23,7 @@ static uint8_t sht30_crc8(const uint8_t *data) {
     return crc; // XorOut=0x00
 }
 
-static void i2c_dump_error(SHT30_HANDLE *handle, const char* tag){
+static void sht30_dump_error(SHT30_HANDLE *handle, const char* tag){
     static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
     int snprintf_status = 0;
     uint32_t error_code = HAL_I2C_GetError(handle->hi2c);
