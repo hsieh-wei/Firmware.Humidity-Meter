@@ -120,25 +120,22 @@ int main(void)
     // measurement temp and humidity
     int sht30_status = sht30_read(&g_sht30_handle);
 
-
     // combine tx message
+    static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
     int snprintf_status = 0;
     if (sht30_status == SHT30_SUCCESS) {
       // need to open printf float
-      snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
                                 "Temp: %d C, Humidity: %d %%\r\n",
                                 (int)g_sht30_handle.temperature, (int)g_sht30_handle.humidity);
     } 
     else {
-      snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
                                 "SHT30 read error: %d\r\n", sht30_status);
     }
 
-    if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
-      int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle);
-      if (pc_link_tx_status != PC_LINK_SUCCESS) {
-        led_on(GPIOA, GPIO_PIN_6);
-      }
+    if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
+      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
     }
 
     HAL_Delay(1000); // 1 Hz measurement

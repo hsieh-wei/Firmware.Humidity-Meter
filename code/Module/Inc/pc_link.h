@@ -34,15 +34,13 @@ typedef struct {
 #define PC_LINK_TX_BUF_SIZE 64
 #endif
 extern PC_LINK_HANDLE g_pc_link_handle;
-extern uint8_t g_pc_link_buf_rx[PC_LINK_RX_BUF_SIZE];
-extern uint8_t g_pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
 
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
 int pc_link_init(PC_LINK_HANDLE *handle);
 int pc_link_rx_dma(PC_LINK_HANDLE *handle);
-int pc_link_tx_dma(PC_LINK_HANDLE *handle);
+int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len);
 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 

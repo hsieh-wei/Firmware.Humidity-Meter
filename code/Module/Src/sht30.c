@@ -24,13 +24,16 @@ static uint8_t sht30_crc8(const uint8_t *data) {
 }
 
 static void i2c_dump_error(SHT30_HANDLE *handle, const char* tag){
+    static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
+    int snprintf_status = 0;
     uint32_t error_code = HAL_I2C_GetError(handle->hi2c);
     uint32_t sht30_status = handle->hi2c->State;
-    int snprintf_status = 0;
-    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+
+    snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
                         "[%s]: I2C State=0x%lx Error=0x%lx\r\n", tag, sht30_status, error_code);
-    if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
-      (void)pc_link_tx_dma(&g_pc_link_handle);
+
+    if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
+      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
     }
 }
 // --------------------------------------------------------------------------

@@ -5,8 +5,6 @@
 // Global Variable
 // --------------------------------------------------------------------------
 PC_LINK_HANDLE g_pc_link_handle;
-uint8_t g_pc_link_buf_rx[PC_LINK_RX_BUF_SIZE];
-uint8_t g_pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
 
 // --------------------------------------------------------------------------
 // Internal Helpers 
@@ -22,9 +20,11 @@ static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
 // --------------------------------------------------------------------------
 int pc_link_init(PC_LINK_HANDLE *handle)
 {
-    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_buf_len == 0) {
+    if (!handle || !handle->huart) {
         return PC_LINK_ERROR;
     }
+    static uint8_t g_pc_link_buf_rx[PC_LINK_RX_BUF_SIZE];
+    static uint8_t g_pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
 
     // initial variable
     handle->rx_buf     = g_pc_link_buf_rx;
@@ -51,19 +51,17 @@ int pc_link_rx_dma(PC_LINK_HANDLE *handle)
     return (status == HAL_OK) ? PC_LINK_SUCCESS : PC_LINK_ERROR;
 }
 
-int pc_link_tx_dma(PC_LINK_HANDLE *handle)
+int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
 {
     if (!handle || !handle->huart || !handle->tx_buf) return PC_LINK_ERROR;
     if (handle->busy_tx) return PC_LINK_ERROR; // tx is busy
 
-    // count tx data length
-    uint16_t len = 0;
-    while (len < handle->tx_buf_len && handle->tx_buf[len] != '\0') len++;
-    if (len == 0) return PC_LINK_ERROR;
+    handle->busy_tx = 1; // set tx busy
 
-    handle->busy_tx = 1;
-    HAL_StatusTypeDef st = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
-    if (st != HAL_OK) {
+    memcpy(handle->tx_buf, data, len);
+
+    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
+    if (status != HAL_OK) {
         handle->busy_tx = 0; // if fail clead busy
         return PC_LINK_ERROR;
     }
@@ -89,8 +87,9 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
     if (!handle->busy_tx) {
         uint16_t len = size;
         if (len > handle->tx_buf_len) len = handle->tx_buf_len;
+        handle->busy_tx = 1; // set tx busy
         memcpy(handle->tx_buf, handle->rx_buf, len);
-        (void)pc_link_tx_dma(handle); 
+        (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
     }
 }
 
