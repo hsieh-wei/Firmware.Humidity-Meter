@@ -126,7 +126,7 @@ int main(void)
     if (sht30_status == SHT30_SUCCESS) {
       // need to open printf float
       snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                                "Temp: %d C, Humidity: %d %%\r\n",
+                                "Temperature: %d°C, Humidity: %d%%\r\n",
                                 (int)g_sht30_handle.temperature, (int)g_sht30_handle.humidity);
     } 
     else {
