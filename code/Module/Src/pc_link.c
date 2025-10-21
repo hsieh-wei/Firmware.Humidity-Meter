@@ -2,6 +2,13 @@
 #include "pc_link.h"
 
 // --------------------------------------------------------------------------
+// Global Variable
+// --------------------------------------------------------------------------
+PC_LINK_HANDLE g_pc_link_handle;
+uint8_t g_pc_link_buf_rx[PC_LINK_RX_BUF_SIZE];
+uint8_t g_pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
+
+// --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
 static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
@@ -19,7 +26,13 @@ int pc_link_init(PC_LINK_HANDLE *handle)
         return PC_LINK_ERROR;
     }
 
+    // initial variable
+    handle->rx_buf     = g_pc_link_buf_rx;
+    handle->rx_buf_len = sizeof(g_pc_link_buf_rx);
+    handle->tx_buf     = g_pc_link_buf_tx;
+    handle->tx_buf_len = sizeof(g_pc_link_buf_tx);
     handle->busy_tx = 0;
+
     //turn off Half-Transfer IT
     pc_link_disable_dma_half_it(handle->huart);
     return PC_LINK_SUCCESS;
@@ -38,26 +51,25 @@ int pc_link_rx_dma(PC_LINK_HANDLE *handle)
     return (status == HAL_OK) ? PC_LINK_SUCCESS : PC_LINK_ERROR;
 }
 
-int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
+int pc_link_tx_dma(PC_LINK_HANDLE *handle)
 {
-    if (!handle || !handle->huart || !data || len == 0) {
-        return PC_LINK_ERROR;
-    }
-    if (handle->busy_tx) {
-        return PC_LINK_ERROR;  // tx is busy
-    }
+    if (!handle || !handle->huart || !handle->tx_buf) return PC_LINK_ERROR;
+    if (handle->busy_tx) return PC_LINK_ERROR; // tx is busy
 
-    // safe copy to protect: when dma transmit tx_buf, *data change will not cause error
-    memcpy(handle->tx_buf, data, len); 
+    // count tx data length
+    uint16_t len = 0;
+    while (len < handle->tx_buf_len && handle->tx_buf[len] != '\0') len++;
+    if (len == 0) return PC_LINK_ERROR;
 
     handle->busy_tx = 1;
-    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
-    if (status != HAL_OK) {
-        handle->busy_tx = 0;  // if fail clead busy
+    HAL_StatusTypeDef st = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
+    if (st != HAL_OK) {
+        handle->busy_tx = 0; // if fail clead busy
         return PC_LINK_ERROR;
     }
     return PC_LINK_SUCCESS;
 }
+
 
 // ----------------------------------------------------------------------------
 // HAL Weak Callback re define 
@@ -65,25 +77,21 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
 void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uint16_t size)
 {
     // Check whether it is the specified handler
-    if (!handle || huart != handle->huart) {
-        return;
-    }
+    if (!handle || huart != handle->huart) return;
 
-    if (size > 0) {
-        // echo if there is tx_buf
-        if (handle->tx_buf && handle->tx_buf_len > 0) {
-            // safe copy to protect: when dma transmit tx_buf, *data change will not cause error
-            memcpy(handle->tx_buf, handle->rx_buf, size);
-
-            // If currently busy, this return is skipped
-            if (!handle->busy_tx) {
-                (void)pc_link_tx_dma(handle, handle->tx_buf, size);
-            }
-        }
-    }
+    // Check whether tx_buf is exist
+    if (!handle->tx_buf || handle->tx_buf_len == 0) return;
 
     // restart rx
     (void)pc_link_rx_dma(handle);
+
+    // echo rx data if tx is not busy
+    if (!handle->busy_tx) {
+        uint16_t len = size;
+        if (len > handle->tx_buf_len) len = handle->tx_buf_len;
+        memcpy(handle->tx_buf, handle->rx_buf, len);
+        (void)pc_link_tx_dma(handle); 
+    }
 }
 
 void pc_link_irq_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart)

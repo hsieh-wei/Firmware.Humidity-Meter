@@ -54,12 +54,10 @@
 
 /* USER CODE BEGIN PV */
 // pc_link handle
-static PC_LINK_HANDLE g_pc_link_handle; 
-static uint8_t g_pc_link_buf_rx[64];
-static uint8_t g_pc_link_buf_tx[64];
+extern PC_LINK_HANDLE g_pc_link_handle; 
 
 // sht30 handle
-static SHT30_HANDLE g_sht30_handle;   
+static SHT30_HANDLE g_sht30_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,12 +104,8 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  // Inject huart3 and buffer into pc_link handl,then start DMA ReceiveToIdle
+  // Inject huart3 and buffer into pc_link handle,then start DMA ReceiveToIdle
   g_pc_link_handle.huart      = &huart3;
-  g_pc_link_handle.rx_buf     = g_pc_link_buf_rx;  
-  g_pc_link_handle.rx_buf_len = sizeof(g_pc_link_buf_rx);
-  g_pc_link_handle.tx_buf     = g_pc_link_buf_tx;  // allocate a memory for tx dma
-  g_pc_link_handle.tx_buf_len = sizeof(g_pc_link_buf_tx);
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
   
@@ -141,7 +135,7 @@ int main(void)
     }
 
     if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
-      int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle, g_pc_link_buf_tx, (uint16_t)snprintf_status);
+      int pc_link_tx_status = pc_link_tx_dma(&g_pc_link_handle);
       if (pc_link_tx_status != PC_LINK_SUCCESS) {
         led_on(GPIOA, GPIO_PIN_6);
       }

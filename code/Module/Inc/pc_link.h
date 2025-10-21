@@ -2,7 +2,6 @@
 #define PC_LINK_H
 
 #include <stdint.h>
-#include <stdbool.h>
 #include "stm32f4xx_hal.h"
 
 // --------------------------------------------------------------------------
@@ -26,11 +25,24 @@ typedef struct {
 } PC_LINK_HANDLE;
 
 // --------------------------------------------------------------------------
+// Global Variable
+// --------------------------------------------------------------------------
+#ifndef PC_LINK_RX_BUF_SIZE
+#define PC_LINK_RX_BUF_SIZE 64
+#endif
+#ifndef PC_LINK_TX_BUF_SIZE
+#define PC_LINK_TX_BUF_SIZE 64
+#endif
+extern PC_LINK_HANDLE g_pc_link_handle;
+extern uint8_t g_pc_link_buf_rx[PC_LINK_RX_BUF_SIZE];
+extern uint8_t g_pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
+
+// --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
 int pc_link_init(PC_LINK_HANDLE *handle);
 int pc_link_rx_dma(PC_LINK_HANDLE *handle);
-int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len);
+int pc_link_tx_dma(PC_LINK_HANDLE *handle);
 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 

@@ -1,6 +1,7 @@
 #include "sht30.h"
+#include "pc_link.h"
 #include <stdint.h>
-#include <limits.h> 
+#include <stdio.h>
 
 // --------------------------------------------------------------------------
 // Internal Helpers 
@@ -21,6 +22,17 @@ static uint8_t sht30_crc8(const uint8_t *data) {
     }
     return crc; // XorOut=0x00
 }
+
+static void i2c_dump_error(SHT30_HANDLE *handle, const char* tag){
+    uint32_t error_code = HAL_I2C_GetError(handle->hi2c);
+    uint32_t sht30_status = handle->hi2c->State;
+    int snprintf_status = 0;
+    snprintf_status = snprintf((char*)g_pc_link_buf_tx, sizeof(g_pc_link_buf_tx),
+                        "[%s]: I2C State=0x%lx Error=0x%lx\r\n", tag, sht30_status, error_code);
+    if (snprintf_status > 0 && snprintf_status < sizeof(g_pc_link_buf_tx)) {
+      (void)pc_link_tx_dma(&g_pc_link_handle);
+    }
+}
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
@@ -38,22 +50,22 @@ int sht30_init(SHT30_HANDLE *handle)
 
     //Soft Reset
     cmd_buf[0] = 0x30; cmd_buf[1] = 0xA2;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(2); // minimal waiting time after soft reset
 
     //Stop Periodic
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x93;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
 
     //Disable Heater
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x66;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
 
     //Clear Status Register
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x41;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
     
     return SHT30_SUCCESS;
@@ -71,11 +83,14 @@ int sht30_read(SHT30_HANDLE *handle){
 
     // Repeatability High, Disabled Clock Stretching Measurement
     cmd_buf[0] = 0x24; cmd_buf[1] = 0x00;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) {
+        i2c_dump_error(handle, "TX 0x2400");
+        return SHT30_ERROR;
+    }
     HAL_Delay(15); // minimal waiting time after high repeatability measurement
 
     // Read Measurement Data
-    if (HAL_I2C_Master_Receive(handle->hi2c, handle->i2c_address, read_buf,6, HAL_MAX_DELAY) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Receive(handle->hi2c, handle->i2c_address, read_buf,6, 100) != HAL_OK) return SHT30_ERROR;
 
     // CRC Validate
     if (sht30_crc8(&read_buf[0]) != read_buf[2]) return SHT30_ERROR;
