@@ -135,7 +135,7 @@ int main(void)
     }
 
     if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
-      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
+      // (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
     }
 
     HAL_Delay(1000); // 1 Hz measurement
