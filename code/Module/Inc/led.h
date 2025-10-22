@@ -3,10 +3,27 @@
 
 #include "stm32f4xx_hal.h"
 
-void led_on(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+// --------------------------------------------------------------------------
+// Error Codes 
+// --------------------------------------------------------------------------
+typedef enum {
+    LED_SUCCESS  = 0,
+    LED_ERROR    = -1,
+} LED_ERR_t;
 
-void led_off(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+// --------------------------------------------------------------------------
+// Handle
+// --------------------------------------------------------------------------
+typedef struct {
+    GPIO_TypeDef *gpiox;  // gpio HAL handle (EX: &GPIOA) 
+    uint16_t gpio_pin;    // gpio HAL handle (EX: &GPIOA) 
+} LED_HANDLE;
 
-void led_toggle(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+// --------------------------------------------------------------------------
+// API
+// --------------------------------------------------------------------------
+int led_on(LED_HANDLE *handle);
+int led_off(LED_HANDLE *handle);
+int led_toggle(LED_HANDLE *handle);
 
 #endif

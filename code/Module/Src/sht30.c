@@ -8,7 +8,8 @@
 // --------------------------------------------------------------------------
 #define SHT30_ADDRESS (0x44 << 1) // ADDR connected to logic low
 
-static uint8_t sht30_crc8(const uint8_t *data) {
+static uint8_t sht30_crc8(const uint8_t *data)
+{
     uint8_t crc = 0xFF; // Init
     for (uint32_t i = 0; i < 2; ++i) {
         // crc two byte
@@ -23,7 +24,8 @@ static uint8_t sht30_crc8(const uint8_t *data) {
     return crc; // XorOut=0x00
 }
 
-static void sht30_dump_error(SHT30_HANDLE *handle, const char* tag){
+static void sht30_dump_error(SHT30_HANDLE *handle, const char* tag)
+{
     static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
     int snprintf_status = 0;
     uint32_t error_code = HAL_I2C_GetError(handle->hi2c);
@@ -74,7 +76,8 @@ int sht30_init(SHT30_HANDLE *handle)
     return SHT30_SUCCESS;
 }
 
-int sht30_read(SHT30_HANDLE *handle){
+int sht30_read(SHT30_HANDLE *handle)
+{
     if (!handle || !handle->hi2c){
         return SHT30_ERROR;
     }

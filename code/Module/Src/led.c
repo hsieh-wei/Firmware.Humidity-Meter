@@ -1,17 +1,29 @@
 #include "led.h"
+// --------------------------------------------------------------------------
+// Internal Helpers 
+// --------------------------------------------------------------------------
 
-// active-low
-void led_on(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+// --------------------------------------------------------------------------
+// API
+// --------------------------------------------------------------------------
+int led_on(LED_HANDLE *handle)
 {
-    HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(handle->gpiox, handle->gpio_pin, GPIO_PIN_RESET); // active-low
+    return LED_SUCCESS;
 }
 
-void led_off(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+int led_off(LED_HANDLE *handle)
 {
-    HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(handle->gpiox, handle->gpio_pin, GPIO_PIN_SET); // active-low
+    return LED_SUCCESS;
 }
 
-void led_toggle(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+int led_toggle(LED_HANDLE *handle)
 {
-    HAL_GPIO_TogglePin(GPIOx, GPIO_Pin);
+    HAL_GPIO_TogglePin(handle->gpiox, handle->gpio_pin);
+    return LED_SUCCESS;
 }
+
+// --------------------------------------------------------------------------
+// HAL Weak Callback re define 
+// --------------------------------------------------------------------------
