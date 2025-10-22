@@ -110,7 +110,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   // Inject gpioa into led handle
   s_led_handle.gpiox = GPIOA;
-  s_button_handle.gpio_pin = GPIO_PIN_6;
+  s_led_handle.gpio_pin = GPIO_PIN_7;
   // Inject gpioa into button handle
   s_button_handle.gpiox = GPIOE;
   s_button_handle.gpio_pin = GPIO_PIN_3;
@@ -126,7 +126,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-    if(button_pressed(&s_button_handle) == 1){
+    button_pressed(&s_button_handle);
+    if(s_button_handle.pressed == 1){
       led_on(&s_led_handle);
     }
     else {
