@@ -30,7 +30,7 @@ static void sht30_dump_error(SHT30_HANDLE *handle, const char* tag){
     uint32_t sht30_status = handle->hi2c->State;
 
     snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                        "[%s]: I2C State=0x%lx Error=0x%lx\r\n", tag, sht30_status, error_code);
+                        "[%s]: I2C State=0x%lx Error=0x%lx\r\n", tag, (long)sht30_status, (long)error_code);
 
     if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
       (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
