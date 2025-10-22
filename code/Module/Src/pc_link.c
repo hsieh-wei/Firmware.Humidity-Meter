@@ -31,7 +31,7 @@ int pc_link_init(PC_LINK_HANDLE *handle)
     handle->rx_buf_len = sizeof(g_pc_link_buf_rx);
     handle->tx_buf     = g_pc_link_buf_tx;
     handle->tx_buf_len = sizeof(g_pc_link_buf_tx);
-    handle->busy_tx = 0;
+    handle->tx_busy = 0;
 
     //turn off Half-Transfer IT
     pc_link_disable_dma_half_it(handle->huart);
@@ -54,15 +54,15 @@ int pc_link_rx_dma(PC_LINK_HANDLE *handle)
 int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
 {
     if (!handle || !handle->huart || !handle->tx_buf) return PC_LINK_ERROR;
-    if (handle->busy_tx) return PC_LINK_ERROR; // tx is busy
+    if (handle->tx_busy) return PC_LINK_ERROR; // tx is busy
 
-    handle->busy_tx = 1; // set tx busy
+    handle->tx_busy = 1; // set tx busy
 
     memcpy(handle->tx_buf, data, len);
 
     HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
     if (status != HAL_OK) {
-        handle->busy_tx = 0; // if fail clead busy
+        handle->tx_busy = 0; // if fail clead busy
         return PC_LINK_ERROR;
     }
     return PC_LINK_SUCCESS;
@@ -83,13 +83,13 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
     // restart rx
     (void)pc_link_rx_dma(handle);
 
-    // echo rx data if tx is not busy
-    if (!handle->busy_tx) {
+    // echo rx data if tx_buf has not written
+    if (!handle->tx_buf_has_write) {
         uint16_t len = size;
         if (len > handle->tx_buf_len) len = handle->tx_buf_len;
-        handle->busy_tx = 1; // set tx busy
-        // memcpy(handle->tx_buf, handle->rx_buf, len);
-        // (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
+        handle->tx_buf_has_write = 1; // set tx buf is write
+        memcpy(handle->tx_buf, handle->rx_buf, len);
+        (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
     }
 }
 
@@ -98,6 +98,7 @@ void pc_link_irq_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart)
     // Check whether it is the specified handler
     if (handle && handle->huart == huart) {
         // clear busy after send message
-        handle->busy_tx = 0;
+        handle->tx_busy = 0;
+        handle->tx_buf_has_write = 0;
     }
 }

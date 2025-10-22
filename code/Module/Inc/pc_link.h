@@ -16,12 +16,13 @@ typedef enum {
 // Handle
 // --------------------------------------------------------------------------
 typedef struct {
-    UART_HandleTypeDef *huart;  // UART HAL handle（EX：&huart3） 
-    uint8_t  *rx_buf;           // rx buffer DMA 
-    uint16_t  rx_buf_len;       // rx buffer length 
-    uint8_t  *tx_buf;           // tx buffer DMA 
-    uint16_t  tx_buf_len;       // tx buffer length 
-    volatile uint8_t busy_tx;   // driver using, do not change in main 
+    UART_HandleTypeDef *huart;      // UART HAL handle（EX：&huart3） 
+    uint8_t  *rx_buf;               // rx buffer DMA 
+    uint16_t  rx_buf_len;           // rx buffer length 
+    uint8_t  *tx_buf;               // tx buffer DMA 
+    uint16_t  tx_buf_len;           // tx buffer length 
+    volatile int tx_busy;           // driver using to avoid send two tx message in one time 
+    volatile int tx_buf_has_write;  // to ensure tx_buf will not be cover
 } PC_LINK_HANDLE;
 
 // --------------------------------------------------------------------------
