@@ -56,6 +56,8 @@
 /* USER CODE BEGIN PV */
 // led handle
 static LED_HANDLE s_led_handle;
+// button handle
+static BUTTON_HANDLE s_button_handle;
 // pc_link handle
 extern PC_LINK_HANDLE g_pc_link_handle; 
 // sht30 handle
@@ -108,8 +110,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   // Inject gpioa into led handle
   s_led_handle.gpiox = GPIOA;
+  s_button_handle.gpio_pin = GPIO_PIN_6;
   // Inject gpioa into button handle
-  // s_button_handle.gpiox = GPIOE;
+  s_button_handle.gpiox = GPIOE;
+  s_button_handle.gpio_pin = GPIO_PIN_3;
   // Inject huart3 and buffer into pc_link handle,then start DMA ReceiveToIdle
   g_pc_link_handle.huart = &huart3;
   (void)pc_link_init(&g_pc_link_handle);
@@ -122,15 +126,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-    s_led_handle.gpio_pin = GPIO_PIN_6;
-    led_off(&s_led_handle);
-    HAL_Delay(200);
-    led_on(&s_led_handle);
-    HAL_Delay(200);
-    led_toggle(&s_led_handle);
-    HAL_Delay(500);
-    led_toggle(&s_led_handle);
-    HAL_Delay(500);
+    if(button_pressed(&s_button_handle) == 1){
+      led_on(&s_led_handle);
+    }
+    else {
+      led_off(&s_led_handle);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
