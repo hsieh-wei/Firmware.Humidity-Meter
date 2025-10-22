@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "stm32f407xx.h"
+#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include "gpio.h"
@@ -53,11 +54,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+// led handle
+static LED_HANDLE s_led_handle;
 // pc_link handle
 extern PC_LINK_HANDLE g_pc_link_handle; 
-
 // sht30 handle
-static SHT30_HANDLE g_sht30_handle;
+static SHT30_HANDLE s_sht30_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,41 +106,31 @@ int main(void)
   MX_USART3_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  // Inject gpioa into led handle
+  s_led_handle.gpiox = GPIOA;
+  // Inject gpioa into button handle
+  // s_button_handle.gpiox = GPIOE;
   // Inject huart3 and buffer into pc_link handle,then start DMA ReceiveToIdle
-  g_pc_link_handle.huart      = &huart3;
+  g_pc_link_handle.huart = &huart3;
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
-  
   // Inject hi2c1 into sht30 handle
-  g_sht30_handle.hi2c = &hi2c1;
-  (void)sht30_init(&g_sht30_handle);
+  s_sht30_handle.hi2c = &hi2c1;
+  (void)sht30_init(&s_sht30_handle);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-    // measurement temp and humidity
-    int sht30_status = sht30_read(&g_sht30_handle);
-
-    // combine tx message
-    static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
-    int snprintf_status = 0;
-    if (sht30_status == SHT30_SUCCESS) {
-      // need to open printf float
-      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                                "Temperature: %d°C, Humidity: %d%%\r\n",
-                                (int)g_sht30_handle.temperature, (int)g_sht30_handle.humidity);
-    } 
-    else {
-      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                                "SHT30 read error: %d\r\n", sht30_status);
-    }
-
-    if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
-      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
-    }
-
-    HAL_Delay(2000); // 1 Hz measurement
+    s_led_handle.gpio_pin = GPIO_PIN_6;
+    led_off(&s_led_handle);
+    HAL_Delay(200);
+    led_on(&s_led_handle);
+    HAL_Delay(200);
+    led_toggle(&s_led_handle);
+    HAL_Delay(500);
+    led_toggle(&s_led_handle);
+    HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
