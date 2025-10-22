@@ -221,7 +221,10 @@ void EXTI3_IRQHandler(void)
 void EXTI4_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_IRQn 0 */
-  // led_toggle(GPIOA, GPIO_PIN_7);
+  static LED_HANDLE s_led_handle;
+  s_led_handle.gpiox = GPIOA;
+  s_led_handle.gpio_pin = GPIO_PIN_6;
+  led_toggle(&s_led_handle);
   /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
   /* USER CODE BEGIN EXTI4_IRQn 1 */
