@@ -126,13 +126,31 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-    button_pressed(&s_button_handle);
-    if(s_button_handle.pressed == 1){
-      led_on(&s_led_handle);
-    }
+    // measurement temp and humidity
+    int sht30_status = sht30_read(&s_sht30_handle);
+
+    // combine tx message with sht30 data
+    static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
+    int snprintf_status = 0;
+    if (sht30_status == SHT30_SUCCESS) {
+      // need to open printf float
+      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
+                                "Temperature: %d°C, Humidity: %d%%\r\n",
+                                (int)s_sht30_handle.temperature, (int)s_sht30_handle.humidity);
+    } 
     else {
-      led_off(&s_led_handle);
+      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
+                                "SHT30 read error: %d\r\n", sht30_status);
     }
+
+    // send sht30 data to pc
+    if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
+      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
+    }
+
+    // 0.5 Hz measurement
+    HAL_Delay(2000); 
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

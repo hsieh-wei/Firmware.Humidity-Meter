@@ -84,12 +84,10 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
     (void)pc_link_rx_dma(handle);
 
     // echo rx data if tx_buf has not written
-    if (!handle->tx_buf_has_write) {
+    if (handle->tx_busy == 0) {
         uint16_t len = size;
         if (len > handle->tx_buf_len) len = handle->tx_buf_len;
-        handle->tx_buf_has_write = 1; // set tx buf is write
-        memcpy(handle->tx_buf, handle->rx_buf, len);
-        (void)pc_link_tx_dma(handle, handle->tx_buf, len); 
+        (void)pc_link_tx_dma(handle, handle->rx_buf, len); 
     }
 }
 
@@ -99,6 +97,5 @@ void pc_link_irq_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart)
     if (handle && handle->huart == huart) {
         // clear busy after send message
         handle->tx_busy = 0;
-        handle->tx_buf_has_write = 0;
     }
 }

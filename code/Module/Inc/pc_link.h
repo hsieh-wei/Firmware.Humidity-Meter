@@ -22,7 +22,6 @@ typedef struct {
     uint8_t  *tx_buf;               // tx buffer DMA 
     uint16_t  tx_buf_len;           // tx buffer length 
     volatile int tx_busy;           // driver using to avoid send two tx message in one time 
-    volatile int tx_buf_has_write;  // to ensure tx_buf will not be cover
 } PC_LINK_HANDLE;
 
 // --------------------------------------------------------------------------
