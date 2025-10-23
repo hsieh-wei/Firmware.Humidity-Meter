@@ -90,14 +90,14 @@ int sht30_read(SHT30_HANDLE *handle)
 
     // Repeatability High, Disabled Clock Stretching Measurement
     cmd_buf[0] = 0x24; cmd_buf[1] = 0x00;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) {
+    if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, cmd_buf, 2) != HAL_OK) {
         // i2c_dump_error(handle, "TX 0x2400");
         return SHT30_ERROR;
     }
     HAL_Delay(15); // minimal waiting time after high repeatability measurement
 
     // Read Measurement Data
-    if (HAL_I2C_Master_Receive(handle->hi2c, handle->i2c_address, read_buf,6, 100) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Receive_DMA(handle->hi2c, handle->i2c_address, read_buf,6) != HAL_OK) return SHT30_ERROR;
 
     // CRC Validate
     if (sht30_crc8(&read_buf[0]) != read_buf[2]) return SHT30_ERROR;
@@ -117,3 +117,16 @@ int sht30_read(SHT30_HANDLE *handle)
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
+void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+{
+    if(handle && handle->hi2c == huart){
+        return;
+    }
+}
+
+void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+{
+    if(handle && handle->hi2c == huart){
+        return;
+    }
+}

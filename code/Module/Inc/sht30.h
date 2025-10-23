@@ -27,4 +27,9 @@ typedef struct {
 int sht30_init(SHT30_HANDLE *handle);
 int sht30_read(SHT30_HANDLE *handle);
 
+// --------------------------------------------------------------------------
+// HAL Weak Callback re define 
+// --------------------------------------------------------------------------
+void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart);
+void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart);
 #endif // SHT30_H 
