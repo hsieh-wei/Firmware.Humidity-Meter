@@ -1,5 +1,6 @@
 #include "sht30.h"
 #include "pc_link.h"
+#include "stm32f4xx_hal_i2c.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -55,22 +56,22 @@ int sht30_init(SHT30_HANDLE *handle)
 
     //Soft Reset
     cmd_buf[0] = 0x30; cmd_buf[1] = 0xA2;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, cmd_buf, 2) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(2); // minimal waiting time after soft reset
 
     //Stop Periodic
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x93;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, cmd_buf, 2) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
 
     //Disable Heater
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x66;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, cmd_buf, 2) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
 
     //Clear Status Register
     cmd_buf[0] = 0x30; cmd_buf[1] = 0x41;
-    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, cmd_buf, 2, 100) != HAL_OK) return SHT30_ERROR;
+    if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, cmd_buf, 2) != HAL_OK) return SHT30_ERROR;
     HAL_Delay(1); // minimal waiting time before another command 
     
     return SHT30_SUCCESS;
