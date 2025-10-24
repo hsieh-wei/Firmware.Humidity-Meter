@@ -15,11 +15,10 @@ typedef enum {
 // Handle
 // --------------------------------------------------------------------------
 typedef enum {
-    SHT30_IDLE                  = 0,
-    SHT30_TX_TRANSMITTED        = 1,
-    SHT30_WORKING_TX            = 2,
-    SHT30_RX_REQUESTED          = 3,
-    SHT30_WORKING_RX            = 4,
+    SHT30_TX_TRANSMITTED        = 0,
+    SHT30_TX_DONE               = 1,
+    SHT30_RX_REQUESTED          = 2,
+    SHT30_RX_DONE               = 3,
 } SHT30_Measurement_State;
 
 typedef struct {
@@ -36,7 +35,9 @@ typedef struct {
 // API
 // --------------------------------------------------------------------------
 int sht30_init(SHT30_HANDLE *handle);
-int sht30_read(SHT30_HANDLE *handle);
+int sht30_measure_data(SHT30_HANDLE *handle);
+int sht30_get_data(SHT30_HANDLE *handle);
+int sht30_compute_data(SHT30_HANDLE *handle);
 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
