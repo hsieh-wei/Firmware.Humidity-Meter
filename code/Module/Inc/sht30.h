@@ -35,8 +35,8 @@ typedef struct {
 // API
 // --------------------------------------------------------------------------
 int sht30_init(SHT30_HANDLE *handle);
-int sht30_measure_data(SHT30_HANDLE *handle);
-int sht30_get_data(SHT30_HANDLE *handle);
+int sht30_measure_data_dma(SHT30_HANDLE *handle);
+int sht30_get_data_dma(SHT30_HANDLE *handle);
 int sht30_compute_data(SHT30_HANDLE *handle);
 
 // --------------------------------------------------------------------------

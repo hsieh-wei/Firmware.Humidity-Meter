@@ -88,7 +88,7 @@ int sht30_init(SHT30_HANDLE *handle)
     return SHT30_SUCCESS;
 }
 
-int sht30_measure_data(SHT30_HANDLE *handle)
+int sht30_measure_data_dma(SHT30_HANDLE *handle)
 {
     if (!handle || !handle->hi2c){
         return SHT30_ERROR;
@@ -102,7 +102,7 @@ int sht30_measure_data(SHT30_HANDLE *handle)
     return SHT30_SUCCESS;
 }
 
-int sht30_get_data(SHT30_HANDLE *handle)
+int sht30_get_data_dma(SHT30_HANDLE *handle)
 {
     if (!handle || !handle->hi2c){
         return SHT30_ERROR;
