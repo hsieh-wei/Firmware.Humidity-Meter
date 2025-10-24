@@ -30,7 +30,7 @@ typedef struct {
     uint8_t i2c_address;
     float humidity;
     float temperature;
-    SHT30_Measurement_State status
+    SHT30_Measurement_State status;
 } SHT30_HANDLE;
 
 // --------------------------------------------------------------------------
@@ -44,6 +44,6 @@ int sht30_compute_data(SHT30_HANDLE *handle);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart);
-void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart);
+void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
+void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
 #endif // SHT30_H 

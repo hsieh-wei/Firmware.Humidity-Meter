@@ -48,10 +48,12 @@ int sht30_init(SHT30_HANDLE *handle)
         return SHT30_ERROR;
     }
 
-    HAL_Delay(1); // minimal waiting time after power up
+    // minimal waiting time after power up
+    HAL_Delay(1); 
 
     // initial variable
     handle->i2c_address = SHT30_ADDRESS;
+    handle->status = SHT30_IDLE;
 
     //Soft Reset
     if(handle->status ==SHT30_IDLE){
@@ -155,9 +157,9 @@ void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
     }
 }
 
-void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c)
 {
-    if(handle && handle->hi2c == huart){
+    if(handle && handle->hi2c == hi2c){
         handle->status = SHT30_RX_DONE;
     }
 }

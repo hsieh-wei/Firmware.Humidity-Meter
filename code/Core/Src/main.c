@@ -20,6 +20,7 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "stm32f4xx_hal_i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -211,16 +212,26 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+// HAL uart tx complete send
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+  pc_link_irq_tx_cplt(&g_pc_link_handle, huart);
+}
+
 // HAL uart rx idle or full buffer
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   pc_link_irq_rx_event(&g_pc_link_handle, huart, Size);
 }
 
-// HAL uart tx complete send
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
-  pc_link_irq_tx_cplt(&g_pc_link_handle, huart);
+  sht30_irq_tx_cplt(&s_sht30_handle, hi2c);
+}
+
+void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+  sht30_irq_rx_cplt(&s_sht30_handle, hi2c);
 }
 /* USER CODE END 4 */
 
