@@ -72,6 +72,15 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len)
 // ----------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // ----------------------------------------------------------------------------
+void pc_link_irq_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart)
+{
+    // Check whether it is the specified handler
+    if (handle && handle->huart == huart) {
+        // clear busy after send message
+        handle->tx_busy = 0;
+    }
+}
+
 void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uint16_t size)// rx event is able to change input length
 {
     // Check whether it is the specified handler
@@ -88,14 +97,5 @@ void pc_link_irq_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uin
         uint16_t len = size;
         if (len > handle->tx_buf_len) len = handle->tx_buf_len;
         (void)pc_link_tx_dma(handle, handle->rx_buf, len); 
-    }
-}
-
-void pc_link_irq_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart)
-{
-    // Check whether it is the specified handler
-    if (handle && handle->huart == huart) {
-        // clear busy after send message
-        handle->tx_busy = 0;
     }
 }

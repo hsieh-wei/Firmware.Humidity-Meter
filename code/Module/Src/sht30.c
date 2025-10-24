@@ -117,14 +117,14 @@ int sht30_read(SHT30_HANDLE *handle)
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
 {
     if(handle && handle->hi2c == huart){
         return;
     }
 }
 
-void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
 {
     if(handle && handle->hi2c == huart){
         return;
