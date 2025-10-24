@@ -54,7 +54,7 @@ int sht30_init(SHT30_HANDLE *handle)
     handle->i2c_address = SHT30_ADDRESS;
 
     //Soft Reset
-    if(handle->status ==SHT30_TX_DONE || handle->status ==SHT30_RX_DONE){
+    if(handle->status ==SHT30_IDLE){
         handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0xA2;
         if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
         handle->status = SHT30_TX_TRANSMITTED;
@@ -62,7 +62,7 @@ int sht30_init(SHT30_HANDLE *handle)
     }
 
     //Stop Periodic
-    if(handle->status ==SHT30_TX_DONE || handle->status ==SHT30_RX_DONE){
+    if(handle->status == SHT30_TX_DONE){
         handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x93;
         if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
         handle->status = SHT30_TX_TRANSMITTED;
@@ -70,7 +70,7 @@ int sht30_init(SHT30_HANDLE *handle)
     }
 
     //Disable Heater
-    if(handle->status ==SHT30_TX_DONE || handle->status ==SHT30_RX_DONE){
+    if(handle->status == SHT30_TX_DONE){
         handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x66;
         if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
         handle->status = SHT30_TX_TRANSMITTED;
@@ -78,7 +78,7 @@ int sht30_init(SHT30_HANDLE *handle)
     }
 
     //Clear Status Register
-    if(handle->status ==SHT30_TX_DONE || handle->status ==SHT30_RX_DONE){
+    if(handle->status == SHT30_TX_DONE){
         handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x41;
         if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
         handle->status = SHT30_TX_TRANSMITTED;
@@ -95,9 +95,10 @@ int sht30_measure_data_dma(SHT30_HANDLE *handle)
     }
 
     // Repeatability High, Disabled Clock Stretching Measurement
-    if(handle->status ==SHT30_TX_DONE || handle->status ==SHT30_RX_DONE){
+    if(handle->status == SHT30_TX_DONE || handle->status == SHT30_RX_DONE){
         handle->tx_buf[0] = 0x24; handle->tx_buf[1] = 0x00;
         if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address, handle->tx_buf, 2) != HAL_OK) return SHT30_ERROR;
+        handle->status = SHT30_TX_TRANSMITTED;
     }
     return SHT30_SUCCESS;
 }
@@ -112,8 +113,9 @@ int sht30_get_data_dma(SHT30_HANDLE *handle)
     HAL_Delay(15); 
 
     // get measurement data
-    if(handle->status ==SHT30_TX_DONE){
+    if(handle->status == SHT30_TX_DONE){
         if (HAL_I2C_Master_Receive_DMA(handle->hi2c, handle->i2c_address, handle->rx_buf, 6) != HAL_OK) return SHT30_ERROR;
+        handle->status = SHT30_RX_REQUESTED;
     }
     return SHT30_SUCCESS;
 }
@@ -124,7 +126,7 @@ int sht30_compute_data(SHT30_HANDLE *handle)
         return SHT30_ERROR;
     }
 
-    if(handle->status ==SHT30_RX_DONE){
+    if(handle->status == SHT30_RX_DONE){
         // CRC Validate
         if (sht30_crc8(&handle->rx_buf[0]) != handle->rx_buf[2]) return SHT30_ERROR;
         if (sht30_crc8(&handle->rx_buf[3]) != handle->rx_buf[5]) return SHT30_ERROR;
@@ -137,6 +139,7 @@ int sht30_compute_data(SHT30_HANDLE *handle)
         uint16_t raw_humidity = (uint16_t)((handle->rx_buf[3] << 8) | handle->rx_buf[4]);
         handle->humidity = 100 * (float)raw_humidity / 65535.0f; // 65535 = 2^16-1
 
+        handle->status = SHT30_COMPUTE_DONE;
         return SHT30_SUCCESS;
     }
     return SHT30_ERROR;

@@ -124,30 +124,40 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1){
     // measurement temp and humidity
-    int sht30_status = sht30_read(&s_sht30_handle);
-
-    // combine tx message with sht30 data
-    static uint8_t pc_link_buf_tx[PC_LINK_TX_BUF_SIZE];
-    int snprintf_status = 0;
-    if (sht30_status == SHT30_SUCCESS) {
-      // need to open printf float
-      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                                "Temperature: %d°C, Humidity: %d%%\r\n",
-                                (int)s_sht30_handle.temperature, (int)s_sht30_handle.humidity);
-    } 
-    else {
-      snprintf_status = snprintf((char*)pc_link_buf_tx, sizeof(pc_link_buf_tx),
-                                "SHT30 read error: %d\r\n", sht30_status);
+    if (s_sht30_handle.status == SHT30_TX_DONE || s_sht30_handle.status == SHT30_COMPUTE_DONE){
+      (void)sht30_measure_data_dma(&s_sht30_handle);
     }
 
-    // send sht30 data to pc
-    if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
-      (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_buf_tx, snprintf_status);
+    // get temp and humidity data
+    else if (s_sht30_handle.status == SHT30_TX_DONE) {
+      (void)sht30_get_data_dma(&s_sht30_handle);
     }
 
-    // 0.5 Hz measurement
-    HAL_Delay(2000); 
+    // compute temp and humidity data and send to pc
+    else if (s_sht30_handle.status == SHT30_RX_DONE) {
+      // 
+      int sht30_status = sht30_compute_data(&s_sht30_handle);
 
+      // combine tx message with sht30 data
+      int snprintf_status = 0;
+      static uint8_t pc_link_tx_buf[PC_LINK_TX_BUF_SIZE];
+      if (sht30_status == SHT30_SUCCESS) {
+        snprintf_status = snprintf((char*)pc_link_tx_buf, sizeof(pc_link_tx_buf),
+                                  "Temperature: %d°C, Humidity: %d%%\r\n",
+                                  (int)s_sht30_handle.temperature, (int)s_sht30_handle.humidity);
+      } 
+      else {
+        snprintf_status = snprintf((char*)pc_link_tx_buf, sizeof(pc_link_tx_buf),
+                                  "SHT30 read error: %d\r\n", sht30_status);
+      }
+
+      // send sht30 data to pc
+      if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
+        (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_tx_buf, snprintf_status);
+      }
+      // 0.5 Hz measurement
+      HAL_Delay(2000); 
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -201,13 +211,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-// HAL rx idle or full buffer
+// HAL uart rx idle or full buffer
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   pc_link_irq_rx_event(&g_pc_link_handle, huart, Size);
 }
 
-// HAL Tx complete send
+// HAL uart tx complete send
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   pc_link_irq_tx_cplt(&g_pc_link_handle, huart);

@@ -15,10 +15,12 @@ typedef enum {
 // Handle
 // --------------------------------------------------------------------------
 typedef enum {
-    SHT30_TX_TRANSMITTED        = 0,
-    SHT30_TX_DONE               = 1,
-    SHT30_RX_REQUESTED          = 2,
-    SHT30_RX_DONE               = 3,
+    SHT30_IDLE                  = 0,
+    SHT30_TX_TRANSMITTED        = 1,
+    SHT30_TX_DONE               = 2,
+    SHT30_RX_REQUESTED          = 3,
+    SHT30_RX_DONE               = 4,
+    SHT30_COMPUTE_DONE          = 5,
 } SHT30_Measurement_State;
 
 typedef struct {
