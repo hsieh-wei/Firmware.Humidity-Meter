@@ -26,11 +26,11 @@ typedef enum {
 typedef struct {
     I2C_HandleTypeDef *hi2c;  // I2C HAL handle (EX: &hi2c1)
     uint8_t tx_buf[2];        // sht30 cmd buffer
-    uint8_t rx_buf[4];        // sht30 return measurement buffer
+    uint8_t rx_buf[6];        // sht30 return measurement buffer
     uint8_t i2c_address;
     float humidity;
     float temperature;
-    SHT30_Measurement_State status;
+    volatile SHT30_Measurement_State status;
 } SHT30_HANDLE;
 
 // --------------------------------------------------------------------------

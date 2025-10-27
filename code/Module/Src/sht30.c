@@ -53,40 +53,33 @@ int sht30_init(SHT30_HANDLE *handle)
 
     // initial variable
     handle->i2c_address = SHT30_ADDRESS;
-    handle->status = SHT30_IDLE;
 
     //Soft Reset
-    if(handle->status ==SHT30_IDLE){
-        handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0xA2;
-        if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
-        handle->status = SHT30_TX_TRANSMITTED;
-        HAL_Delay(2); // minimal waiting time after soft reset
-    }
+    handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0xA2;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
+    handle->status = SHT30_TX_TRANSMITTED;
+    HAL_Delay(2); // minimal waiting time after soft reset
 
     //Stop Periodic
-    if(handle->status == SHT30_TX_DONE){
-        handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x93;
-        if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
-        handle->status = SHT30_TX_TRANSMITTED;
-        HAL_Delay(1); // minimal waiting time before another command 
-    }
+    handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x93;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
+    handle->status = SHT30_TX_TRANSMITTED;
+    HAL_Delay(1); // minimal waiting time before another command 
 
     //Disable Heater
-    if(handle->status == SHT30_TX_DONE){
-        handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x66;
-        if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
-        handle->status = SHT30_TX_TRANSMITTED;
-        HAL_Delay(1); // minimal waiting time before another command 
-    }
+    handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x66;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
+    handle->status = SHT30_TX_TRANSMITTED;
+    HAL_Delay(1); // minimal waiting time before another command 
 
     //Clear Status Register
-    if(handle->status == SHT30_TX_DONE){
-        handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x41;
-        if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
-        handle->status = SHT30_TX_TRANSMITTED;
-        HAL_Delay(1); // minimal waiting time before another command 
-    }
+    handle->tx_buf[0] = 0x30; handle->tx_buf[1] = 0x41;
+    if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf, 2, 200) != HAL_OK) return SHT30_ERROR;
+    handle->status = SHT30_TX_TRANSMITTED;
+    HAL_Delay(1); // minimal waiting time before another command 
     
+    handle->status = SHT30_IDLE;
+
     return SHT30_SUCCESS;
 }
 
@@ -150,9 +143,9 @@ int sht30_compute_data(SHT30_HANDLE *handle)
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *huart)
+void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c)
 {
-    if(handle && handle->hi2c == huart){
+    if(handle && handle->hi2c == hi2c){
         handle->status = SHT30_TX_DONE;
     }
 }

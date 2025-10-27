@@ -125,7 +125,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1){
     // measurement temp and humidity
-    if (s_sht30_handle.status == SHT30_TX_DONE || s_sht30_handle.status == SHT30_COMPUTE_DONE){
+    if (s_sht30_handle.status == SHT30_IDLE || s_sht30_handle.status == SHT30_COMPUTE_DONE){
       (void)sht30_measure_data_dma(&s_sht30_handle);
     }
 
