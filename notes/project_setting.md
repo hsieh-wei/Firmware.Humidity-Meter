@@ -4,44 +4,106 @@
 
 | 項目     | 操作路徑與說明                                                                      |
 | ------ | ---------------------------------------------------------------------------- |
-| MCU 選擇 | Start New Project → `MCU Selector` → 搜尋 `STM32F407VET6` → 點擊 `Start Project` |
----
-
-## Step 2：Pinout & Configuration
-
-### 2.1 System Core 主要設定# 5_uart_dma
-
-## Step 1：建立 STM32CubeMX 專案
-
-| 項目     | 操作路徑與說明                                                                      |
-| ------ | ---------------------------------------------------------------------------- |
 | MCU 選擇 | Start New Project → `MCU Selector` → 搜尋 `STM32F407IGH6` → 點擊 `Start Project` |
 ---
 
 ## Step 2：Pinout & Configuration
 
-### 2.1 System Core 主要設定
+### 2.1 System Core
 
-| 模組  | 選項設定                                             | 功能說明                    | 為何選此設定               |
-| --- | ------------------------------------------------ | ----------------------- | -------------------- |
-| SYS | `Serial Wire (SWD)`                              | 提供 ULINKpro Debug 與燒錄通道 | SWD 僅需 2 線，節省腳位，支援廣泛 |
-| RCC | `HSE = Crystal/Ceramic Resonator` <br> `LSE` 不勾選 | 啟用外部高精度振盪器              | HSE 精準穩定，適合實際硬體時鐘來源  |
-| NVIC | `USART3 Global Interrupt`勾選 (Connectivityg 設定後才能啟用) | 致能 USART3 例外事件              | 使用 USART3 中斷 |
+#### System 
+| 腳位   | 功能設定 | 外接模組腳位
+| ---- | ---- | ---- 
+| PA6  | LED |X
 
-### 2.2 System Core GPIO 腳位設定
-| 腳位   | 功能設定    | GPIO Mode                               | Pull 設定 | 備註                                |
-| ---- | ------- | --------------------------------------- | ------- | --------------------------------- |
-| PA6  | LED   | `GPIO_Output`                           | 無       | 控制用 LED
-| PA7  | LED         | GPIO\_Output |    無     |                 控制用 LED          |               控制用 LED          |
-### 2.3 Connectivity
+| 模組  | 選項設定
+| --- | ---- |
+| SYS | Serial Wire (SWD)                           
+| RCC | HSE = Crystal/Ceramic Resonator` <br> LSE 不勾選 
 
-* 開啟 USART3 ， 設置成 Asynchronous
-    * 會自動開啟 `PB10` 、 `PB11`
-    * Baud Rate = 115200 bps
-    * Word length  = 8 but bits
-    * Parity = None
-    * Stop Bits = 1 bit
-* 選取 USART3 中 DMA Settings ，按下 ADD 並且新增 USART3 RX 、 USART3 TX
+#### GPIO 
+
+| 腳位   | 功能設定| GPIO Mode| Pull 設定| 外接模組腳位
+| ---- | ---- | ---- |---- |----
+| PA6  | LED | Output Push Pull| No pull-up and pull-down| X
+| PA7  | LED | Output Push Pull| No pull-up and pull-down| X
+| PA8  | LCD 背光恆亮 | Output Push Pull| No pull-up and pull-down| LCD BLK
+| PC0  | LCD 數據/指令控制  | Output Push Pull| No pull-up and pull-down| LCD DC
+| PC1  | LCD 初始化 | Output Push Pull| No pull-up and pull-down| LCD RST
+| PC2  | LCD | Output Push Pull| No pull-up and pull-down| LCD CS
+| PE3  | BTN | External Interrupt| pull-up|X
+| PE4  | BTN | External Interrupt| pull-up|X
+
+### 2.2 Analog
+NULL
+
+### 2.3 Timers
+#### TIM1
+先不設置
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| PA8 | LCD 背光調亮度 |LCD BLK
+
+| 項1  | 項2 | 項3| 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode  | Parameter Setting |Clock Source | X |Internal Clock
+| Mode  | Parameter Setting | Channel 1 | X |PWM Generation CH1
+| Configuration  | Parameter Setting | Counter Setting | Prescaler | 84 
+| Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 100-1 
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Mode | PWM Mode 1
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Pulse | 50
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Output Compare preload | Enable
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Fast Mode | Disable
+
+
+### 2.4 Connectivity
+#### I2C1
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| PB6 | I2C1_SCL | 溫溼度計 SCL
+| PB7 | I2C1_SDA | 溫溼度計 SDA
+
+| 項1  | 項2 | 項3 | 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode  | I2C | X | X | I2C
+| Configuration | Parameter Setting | Master Features | I2C Clock Speed | 100000 
+| Configuration | Parameter Setting | Slave Features | Primary Address Length selsction | 7-bit 
+| Configuration |  DMA Setting | I2C1_Rx |DMA1 Stream 0 | Periphrel To Memory 
+| Configuration |  DMA Setting | I2C1_Tx |DMA1 Stream 6 | Memory To Periphrel 
+| Configuration | NVIC | X | X | 全部啟用 
+
+#### SPI1
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| PA5 | SPI1_SCL | LCD SCL
+| PB4 | SPI1_MISO | X
+| PB5 | SPI1_MOSI | LCD SDA
+
+| 項1  | 項2 | 項3 | 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode  | Mode | X | X | Full-Duplex Master
+| Configuration | Parameter Setting | Basic Paremeters | Data Size | 100000 
+| Configuration | Parameter Setting | Clock Paremeters | Prescaler | 4 
+| Configuration | Parameter Setting | Clock Paremeters | CPOL | Low
+| Configuration | Parameter Setting | Clock Paremeters | CPOL | 1 Edge  
+| Configuration | NVIC | X | X | 全部啟用 
+
+#### SPI
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| PA9 | USART1_Tx | USB Uart RXD
+| PA10 | USART1_Rx | USB Uart TXD
+
+| 項1  | 項2 | 項3 | 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode  | Mode | X | X | Asynchronous
+| Configuration | Parameter Setting | Basic Paremeters | Baud Rate | 115200 Bits/s 
+| Configuration | Parameter Setting | Basic Paremeters | Word Length | 115200 Bits/s 
+| Configuration | Parameter Setting | Basic Paremeters | Parity | None
+| Configuration | Parameter Setting | Basic Paremeters | Stop Bits| 1
+| Configuration |  DMA Setting | USART1_Rx |DMA1 Stream 2 | Periphrel To Memory 
+| Configuration |  DMA Setting | USART1_Tx |DMA1 Stream 7 | Memory To Periphrel 
+| Configuration | NVIC | X | X | 全部啟用 
 
 ---
 
@@ -65,30 +127,17 @@
 ## Step 4：Project Manager 設定
 
 ### 4.1 Project Settings
-
-| 項目                        | 設定                         |
-| ------------------------- | -------------------------- |
-| Project Name              | 自訂                         |
-| Project Location          | 自訂                         |
-| Application Structure     | Advanced                         |
-| Toolchain Folder Location | 自訂                         |
-| Toolchain / IDE           | STM32CubeIDE |
-
-### 4.2 Thread-safe Settings
-
-| 項目                                           | 操作 |
-| -------------------------------------------- | ---- |
-| Enable multi-threaded support                | 勾選    |
-| Mapping suitable strategy for RTOS selection | 下拉選單    |
-
-### 4.3 MCU and Firmware Package
-
-| 項目            | 說明              | 備註|
-| ------------- | --------------- |  --------------- |
-| MCU Reference | `STM32F407IGHx` | 其他先不動 |
-
-### 4.4 Code Generator
-- Generated files 
-    - 勾選 Generating peripheral initialization as a pair of '.c / .h ' files per peripheral
-    - 勾選 Keep User Code when re-generating
-    - 勾選 delete previously  generated files when re-generated
+| 項1  | 項2 | 項3 | 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Project  | Project Settings | Project Name | X | 自訂
+| Project  | Project Settings | Project Location | X | 自訂
+| Project  | Project Settings | Application Structure | X | Advanced
+| Project  | Project Settings | Toolchain Folder Location | X | 自訂
+| Project  | Project Settings | Toolchain / IDE | X | CMake
+| Project  | Thread-safe Settings | X | X | Enable multi-threaded support
+| Project  | Thread-safe Settings | Thread-safe Locking Strategy | X | Default - Mapping suitable strategy for RTOS selection
+| Project  | MCU and Firmware Package | MCU Reference | X | STM32F407VETx
+| Code Generator  | STM32Cube MCU packages and embedded software packs | X | X | Copy only the necessary library files
+| Code Generator  | Generated files | X | X | Generating peripheral initialization as a pair of '.c / .h ' files per peripheral
+| Code Generator  | Generated files | X | X | Keep User Code when re-generating
+| Code Generator  | Generated files | X | X | delete previously  generated files when re-generated
