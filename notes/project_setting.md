@@ -30,7 +30,7 @@
 | PA8  | LCD 背光恆亮 | Output Push Pull| No pull-up and pull-down| LCD BLK
 | PC0  | LCD 數據/指令控制  | Output Push Pull| No pull-up and pull-down| LCD DC
 | PC1  | LCD 初始化 | Output Push Pull| No pull-up and pull-down| LCD RST
-| PC2  | LCD | Output Push Pull| No pull-up and pull-down| LCD CS
+| PC2  | LCD Slave Select| Output Push Pull| No pull-up and pull-down| LCD CS
 | PE3  | BTN | External Interrupt| pull-up|X
 | PE4  | BTN | External Interrupt| pull-up|X
 
