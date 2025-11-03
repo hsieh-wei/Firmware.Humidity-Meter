@@ -114,7 +114,7 @@ int main(void)
   s_button_handle.gpiox = GPIOE;
   s_button_handle.gpio_pin = GPIO_PIN_3;
   // Inject huart3 and buffer into pc_link handle,then start DMA ReceiveToIdle
-  g_pc_link_handle.huart = &huart3;
+  g_pc_link_handle.huart = &huart1;
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
   // Inject hi2c1 into sht30 handle
