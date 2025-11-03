@@ -14,7 +14,11 @@
 #### System 
 | 腳位   | 功能設定 | 外接模組腳位
 | ---- | ---- | ---- 
-| PA6  | LED |X
+| SWDIO  | ST-Link 燒錄 |ST-Link SWDIO
+| SWCLK  | ST-Link 燒錄 |ST-Link SWCLK
+| NRST  | ST-Link 燒錄 |ST-Link RST
+| GND  | ST-Link 燒錄 |ST-Link GND
+| 3V3  | ST-Link 燒錄 |ST-Link 3.3 V
 
 | 模組  | 選項設定
 | --- | ---- |
@@ -28,8 +32,8 @@
 | PA6  | LED | Output Push Pull| No pull-up and pull-down| X
 | PA7  | LED | Output Push Pull| No pull-up and pull-down| X
 | PA8  | LCD 背光恆亮 | Output Push Pull| No pull-up and pull-down| LCD BLK
-| PC0  | LCD 數據/指令控制  | Output Push Pull| No pull-up and pull-down| LCD DC
-| PC1  | LCD 初始化 | Output Push Pull| No pull-up and pull-down| LCD RST
+| PC0  | LCD 初始化  | Output Push Pull| No pull-up and pull-down| LCD RST DC
+| PC1  | LCD 數據/指令控制 | Output Push Pull| No pull-up and pull-down| LCD DC
 | PC2  | LCD Slave Select| Output Push Pull| No pull-up and pull-down| LCD CS
 | PE3  | BTN | External Interrupt| pull-up|X
 | PE4  | BTN | External Interrupt| pull-up|X
@@ -88,7 +92,7 @@ NULL
 | Configuration | Parameter Setting | Clock Paremeters | CPOL | 1 Edge  
 | Configuration | NVIC | X | X | 全部啟用 
 
-#### SPI
+#### USART1
 | 腳位   | 功能設定| 外接模組腳位
 | ---- |---- |----
 | PA9 | USART1_Tx | USB Uart RXD
