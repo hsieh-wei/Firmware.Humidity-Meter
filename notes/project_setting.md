@@ -79,7 +79,7 @@ NULL
 #### SPI1
 | 腳位   | 功能設定| 外接模組腳位
 | ---- |---- |----
-| PA5 | SPI1_SCL | LCD SCL
+| PA5 | SPI1_SCK | LCD SCL
 | PB4 | SPI1_MISO | X
 | PB5 | SPI1_MOSI | LCD SDA
 
