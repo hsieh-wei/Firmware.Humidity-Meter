@@ -21,7 +21,7 @@
 ### 一筆 SPI 交易該怎麼切界線
 - D/CX 、 SDA 要在第一個取樣前設置好 CS該 SDA 前被設定好
     - D/CX 設置時間須超過 TDCS，並維持最少 TDCH
-    - SDA 設置時間須超過 TSDS，並維持最少 TSDH
+    - SDA 設置時間須超過 TSDS，並維持最少 TSDH (SPI無論HAL、bare metal 開發register，都會處理好解滿足)
 - CS 規定交易邊界
  - TCSS，CS 由高到低以後，要等 TCSS 才能開始第一個上升緣
  - TCSH，最後一個上升緣後，CS 必須再維持 TCSH 才能拉高結束
