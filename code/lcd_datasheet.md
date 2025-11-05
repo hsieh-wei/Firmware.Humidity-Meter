@@ -31,26 +31,7 @@
 - 表裡 TSCYCW 表示 write clock cycle 的最小值，最小值 66 ns 表示 write 的 SCK 上限大約 15 MHz。
 - High/Low 脈寬的最小值也要滿足TSHW/TSLW = 15ns
 
-### 實際流程
-- 準備階段
-    - D/CX = 版上 DC = 0/1
-    - CS=1
-- 開始交易
-    - CS=0 ，等 TCSS
-    - 開始 SCK 上升緣
-- 結束交易
-    - 最後一個上升緣後讓 CS 保持 TCSH 低 
-    - CS=1 結束
-- 若要馬上送下一筆，記得 CS=1 要至少 TCHW 再拉低
-
 ## 2. 9.4 Serial Interface
-
-### 再次確認
-- 4線串列8bit
-- CSX（片選）
-- D/CX（資料/指令標誌）
-- SCL（串列時脈）
-- SDA（串列資料輸入/輸出）
 
 ### 確認 9.4.1 Command Write Mode 
  - D/C=0 command, D/C=1 data/parameter
@@ -65,3 +46,19 @@
 - 傳輸連續性
     - 若 CSX 保持低電位，LCD driver 會持續等待下一個 byte
     - 下一筆的第 1 個 bit 視為新資料的 D7 位
+
+## 3. 整理實際傳輸流程
+- 準備階段
+    - D/CX = 版上 DC = 0/1
+    - CS=1
+- 開始交易
+    - CS=0 ，等 TCSS
+    - 開始 SCK 上升緣
+- 結束交易
+    - 最後一個上升緣後讓 CS 保持低 TCSH
+    - CS=1 結束
+- 若要在結束交易後送下一筆， CS=1 要至少 TCHW 再拉低
+
+## 4. 開始交叉閱讀 9.模組 、 10. cmd
+- Init
+    - Hardware Reset, 9.5、9.17、10.1.11
