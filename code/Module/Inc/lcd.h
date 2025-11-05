@@ -25,7 +25,7 @@ typedef struct {
     LCD_Control_Pin_HANDLE dc;  // 0 command, 1 parameter and data
     LCD_Control_Pin_HANDLE cs;  // chip select
     LCD_Control_Pin_HANDLE blk; // LCD backlit modify 
-    uint8_t *tx_buf;            // LCD cmd buffer
+    uint8_t tx_buf[32];         // LCD cmd buffer
 } LCD_HANDLE;
 
 // --------------------------------------------------------------------------
