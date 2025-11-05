@@ -56,9 +56,12 @@
     - 開始 SCK 上升緣
 - 結束交易
     - 最後一個上升緣後讓 CS 保持低 TCSH
-    - CS=1 結束
+    - CS=1 結束，或 CS 保持低繼續傳輸
 - 若要在結束交易後送下一筆， CS=1 要至少 TCHW 再拉低
 
 ## 4. 開始交叉閱讀 9.模組 、 10. cmd
 - Init
-    - Hardware Reset, 9.5、9.17、10.1.11
+    - hardware Reset, 9.5、9.17、10.1.11
+    - software Reset, 10.1.2
+    - software Reset, 10.1.12
+    - software Reset, 10.1.19

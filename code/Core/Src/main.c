@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -32,6 +33,7 @@
 #include "button.h"
 #include "pc_link.h"
 #include "sht30.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,13 +55,15 @@
 
 /* USER CODE BEGIN PV */
 // led handle
-static LED_HANDLE s_led_handle;
+static LED_HANDLE     s_led_handle;
 // button handle
-static BUTTON_HANDLE s_button_handle;
+static BUTTON_HANDLE  s_button_handle;
 // pc_link handle
 extern PC_LINK_HANDLE g_pc_link_handle; 
 // sht30 handle
-static SHT30_HANDLE s_sht30_handle;
+static SHT30_HANDLE   s_sht30_handle;
+// sht30 handle
+static LCD_HANDLE     s_lcd_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,46 +124,23 @@ int main(void)
   // Inject hi2c1 into sht30 handle
   s_sht30_handle.hi2c = &hi2c1;
   (void)sht30_init(&s_sht30_handle);
+  // Inject hi2c1 into sht30 handle
+  s_lcd_handle.hspi =  &hspi1;
+  s_lcd_handle.rst.gpiox = GPIOC;
+  s_lcd_handle.rst.gpio_pin = GPIO_PIN_0;
+  s_lcd_handle.dc.gpiox = GPIOC;
+  s_lcd_handle.dc.gpio_pin = GPIO_PIN_1;
+  s_lcd_handle.cs.gpiox = GPIOC;
+  s_lcd_handle.cs.gpio_pin = GPIO_PIN_2;
+  s_lcd_handle.blk.gpiox = GPIOA;
+  s_lcd_handle.blk.gpio_pin = GPIO_PIN_8;
+  (void)lcd_init(&s_lcd_handle);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-    // measurement temp and humidity
-    if (s_sht30_handle.status == SHT30_IDLE || s_sht30_handle.status == SHT30_COMPUTE_DONE){
-      (void)sht30_measure_data_dma(&s_sht30_handle);
-    }
 
-    // get temp and humidity data
-    else if (s_sht30_handle.status == SHT30_TX_DONE) {
-      (void)sht30_get_data_dma(&s_sht30_handle);
-    }
-
-    // compute temp and humidity data and send to pc
-    else if (s_sht30_handle.status == SHT30_RX_DONE) {
-      // 
-      int sht30_status = sht30_compute_data(&s_sht30_handle);
-
-      // combine tx message with sht30 data
-      int snprintf_status = 0;
-      static uint8_t pc_link_tx_buf[PC_LINK_TX_BUF_SIZE];
-      if (sht30_status == SHT30_SUCCESS) {
-        snprintf_status = snprintf((char*)pc_link_tx_buf, sizeof(pc_link_tx_buf),
-                                  "Temperature: %d°C, Humidity: %d%%\r\n",
-                                  (int)s_sht30_handle.temperature, (int)s_sht30_handle.humidity);
-      } 
-      else {
-        snprintf_status = snprintf((char*)pc_link_tx_buf, sizeof(pc_link_tx_buf),
-                                  "SHT30 read error: %d\r\n", sht30_status);
-      }
-
-      // send sht30 data to pc
-      if (snprintf_status > 0 && snprintf_status < PC_LINK_TX_BUF_SIZE) {
-        (void)pc_link_tx_dma(&g_pc_link_handle, pc_link_tx_buf, snprintf_status);
-      }
-      // 0.5 Hz measurement
-      HAL_Delay(2000); 
-    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
