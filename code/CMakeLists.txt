@@ -49,6 +49,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/button.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/pc_link.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/sht30.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd.c
 )
 
 # Add include paths
