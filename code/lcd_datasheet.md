@@ -42,3 +42,26 @@
     - 最後一個上升緣後讓 CS 保持 TCSH 低 
     - CS=1 結束
 - 若要馬上送下一筆，記得 CS=1 要至少 TCHW 再拉低
+
+## 2. 9.4 Serial Interface
+
+### 再次確認
+- 4線串列8bit
+- CSX（片選）
+- D/CX（資料/指令標誌）
+- SCL（串列時脈）
+- SDA（串列資料輸入/輸出）
+
+### 確認 9.4.1 Command Write Mode 
+ - D/C=0 command, D/C=1 data/parameter
+- 一筆資料含 8 bits，MSB first(D7 => D0)
+- 傳輸規則
+    - 當 CSX=High，介面閒置、忽略所有時鐘與資料
+    - CSX 下降沿，開始一筆新的傳輸
+    - CSX 上升沿，結束傳輸、重新初始化串列介面
+- 取樣規則
+    - SDA 在 SCL 上升緣 取樣
+    - 在第 8 個 SCL 上升緣取樣 D/CX
+- 傳輸連續性
+    - 若 CSX 保持低電位，LCD driver 會持續等待下一個 byte
+    - 下一筆的第 1 個 bit 視為新資料的 D7 位
