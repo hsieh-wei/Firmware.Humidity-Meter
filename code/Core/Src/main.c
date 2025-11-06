@@ -141,9 +141,21 @@ int main(void)
   while (1){
     (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_RED);
     HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_ORANGE);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_YELLOW);
+    HAL_Delay(1000);
     (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_GREEN);
     HAL_Delay(1000);
     (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_BLUE);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_PURPLE);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_BLACK);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_GRAY);
     HAL_Delay(1000);
     /* USER CODE END WHILE */
 
