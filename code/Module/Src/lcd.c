@@ -6,16 +6,9 @@
 // --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
-// color in RGB565
-#define RED     0xf800
-#define ORANGE  0xfb40
-#define YELLOW  0xffe0
-#define GREEN   0x07e0
-#define BLUE    0x001f
-#define PURPLE  0x901f
-#define BLACK   0x0000
-#define WHITE   0xffff
-#define GRAY    0xf800
+//LCD screen size
+#define WIDTH_X   160
+#define LENGTH_Y  128
 
 static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
 {
@@ -32,7 +25,7 @@ static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
 
     // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
-    
+
     return LCD_SUCCESS;
 }
 
@@ -44,7 +37,7 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
 
     //TCSS, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually. 
 
-    if(HAL_SPI_Transmit(handle->hspi, handle->tx_buf, 2, 100) != HAL_OK) return LCD_ERROR;
+    if(HAL_SPI_Transmit(handle->hspi, handle->tx_buf, 1, 100) != HAL_OK) return LCD_ERROR;
 
     // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
 
@@ -55,21 +48,21 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
     return LCD_SUCCESS;
 }
 
-static int lcd_set_coordinate(LCD_HANDLE *handle,uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1)
+static int lcd_set_coordinate(LCD_HANDLE *handle, uint16_t x_start, uint16_t x_end, uint16_t y_start, uint16_t y_end)
 {
     // CASET, set write data begin point(x)
     if (lcd_send_cmd(handle, 0x2A) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, (uint8_t)(x_start >> 8) & 0xFF) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, (uint8_t)x_start & 0xFF) != LCD_SUCCESS) return LCD_ERROR;        // parameter 2
+    if (lcd_send_data(handle, (uint8_t)(x_end >> 8) & 0xFF) != LCD_SUCCESS) return LCD_ERROR;   // parameter 3
+    if (lcd_send_data(handle, (uint8_t)x_end & 0xFF) != LCD_SUCCESS) return LCD_ERROR;          // parameter 4
 
-    // CASET, set write data begin point(y)
-    if (lcd_send_cmd(handle, 0x2A) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
-    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    // RASET, set write data begin point(y)
+    if (lcd_send_cmd(handle, 0x2B) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_send_data(handle, (uint8_t)(y_start >> 8) & 0xFF) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, (uint8_t)y_start & 0xFF) != LCD_SUCCESS) return LCD_ERROR;        // parameter 2
+    if (lcd_send_data(handle, (uint8_t)(y_end >> 8) & 0xFF) != LCD_SUCCESS) return LCD_ERROR;   // parameter 3
+    if (lcd_send_data(handle, (uint8_t)y_end & 0xFF) != LCD_SUCCESS) return LCD_ERROR;          // parameter 4
 
     return LCD_SUCCESS;
 }
@@ -115,20 +108,24 @@ int lcd_init(LCD_HANDLE *handle)
     return LCD_SUCCESS;
 }
 
-int lcd_fill_screen(LCD_HANDLE *handle, int color)
+int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
 {
     if (!handle || !handle->hspi){
         return LCD_ERROR;
     }
 
-    // MADCTL, Memory access contro
-    if (lcd_send_cmd(handle, 0x36) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_send_data(handle, 0x00) != LCD_SUCCESS) return LCD_ERROR; // MH、ML
-
-    // MADCTL, Memory access contro
-    if (lcd_send_cmd(handle, 0x36) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_send_data(handle, 0x00) != LCD_SUCCESS) return LCD_ERROR; // MH、ML
-
+    // set full screen coordinate
+    lcd_set_coordinate(handle, 0, WIDTH_X-1, 0 ,LENGTH_Y-1);
+    
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    for (int y=0; y<LENGTH_Y; y++) {
+        for (int x=0; x < WIDTH_X; x++) {
+            if (lcd_send_data(handle, (uint8_t)(color >>8 & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;
+            if (lcd_send_data(handle, (uint8_t)(color & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;
+        }
+    }
+    return LCD_SUCCESS;
 }
 
 // --------------------------------------------------------------------------

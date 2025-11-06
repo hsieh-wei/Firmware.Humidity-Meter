@@ -31,6 +31,17 @@ typedef struct {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
+// Color in RGB565
+#define RED     0xf800
+#define ORANGE  0xfb40
+#define YELLOW  0xffe0
+#define GREEN   0x07e0
+#define BLUE    0x001f
+#define PURPLE  0x901f
+#define BLACK   0x0000
+#define WHITE   0xffff
+#define GRAY    0xf800
+
 int lcd_init(LCD_HANDLE *handle);
 
 // --------------------------------------------------------------------------
