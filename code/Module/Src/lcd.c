@@ -1,6 +1,7 @@
 #include "lcd.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_spi.h"
+#include <stdint.h>
 
 // --------------------------------------------------------------------------
 // Internal Helpers 
@@ -31,6 +32,7 @@ static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
 
     // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
+    
     return LCD_SUCCESS;
 }
 
@@ -47,12 +49,28 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
     // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
 
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
+
     // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
+
     return LCD_SUCCESS;
 }
 
-static int lcd_set_coor(x0, y0, x1, y1)
+static int lcd_set_coordinate(LCD_HANDLE *handle,uint8_t x0, uint8_t x1, uint8_t y0, uint8_t y1)
 {
+    // CASET, set write data begin point(x)
+    if (lcd_send_cmd(handle, 0x2A) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+
+    // CASET, set write data begin point(y)
+    if (lcd_send_cmd(handle, 0x2A) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+    if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // parameter 1
+
     return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
@@ -90,11 +108,9 @@ int lcd_init(LCD_HANDLE *handle)
     // COLMOD, Set Interface Pixel Format as 16bit (2 byte per pixel)
     if (lcd_send_cmd(handle, 0x3A) != LCD_SUCCESS) return LCD_ERROR;
     if (lcd_send_data(handle, 0x05) != LCD_SUCCESS) return LCD_ERROR; // COLMOD Parameter, IFPF 16-bit/pixel
-    HAL_Delay(10); // just a buffer
 
     // DISPON, Turn into display On mode
     if (lcd_send_cmd(handle, 0x29) != LCD_SUCCESS) return LCD_ERROR;
-    HAL_Delay(10); // just a buffer
 
     return LCD_SUCCESS;
 }
