@@ -64,8 +64,13 @@
     - Hardware Reset, 9.5、9.17、10.1.11
     - SWRESET, 10.1.2
     - SLPOUT, 10.1.12
-    - MADCTL, 9.10、9.11.1、9.11.4
+    - MADCTL, 9.10、9.11、10.1.24
+        - MY/MX/MV Coordinate Mapping for writing memory. Decide whether to draw out the flip, mirror, or rotate options.
+        - ML/MH The refresh path when the LCD driver scans the panel.
+        - RGB determines whether the lcd panel uses an RGB or BGR array.
     - COLMOD, 10.1.33
     - DISPON, 10.1.19
 - Fill Screen
-    - write data to lcd ram, 、10.1.20 
+    - CASET, 10.1.20
+    - RASET, 10.1.21
+    - RAMWR, 10.1.22
