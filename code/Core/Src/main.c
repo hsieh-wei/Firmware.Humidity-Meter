@@ -51,18 +51,31 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /* USER CODE BEGIN PV */
 // led handle
-static LED_HANDLE     s_led_handle;
+static LED_HANDLE s_led_handle ={
+  .gpiox = GPIOA,
+  .gpio_pin = GPIO_PIN_7,
+};
 // button handle
-static BUTTON_HANDLE  s_button_handle;
+static BUTTON_HANDLE s_button_handle ={
+  .gpiox = GPIOE,
+  .gpio_pin = GPIO_PIN_3,
+};
 // pc_link handle
-extern PC_LINK_HANDLE g_pc_link_handle; 
+extern PC_LINK_HANDLE g_pc_link_handle;
 // sht30 handle
-static SHT30_HANDLE   s_sht30_handle;
+static SHT30_HANDLE s_sht30_handle = {
+    .hi2c = &hi2c1,
+};
 // sht30 handle
-static LCD_HANDLE     s_lcd_handle;
+static LCD_HANDLE s_lcd_handle = {
+    .hspi = &hspi1,
+    .rst  = {GPIOC, GPIO_PIN_0},
+    .dc   = {GPIOC, GPIO_PIN_1},
+    .cs   = {GPIOC, GPIO_PIN_2},
+    .blk  = {GPIOA, GPIO_PIN_8},
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,28 +124,14 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   // Inject gpioa into led handle
-  s_led_handle.gpiox = GPIOA;
-  s_led_handle.gpio_pin = GPIO_PIN_7;
   // Inject gpioa into button handle
-  s_button_handle.gpiox = GPIOE;
-  s_button_handle.gpio_pin = GPIO_PIN_3;
-  // Inject huart3 and buffer into pc_link handle,then start DMA ReceiveToIdle
+  // Inject huart1 and buffer into pc_link handle,then start DMA ReceiveToIdle
   g_pc_link_handle.huart = &huart1;
   (void)pc_link_init(&g_pc_link_handle);
   (void)pc_link_rx_dma(&g_pc_link_handle);
   // Inject hi2c1 into sht30 handle
-  s_sht30_handle.hi2c = &hi2c1;
   (void)sht30_init(&s_sht30_handle);
   // Inject hi2c1 into sht30 handle
-  s_lcd_handle.hspi =  &hspi1;
-  s_lcd_handle.rst.gpiox = GPIOC;
-  s_lcd_handle.rst.gpio_pin = GPIO_PIN_0;
-  s_lcd_handle.dc.gpiox = GPIOC;
-  s_lcd_handle.dc.gpio_pin = GPIO_PIN_1;
-  s_lcd_handle.cs.gpiox = GPIOC;
-  s_lcd_handle.cs.gpio_pin = GPIO_PIN_2;
-  s_lcd_handle.blk.gpiox = GPIOA;
-  s_lcd_handle.blk.gpio_pin = GPIO_PIN_8;
   (void)lcd_init(&s_lcd_handle);
   /* USER CODE END 2 */
 
