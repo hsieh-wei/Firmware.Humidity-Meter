@@ -119,11 +119,9 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
-    for (int y=0; y<LENGTH_Y; y++) {
-        for (int x=0; x < WIDTH_X; x++) {
-            if (lcd_send_data(handle, (uint8_t)(color >>8 & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;
-            if (lcd_send_data(handle, (uint8_t)(color & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;
-        }
+    for (int i=0; i < LENGTH_Y*WIDTH_X; i++) {
+        if (lcd_send_data(handle, (uint8_t)(color >>8 & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;    // high bit of color
+        if (lcd_send_data(handle, (uint8_t)(color & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;        // low bit of color
     }
     return LCD_SUCCESS;
 }
