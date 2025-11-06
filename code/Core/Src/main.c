@@ -139,7 +139,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_RED);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_GREEN);
+    HAL_Delay(1000);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_BLUE);
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

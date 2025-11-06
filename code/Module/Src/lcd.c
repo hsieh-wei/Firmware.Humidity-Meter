@@ -7,8 +7,8 @@
 // Internal Helpers 
 // --------------------------------------------------------------------------
 //LCD screen size
-#define WIDTH_X   160
-#define LENGTH_Y  128
+#define WIDTH_X   128
+#define LENGTH_Y  160
 
 static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
 {
@@ -115,13 +115,15 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     }
 
     // set full screen coordinate
-    lcd_set_coordinate(handle, 0, WIDTH_X-1, 0 ,LENGTH_Y-1);
+    if (lcd_set_coordinate(handle, 0, WIDTH_X-1, 0, LENGTH_Y-1) != LCD_SUCCESS) return LCD_ERROR;
     
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t high_bit = (color >> 8) & 0xFF;
+    uint8_t low_bit = color & 0xFF;
     for (int i=0; i < LENGTH_Y*WIDTH_X; i++) {
-        if (lcd_send_data(handle, (uint8_t)(color >>8 & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;    // high bit of color
-        if (lcd_send_data(handle, (uint8_t)(color & 0xFF)) != LCD_SUCCESS) return LCD_ERROR;        // low bit of color
+        if (lcd_send_data(handle, high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
+        if (lcd_send_data(handle, low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
     }
     return LCD_SUCCESS;
 }

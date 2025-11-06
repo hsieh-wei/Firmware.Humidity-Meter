@@ -32,18 +32,18 @@ typedef struct {
 // API
 // --------------------------------------------------------------------------
 // Color in RGB565
-#define RED     0xf800
-#define ORANGE  0xfb40
-#define YELLOW  0xffe0
-#define GREEN   0x07e0
-#define BLUE    0x001f
-#define PURPLE  0x901f
-#define BLACK   0x0000
-#define WHITE   0xffff
-#define GRAY    0xf800
+#define LCD_COLOR_RED     0xF800
+#define LCD_COLOR_ORANGE  0xFB40
+#define LCD_COLOR_YELLOW  0xFFE0
+#define LCD_COLOR_GREEN   0x07E0
+#define LCD_COLOR_BLUE    0x001F
+#define LCD_COLOR_PURPLE  0x901F
+#define LCD_COLOR_BLACK   0x0000
+#define LCD_COLOR_WHITE   0xFFFF
+#define LCD_COLOR_GRAY    0x8410
 
 int lcd_init(LCD_HANDLE *handle);
-
+int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color); // color can using below, Ex: LCD_COLOR_RED
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
