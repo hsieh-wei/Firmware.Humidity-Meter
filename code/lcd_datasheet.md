@@ -61,9 +61,11 @@
 
 ## 4. 開始交叉閱讀 9.模組 、 10. cmd
 - Init
-    - hardware Reset, 9.5、9.17、10.1.11
-    - software Reset, 10.1.2
-    - software Reset, 10.1.12
-    - software Reset, 10.1.19
+    - Hardware Reset, 9.5、9.17、10.1.11
+    - SWRESET, 10.1.2
+    - SLPOUT, 10.1.12
+    - MADCTL, 9.10、9.11.1、9.11.4
+    - COLMOD, 10.1.33
+    - DISPON, 10.1.19
 - Fill Screen
-    - 
+    - write data to lcd ram, 、10.1.20 
