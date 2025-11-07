@@ -119,11 +119,43 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
-    uint8_t high_bit = (color >> 8) & 0xFF;
-    uint8_t low_bit = color & 0xFF;
+    uint8_t color_high_bit = (color >> 8) & 0xFF;
+    uint8_t color_low_bit = color & 0xFF;
     for (int i=0; i < LENGTH_Y*WIDTH_X; i++) {
-        if (lcd_send_data(handle, high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
-        if (lcd_send_data(handle, low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+        if (lcd_send_data(handle, color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
+        if (lcd_send_data(handle, color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+    }
+    return LCD_SUCCESS;
+}
+
+int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
+{
+    if (!handle || !handle->hspi){
+        return LCD_ERROR;
+    }
+
+    // set full screen coordinate
+    if (lcd_set_coordinate(handle, x_start, x_start+(font_lookup_table->width)-1, y_start,y_start+(font_lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t font_color_high_bit = (font_color >> 8) & 0xFF;
+    uint8_t font_color_low_bit = font_color & 0xFF;
+    uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
+    uint8_t background_color_low_bit = background_color & 0xFF;
+    int font_index = (font-0x20)*font_lookup_table->height; // ascii code "space" is 0x20, and lookup table is start at "space"
+    for (int y=0; y < font_lookup_table->height; y++) {
+        for (int x=0; x < font_lookup_table->width; x++) {
+            if((font_lookup_table->data[font_index]>>(15-x)) & 1){ // check msb bit
+                if (lcd_send_data(handle, font_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
+                if (lcd_send_data(handle, font_color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+            }
+            else{
+                if (lcd_send_data(handle, background_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
+                if (lcd_send_data(handle, background_color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+            }
+        }
+        font_index++;
     }
     return LCD_SUCCESS;
 }

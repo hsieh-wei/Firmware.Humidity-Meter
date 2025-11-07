@@ -295,6 +295,6 @@ static const uint16_t Font_16x26 [] = {
 };
 
 
-LCD_FONT_DEFINE LCD_Font_7x10 =  {7, 10, Font_7x10};
-LCD_FONT_DEFINE LCD_Font_11x18 = {11,18, Font_11x18};
-LCD_FONT_DEFINE LCD_Font_16x26 = {16,26, Font_16x26};
+LCD_FONT_HANDLE LCD_Font_7x10 =  {7, 10, Font_7x10};
+LCD_FONT_HANDLE LCD_Font_11x18 = {11,18, Font_11x18};
+LCD_FONT_HANDLE LCD_Font_16x26 = {16,26, Font_16x26};
