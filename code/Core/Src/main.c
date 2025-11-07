@@ -137,27 +137,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
   while (1){
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_RED);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_ORANGE);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_YELLOW);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_GREEN);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_BLUE);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_PURPLE);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_BLACK);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-    HAL_Delay(1000);
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_GRAY);
-    HAL_Delay(1000);
     /* USER CODE END WHILE */
-
+    (void)lcd_print_font(&s_lcd_handle, 'W', &LCD_Font_16x26, 10, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'A', &LCD_Font_16x26, 35, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'D', &LCD_Font_16x26, 60, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'E', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, '&', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'Y', &LCD_Font_16x26, 10, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'O', &LCD_Font_16x26, 35, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'N', &LCD_Font_16x26, 60, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font(&s_lcd_handle, 'G', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

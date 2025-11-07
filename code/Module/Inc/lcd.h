@@ -45,7 +45,12 @@ typedef struct {
 #define LCD_COLOR_GRAY    0x8410
 
 int lcd_init(LCD_HANDLE *handle);
-int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color); // color can using below, Ex: LCD_COLOR_RED
+
+// color can using below, Ex: LCD_COLOR_RED
+int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color); 
+
+//color can using below, font has three size(7X10,11x18,16x26), font can print from "space" to "~"(can reference ascii)
+int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
