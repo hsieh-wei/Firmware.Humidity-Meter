@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
+#include "stm32f4xx_hal.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -137,18 +138,28 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
   while (1){
     /* USER CODE END WHILE */
-    (void)lcd_print_font(&s_lcd_handle, 'W', &LCD_Font_16x26, 10, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'A', &LCD_Font_16x26, 35, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'D', &LCD_Font_16x26, 60, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'E', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, '&', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'Y', &LCD_Font_16x26, 10, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'O', &LCD_Font_16x26, 35, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'N', &LCD_Font_16x26, 60, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(&s_lcd_handle, 'G', &LCD_Font_16x26, 85, 60, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'W', &LCD_Font_16x26, 20, 21, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'A', &LCD_Font_16x26, 60, 21, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'D', &LCD_Font_16x26, 100, 21, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'E', &LCD_Font_16x26, 140, 21, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, '&', &LCD_Font_16x26, 75, 63, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'Y', &LCD_Font_16x26, 20, 105, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'O', &LCD_Font_16x26, 60, 105, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'N', &LCD_Font_16x26, 100, 105, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
+    (void)lcd_print_font(&s_lcd_handle, 'G', &LCD_Font_16x26, 140, 105, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -33,6 +33,10 @@ typedef struct {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
+//LCD screen size(left upper is (0,0), x increase when go right, y increase when go down)
+#define LCD_WIDTH_X   160
+#define LCD_HEIGHT_Y  128
+
 // Color in RGB565
 #define LCD_COLOR_RED     0xF800
 #define LCD_COLOR_ORANGE  0xFB40

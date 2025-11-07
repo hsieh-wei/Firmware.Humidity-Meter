@@ -6,10 +6,6 @@
 // --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
-//LCD screen size
-#define WIDTH_X   160
-#define HEIGHT_Y  128
-
 static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
 {
     handle->tx_buf[0] = cmd;
@@ -115,13 +111,13 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     }
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, 0, WIDTH_X-1, 0, HEIGHT_Y-1) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X-1, 0, LCD_HEIGHT_Y-1) != LCD_SUCCESS) return LCD_ERROR;
     
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
     uint8_t color_high_bit = (color >> 8) & 0xFF;
     uint8_t color_low_bit = color & 0xFF;
-    for (int i=0; i < HEIGHT_Y*WIDTH_X; i++) {
+    for (int i=0; i < LCD_WIDTH_X*LCD_HEIGHT_Y; i++) {
         if (lcd_send_data(handle, color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
         if (lcd_send_data(handle, color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
     }
@@ -147,6 +143,41 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lo
     // start to print font
     for (int y = 0; y < font_lookup_table->height; y++) {
         uint16_t row_bit = font_lookup_table->data[font_index]; // row bit which is 7~16bit x data
+        for (int x = 0; x < font_lookup_table->width; x++) {
+            int bit = 15 - x; // start bit is from msb
+            if ((row_bit >> bit) & 1) {
+                // print font color
+                if (lcd_send_data(handle, font_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, font_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+            } else {
+                // print background color
+                if (lcd_send_data(handle, background_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, background_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+            }
+        }
+        font_index++; //next row
+    }
+    return LCD_SUCCESS;
+}
+
+int lcd_print_icon(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
+{
+    if (!handle || !handle->hspi){
+        return LCD_ERROR;
+    }
+
+    // set full screen coordinate
+    if (lcd_set_coordinate(handle, x_start, x_start+(font_lookup_table->width)-1, y_start,y_start+(font_lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t font_color_high_bit = (font_color >> 8) & 0xFF;
+    uint8_t font_color_low_bit = font_color & 0xFF;
+    uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
+    uint8_t background_color_low_bit = background_color & 0xFF;
+    // start to print font
+    for (int i = 0; i < font_lookup_table->width*font_lookup_table->height; i++) {
+        uint16_t row_bit = font_lookup_table->data[i]; // row bit which is 7~16bit x data
         for (int x = 0; x < font_lookup_table->width; x++) {
             int bit = 15 - x; // start bit is from msb
             if ((row_bit >> bit) & 1) {
