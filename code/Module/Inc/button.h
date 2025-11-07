@@ -2,6 +2,7 @@
 #define __BUTTON_H__
 
 #include "stm32f4xx_hal.h"
+#include <stdint.h>
 
 // --------------------------------------------------------------------------
 // Error Codes 
