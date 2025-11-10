@@ -20,6 +20,6 @@ typedef struct {
 extern LCD_FONT_HANDLE LCD_Font_7x10;
 extern LCD_FONT_HANDLE LCD_Font_11x18;
 extern LCD_FONT_HANDLE LCD_Font_16x26;
-extern LCD_ICON_HANDLE LCD_Heart_20X20;
+extern LCD_ICON_HANDLE LCD_Heart_30X30;
 
 #endif // LCD_GLYPHS_TABLE_H
