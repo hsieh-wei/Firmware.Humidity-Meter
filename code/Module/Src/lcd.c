@@ -124,14 +124,14 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     return LCD_SUCCESS;
 }
 
-int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
+int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
 {
     if (!handle || !handle->hspi){
         return LCD_ERROR;
     }
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(font_lookup_table->width)-1, y_start,y_start+(font_lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
@@ -139,13 +139,13 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lo
     uint8_t font_color_low_bit = font_color & 0xFF;
     uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
     uint8_t background_color_low_bit = background_color & 0xFF;
-    int font_index = (font-0x20)*font_lookup_table->height; // ascii code "space" is 0x20, and lookup table is start at "space"
+    int font_index = (font-0x20)*lookup_table->height; // ascii code "space" is 0x20, and lookup table is start at "space"
     // start to print font
-    for (int y = 0; y < font_lookup_table->height; y++) {
-        uint16_t row_bit = font_lookup_table->data[font_index]; // row bit which is 7~16bit x data
-        for (int x = 0; x < font_lookup_table->width; x++) {
-            int bit = 15 - x; // start bit is from msb
-            if ((row_bit >> bit) & 1) {
+    for (int y = 0; y < lookup_table->height; y++) {
+        uint16_t row_bit = lookup_table->data[font_index]; // row bit which is x data
+        for (int x = 0; x < lookup_table->width; x++) {
+            int bit_index = 15 - x; // start bit is from msb
+            if ((row_bit >> bit_index) & 1) {
                 // print font color
                 if (lcd_send_data(handle, font_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
                 if (lcd_send_data(handle, font_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
@@ -160,41 +160,40 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lo
     return LCD_SUCCESS;
 }
 
-int lcd_print_icon(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *font_lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
+int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t icon_color, uint16_t background_color)
 {
     if (!handle || !handle->hspi){
         return LCD_ERROR;
     }
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(font_lookup_table->width)-1, y_start,y_start+(font_lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
-    uint8_t font_color_high_bit = (font_color >> 8) & 0xFF;
-    uint8_t font_color_low_bit = font_color & 0xFF;
+    uint8_t icon_color_high_bit = (icon_color >> 8) & 0xFF;
+    uint8_t icon_color_low_bit = icon_color & 0xFF;
     uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
     uint8_t background_color_low_bit = background_color & 0xFF;
+    int bytes_per_row = (lookup_table->width + 7) / 8;  // count how mant bytes per row
     // start to print font
-    for (int i = 0; i < font_lookup_table->width*font_lookup_table->height; i++) {
-        uint16_t row_bit = font_lookup_table->data[i]; // row bit which is 7~16bit x data
-        for (int x = 0; x < font_lookup_table->width; x++) {
-            int bit = 15 - x; // start bit is from msb
-            if ((row_bit >> bit) & 1) {
+    for (int y = 0; y < lookup_table->height; y++) {
+        for (int x = 0; x < lookup_table->width; x++) {
+            int byte_index = x / 8;
+            int bit_index  = 7 - (x % 8); // start bit is from msb
+            if ((lookup_table->data[y*bytes_per_row + byte_index] >> bit_index) & 1) {
                 // print font color
-                if (lcd_send_data(handle, font_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
-                if (lcd_send_data(handle, font_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, icon_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, icon_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
             } else {
                 // print background color
                 if (lcd_send_data(handle, background_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
                 if (lcd_send_data(handle, background_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
             }
         }
-        font_index++; //next row
     }
     return LCD_SUCCESS;
 }
-
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------

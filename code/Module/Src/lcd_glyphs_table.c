@@ -313,16 +313,17 @@ static const uint16_t Font_16x26 [] = {
 // 4. Output
 // Code output format: Arduino code
 // Draw mode: Horizontal -1bit per pixel
+
+// from left to right is a row, then upper to down is column 
 // --------------------------------------------------------------------------
-static const uint16_t Heart_20X20 []  = {
+static const uint8_t Heart_20X20 []  = {
 	0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFE, 
 	0xF7, 0xF0, 0xFC, 0x03, 0xF0, 0xFC, 0x03, 0xF0, 0xFC, 0x03, 0xF0, 0xFC, 0x03, 0xF0, 0xFE, 0x07, 
 	0xF0, 0xFF, 0x0F, 0xF0, 0xFF, 0x9F, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 
 	0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0xFF, 0xFF, 0xF0, 0x00, 0x00, 0x00
-};
+}; 
 
-
-LCD_GLYPHS_HANDLE LCD_Font_7x10 =  {7, 10, Font_7x10};
-LCD_GLYPHS_HANDLE LCD_Font_11x18 = {11,18, Font_11x18};
-LCD_GLYPHS_HANDLE LCD_Font_16x26 = {16,26, Font_16x26};
-LCD_GLYPHS_HANDLE LCD_Heart_19X18 = {19,18, Heart_20X20};
+LCD_FONT_HANDLE LCD_Font_7x10 =  {7, 10, Font_7x10};
+LCD_FONT_HANDLE LCD_Font_11x18 = {11,18, Font_11x18};
+LCD_FONT_HANDLE LCD_Font_16x26 = {16,26, Font_16x26};
+LCD_ICON_HANDLE LCD_Heart_20X20 = {20,20, Heart_20X20};

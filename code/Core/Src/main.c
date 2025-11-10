@@ -150,7 +150,7 @@ int main(void)
     HAL_Delay(500);
     (void)lcd_print_font(&s_lcd_handle, 'E', &LCD_Font_16x26, 140, 21, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
     HAL_Delay(500);
-    (void)lcd_print_font(&s_lcd_handle, '&', &LCD_Font_16x26, 75, 63, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_icon(&s_lcd_handle, &LCD_Heart_20X20, 75, 63, LCD_COLOR_RED, LCD_COLOR_BLACK);
     HAL_Delay(500);
     (void)lcd_print_font(&s_lcd_handle, 'Y', &LCD_Font_16x26, 20, 105, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
     HAL_Delay(500);
