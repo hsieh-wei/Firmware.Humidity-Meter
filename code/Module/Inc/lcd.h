@@ -1,7 +1,7 @@
 #ifndef LCD_H
 #define LCD_H
 
-#include "lcd_font.h"
+#include "lcd_glyphs_table.h"
 #include "stm32f4xx_hal.h"
 #include <stdint.h>
 
