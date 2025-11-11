@@ -138,30 +138,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 10, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
   while (1){
     /* USER CODE END WHILE */
-    (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'W', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'A', &LCD_Font_16x26, 50, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'D', &LCD_Font_16x26, 90, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'E', &LCD_Font_16x26, 130, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_icon(&s_lcd_handle, &LCD_Heart_30X30, 68, 49, LCD_COLOR_RED, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'Y', &LCD_Font_16x26, 10, 92, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'O', &LCD_Font_16x26, 50, 92, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'N', &LCD_Font_16x26, 90, 92, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    // (void)lcd_print_font(&s_lcd_handle, 'G', &LCD_Font_16x26, 130, 92, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    // HAL_Delay(500);
-    (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 10, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
-    (void)lcd_print_icon(&s_lcd_handle, &LCD_Water_Drop_30X30, 50, 50, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
