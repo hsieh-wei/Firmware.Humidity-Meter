@@ -139,12 +139,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_16x26, 10, 10, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 10, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
   while (1){
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
