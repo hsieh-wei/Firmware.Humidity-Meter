@@ -1,7 +1,9 @@
 #include "lcd.h"
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_spi.h"
 #include <stdint.h>
+#include <string.h>
 
 // --------------------------------------------------------------------------
 // Internal Helpers 
@@ -41,6 +43,20 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
 
     // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
 
+    return LCD_SUCCESS;
+}
+
+static int lcd_send_data_dma(LCD_HANDLE *handle, uint8_t *data, size_t data_size) // also can using in send parameter
+{
+    HAL_GPIO_WritePin(handle->dc.gpiox, handle->dc.gpio_pin, GPIO_PIN_SET);     // dc send data
+    HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_RESET);   // cs low, ready to transmit
+
+    //TCSS, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually. 
+    handle->tx_busy = 1; // set tx busy
+    memcpy(handle->tx_buf, data, data_size);
+    if(HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK)return LCD_ERROR;
+
+    // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
     return LCD_SUCCESS;
 }
 
@@ -105,6 +121,32 @@ int lcd_init(LCD_HANDLE *handle)
 }
 
 int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
+{
+    if (!handle || !handle->hspi){
+        return LCD_ERROR;
+    }
+
+    // set full screen coordinate
+    if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X-1, 0, LCD_HEIGHT_Y-1) != LCD_SUCCESS) return LCD_ERROR;
+    
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t color_high_bit = (color >> 8) & 0xFF;
+    uint8_t color_low_bit = color & 0xFF;
+    static uint8_t data[32];
+    for (int i =0; i<32; i++) {
+        if(i%2 == 0) data[i]= color_high_bit;
+        else data[i]= color_low_bit;
+    }
+
+    for (int i=0; i < LCD_WIDTH_X*LCD_HEIGHT_Y; i++) {
+        if (lcd_send_data(handle, color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
+        if (lcd_send_data(handle, color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+    }
+    return LCD_SUCCESS;
+}
+
+int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color)
 {
     if (!handle || !handle->hspi){
         return LCD_ERROR;
@@ -197,3 +239,12 @@ int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
+void lcd_irq_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi)
+{
+    if(handle && handle->hspi == hspi){
+        HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
+        // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
+
+        handle->tx_busy = 0;
+    }
+}

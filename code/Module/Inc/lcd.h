@@ -27,7 +27,8 @@ typedef struct {
     LCD_Control_Pin_HANDLE dc;  // 0 command, 1 parameter and data
     LCD_Control_Pin_HANDLE cs;  // chip select
     LCD_Control_Pin_HANDLE blk; // LCD backlit modify 
-    uint8_t tx_buf[32];         // LCD cmd buffer
+    uint8_t tx_buf[32];         // LCD cmd para data dma buffer, 16 pixel per time
+    volatile int tx_busy;       // avoid send two tx message in one time 
 } LCD_HANDLE;
 
 // --------------------------------------------------------------------------
@@ -59,4 +60,5 @@ int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
+void lcd_irq_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi);
 #endif // LCD_H 

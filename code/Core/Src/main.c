@@ -221,6 +221,10 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
   sht30_irq_rx_cplt(&s_sht30_handle, hi2c);
 }
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
+  lcd_irq_tx_cplt(&s_lcd_handle, hspi);
+}
 /* USER CODE END 4 */
 
 /**
