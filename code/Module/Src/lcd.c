@@ -46,15 +46,18 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
     return LCD_SUCCESS;
 }
 
-static int lcd_send_data_dma(LCD_HANDLE *handle, uint8_t *data, size_t data_size) // also can using in send parameter
+static int lcd_send_data_dma(LCD_HANDLE *handle, size_t data_size) // also can using in send parameter, data_size indicates how much buffer is used.
 {
     HAL_GPIO_WritePin(handle->dc.gpiox, handle->dc.gpio_pin, GPIO_PIN_SET);     // dc send data
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_RESET);   // cs low, ready to transmit
 
     //TCSS, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually. 
     handle->tx_busy = 1; // set tx busy
-    memcpy(handle->tx_buf, data, data_size);
-    if(HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK)return LCD_ERROR;
+    if(HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK){
+        handle->tx_busy = 0; // clear tx busy
+        HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
+        return LCD_ERROR;  
+    }
 
     // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
     return LCD_SUCCESS;
@@ -83,9 +86,7 @@ static int lcd_set_coordinate(LCD_HANDLE *handle, uint16_t x_start, uint16_t x_e
 // --------------------------------------------------------------------------
 int lcd_init(LCD_HANDLE *handle)
 {
-    if (!handle || !handle->hspi){
-        return LCD_ERROR;
-    }
+    if (!handle || !handle->hspi)return LCD_ERROR;
 
     // Initial Control Pin
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);   // unreset status
@@ -122,9 +123,7 @@ int lcd_init(LCD_HANDLE *handle)
 
 int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
 {
-    if (!handle || !handle->hspi){
-        return LCD_ERROR;
-    }
+    if (!handle || !handle->hspi)return LCD_ERROR;
 
     // set full screen coordinate
     if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X-1, 0, LCD_HEIGHT_Y-1) != LCD_SUCCESS) return LCD_ERROR;
@@ -133,12 +132,6 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
     uint8_t color_high_bit = (color >> 8) & 0xFF;
     uint8_t color_low_bit = color & 0xFF;
-    static uint8_t data[32];
-    for (int i =0; i<32; i++) {
-        if(i%2 == 0) data[i]= color_high_bit;
-        else data[i]= color_low_bit;
-    }
-
     for (int i=0; i < LCD_WIDTH_X*LCD_HEIGHT_Y; i++) {
         if (lcd_send_data(handle, color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
         if (lcd_send_data(handle, color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
@@ -148,9 +141,9 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color)
 
 int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color)
 {
-    if (!handle || !handle->hspi){
-        return LCD_ERROR;
-    }
+    if (!handle || !handle->hspi)return LCD_ERROR;
+
+    if (handle->tx_busy == 1) return LCD_ERROR;
 
     // set full screen coordinate
     if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X-1, 0, LCD_HEIGHT_Y-1) != LCD_SUCCESS) return LCD_ERROR;
@@ -159,18 +152,19 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color)
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
     uint8_t color_high_bit = (color >> 8) & 0xFF;
     uint8_t color_low_bit = color & 0xFF;
-    for (int i=0; i < LCD_WIDTH_X*LCD_HEIGHT_Y; i++) {
-        if (lcd_send_data(handle, color_high_bit) != LCD_SUCCESS) return LCD_ERROR;   // high bit of color
-        if (lcd_send_data(handle, color_low_bit) != LCD_SUCCESS) return LCD_ERROR;    // low bit of color
+    for (int i =0; i<LCD_WIDTH_X*LCD_HEIGHT_Y*2; i++) {
+        if(i%2 == 0) handle->tx_buf[i]= color_high_bit;
+        else handle->tx_buf[i]= color_low_bit;
     }
+
+    if (lcd_send_data_dma(handle, sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;  
+
     return LCD_SUCCESS;
 }
 
 int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
 {
-    if (!handle || !handle->hspi){
-        return LCD_ERROR;
-    }
+    if (!handle || !handle->hspi)return LCD_ERROR;
 
     // set full screen coordinate
     if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
@@ -202,12 +196,84 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_
     return LCD_SUCCESS;
 }
 
-int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t icon_color, uint16_t background_color)
+int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t font_color, uint16_t background_color)
 {
-    if (!handle || !handle->hspi){
-        return LCD_ERROR;
+    if (!handle || !handle->hspi)return LCD_ERROR;
+
+    if (handle->tx_busy == 1) return LCD_ERROR;
+
+    // set full screen coordinate
+    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t font_color_high_bit = (font_color >> 8) & 0xFF;
+    uint8_t font_color_low_bit = font_color & 0xFF;
+    uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
+    uint8_t background_color_low_bit = background_color & 0xFF;
+    int font_index = (font-0x20)*lookup_table->height; // ascii code "space" is 0x20, and lookup table is start at "space"
+    // start to print font
+    for (int y = 0; y < lookup_table->height; y++) {
+        uint16_t row_bit = lookup_table->data[font_index]; // row bit which is x data
+        for (int x = 0; x < lookup_table->width; x++) {
+            int bit_index = 15 - x; // start bit is from msb
+            if ((row_bit >> bit_index) & 1) {
+                // print font color
+                handle->tx_buf[y*lookup_table->width*2] = font_color_high_bit;
+                handle->tx_buf[y*lookup_table->width*2] = font_color_low_bit;
+            } else {
+                // print background color
+                handle->tx_buf[y*lookup_table->width*2] = background_color_high_bit;
+                handle->tx_buf[y*lookup_table->width*2] = background_color_low_bit;
+            }
+        }
+        font_index++; //next row
     }
 
+    if (lcd_send_data_dma(handle, sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;  
+
+    return LCD_SUCCESS;
+}
+
+int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t icon_color, uint16_t background_color)
+{
+    if (!handle || !handle->hspi)return LCD_ERROR;
+
+    // set full screen coordinate
+    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+
+    // RAMWR Memory Write 
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    uint8_t icon_color_high_bit = (icon_color >> 8) & 0xFF;
+    uint8_t icon_color_low_bit = icon_color & 0xFF;
+    uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
+    uint8_t background_color_low_bit = background_color & 0xFF;
+    int bytes_per_row = (lookup_table->width + 7) / 8;  // count how mant bytes per row
+    // start to print font
+    for (int y = 0; y < lookup_table->height; y++) {
+        for (int x = 0; x < lookup_table->width; x++) {
+            int byte_index = x / 8;
+            int bit_index  = 7 - (x % 8); // start bit is from msb
+            if ((lookup_table->data[y*bytes_per_row + byte_index] >> bit_index) & 1) {
+                // print font color
+                if (lcd_send_data(handle, icon_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, icon_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+            } else {
+                // print background color
+                if (lcd_send_data(handle, background_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
+                if (lcd_send_data(handle, background_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+            }
+        }
+    }
+    return LCD_SUCCESS;
+}
+
+int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint16_t x_start, uint16_t y_start, uint16_t icon_color, uint16_t background_color)
+{
+    if (!handle || !handle->hspi)return LCD_ERROR;
+
+
+    if (handle->tx_busy == 1) return LCD_ERROR;
     // set full screen coordinate
     if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
 

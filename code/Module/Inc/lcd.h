@@ -16,28 +16,28 @@ typedef enum {
 // --------------------------------------------------------------------------
 // Handle
 // --------------------------------------------------------------------------
+//LCD screen size(left upper is (0,0), x increase when go right, y increase when go down)
+#define LCD_WIDTH_X   160
+#define LCD_HEIGHT_Y  128
+
 typedef struct {
     GPIO_TypeDef *gpiox;  // gpio HAL handle (EX: &GPIOA) 
     uint16_t gpio_pin;    // gpio HAL pin (EX: GPIO_PIN_6) 
 } LCD_Control_Pin_HANDLE;
 
 typedef struct {
-    SPI_HandleTypeDef *hspi;    // spi HAL handle (EX: &hspi1)
-    LCD_Control_Pin_HANDLE rst; // reset
-    LCD_Control_Pin_HANDLE dc;  // 0 command, 1 parameter and data
-    LCD_Control_Pin_HANDLE cs;  // chip select
-    LCD_Control_Pin_HANDLE blk; // LCD backlit modify 
-    uint8_t tx_buf[32];         // LCD cmd para data dma buffer, 16 pixel per time
-    volatile int tx_busy;       // avoid send two tx message in one time 
+    SPI_HandleTypeDef *hspi;                        // spi HAL handle (EX: &hspi1)
+    LCD_Control_Pin_HANDLE rst;                     // reset
+    LCD_Control_Pin_HANDLE dc;                      // 0 command, 1 parameter and data
+    LCD_Control_Pin_HANDLE cs;                      // chip select
+    LCD_Control_Pin_HANDLE blk;                     // LCD backlit modify 
+    uint8_t tx_buf[LCD_WIDTH_X*LCD_HEIGHT_Y*2];     // LCD cmd para data ma buffer.Buffer size can cover the entire LCD screen size (2 bytes per pixel in RGB565 format)
+    volatile int tx_busy;                           // avoid send two tx message in one time 
 } LCD_HANDLE;
 
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
-//LCD screen size(left upper is (0,0), x increase when go right, y increase when go down)
-#define LCD_WIDTH_X   160
-#define LCD_HEIGHT_Y  128
-
 // Color in RGB565
 #define LCD_COLOR_RED     0xF800
 #define LCD_COLOR_ORANGE  0xFB40
