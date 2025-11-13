@@ -46,7 +46,7 @@ static int lcd_send_data(LCD_HANDLE *handle, uint8_t data) // also can using in 
     return LCD_SUCCESS;
 }
 
-static int lcd_send_data_dma(LCD_HANDLE *handle, size_t data_size) // also can using in send parameter, data_size indicates how much buffer is used.
+static int lcd_send_data_dma(LCD_HANDLE *handle, uint16_t data_size) // also can using in send parameter, data_size indicates how much buffer is used.
 {
     HAL_GPIO_WritePin(handle->dc.gpiox, handle->dc.gpio_pin, GPIO_PIN_SET);     // dc send data
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_RESET);   // cs low, ready to transmit
@@ -157,7 +157,7 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color)
         else handle->tx_buf[i]= color_low_bit;
     }
 
-    if (lcd_send_data_dma(handle, sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;  
+    if (lcd_send_data_dma(handle, (uint16_t)sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;  
 
     return LCD_SUCCESS;
 }
@@ -167,7 +167,11 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_
     if (!handle || !handle->hspi)return LCD_ERROR;
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    uint16_t x_end = x_start + lookup_table->width  - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
@@ -203,7 +207,11 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
     if (handle->tx_busy == 1) return LCD_ERROR;
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    uint16_t x_end = x_start + lookup_table->width  - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
@@ -230,7 +238,7 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
         font_index++; //next row
     }
 
-    if ((lcd_send_data_dma(handle, (uint8_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
+    if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
 
     return LCD_SUCCESS;
 }
@@ -240,7 +248,11 @@ int lcd_print_icon(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, uint
     if (!handle || !handle->hspi)return LCD_ERROR;
 
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    uint16_t x_end = x_start + lookup_table->width  - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
@@ -274,8 +286,13 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
 
 
     if (handle->tx_busy == 1) return LCD_ERROR;
+    
     // set full screen coordinate
-    if (lcd_set_coordinate(handle, x_start, x_start+(lookup_table->width)-1, y_start,y_start+(lookup_table->height)-1) != LCD_SUCCESS) return LCD_ERROR;
+    uint16_t x_end = x_start + lookup_table->width  - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write 
     if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
@@ -300,7 +317,7 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
             }
         }
     }
-        if ((lcd_send_data_dma(handle, (uint8_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
+        if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
     return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
