@@ -138,18 +138,37 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
+  // (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  // (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  int lcd_fill_screen_dma_pass = 0;
+  int lcd_print_font_dma_pass = 0;
+  int lcd_print_icon_dma_pass = 0;
   while (1){
     /* USER CODE END WHILE */
+    if(lcd_fill_screen_dma_pass==0){
+      if(lcd_fill_screen_dma(&s_lcd_handle, LCD_COLOR_WHITE) == LCD_SUCCESS){
+        lcd_fill_screen_dma_pass = 1;
+      }
+    }
+    if(lcd_print_font_dma_pass==0){
+      if(lcd_print_font_dma(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) == LCD_SUCCESS){
+        lcd_print_font_dma_pass = 1;
+      }
+    }
+    if(lcd_print_icon_dma_pass==0){
+      if(lcd_print_icon_dma(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE) == LCD_SUCCESS){
+        lcd_print_icon_dma_pass = 1;
+      }
+    }
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
