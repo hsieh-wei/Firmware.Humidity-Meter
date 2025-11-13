@@ -219,18 +219,18 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
             int bit_index = 15 - x; // start bit is from msb
             if ((row_bit >> bit_index) & 1) {
                 // print font color
-                handle->tx_buf[y*lookup_table->width*2] = font_color_high_bit;
-                handle->tx_buf[y*lookup_table->width*2] = font_color_low_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2] = font_color_high_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2 + 1] = font_color_low_bit;
             } else {
                 // print background color
-                handle->tx_buf[y*lookup_table->width*2] = background_color_high_bit;
-                handle->tx_buf[y*lookup_table->width*2] = background_color_low_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2] = background_color_high_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2 + 1] = background_color_low_bit;
             }
         }
         font_index++; //next row
     }
 
-    if (lcd_send_data_dma(handle, sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;  
+    if ((lcd_send_data_dma(handle, (uint8_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
 
     return LCD_SUCCESS;
 }
@@ -291,15 +291,16 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
             int bit_index  = 7 - (x % 8); // start bit is from msb
             if ((lookup_table->data[y*bytes_per_row + byte_index] >> bit_index) & 1) {
                 // print font color
-                if (lcd_send_data(handle, icon_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
-                if (lcd_send_data(handle, icon_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+                handle->tx_buf[(y*lookup_table->width+x) * 2] = icon_color_high_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2 + 1] = icon_color_low_bit;
             } else {
                 // print background color
-                if (lcd_send_data(handle, background_color_high_bit) != LCD_SUCCESS) return LCD_ERROR;
-                if (lcd_send_data(handle, background_color_low_bit)  != LCD_SUCCESS) return LCD_ERROR;
+                handle->tx_buf[(y*lookup_table->width+x) * 2] = background_color_high_bit;
+                handle->tx_buf[(y*lookup_table->width+x) * 2 + 1] = background_color_low_bit;
             }
         }
     }
+        if ((lcd_send_data_dma(handle, (uint8_t)lookup_table->width*lookup_table->height*2)) != LCD_SUCCESS) return LCD_ERROR;  
     return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
