@@ -213,35 +213,35 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-// HAL uart tx complete send
+// Redefine Callback
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-  pc_link_irq_tx_cplt(&g_pc_link_handle, huart);
+  pc_link_uart_tx_cplt(&g_pc_link_handle, huart);
 }
 
 // HAL uart rx idle or full buffer
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-  pc_link_irq_rx_event(&g_pc_link_handle, huart, Size);
+  pc_link_uartex_rx_event(&g_pc_link_handle, huart, Size);
 }
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
-  sht30_irq_tx_cplt(&s_sht30_handle, hi2c);
+  sht30_i2c_master_tx_cplt(&s_sht30_handle, hi2c);
 }
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
-  sht30_irq_rx_cplt(&s_sht30_handle, hi2c);
+  sht30_i2c_master_rx_cplt(&s_sht30_handle, hi2c);
 }
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
-  lcd_irq_tx_cplt(&s_lcd_handle, hspi);
+  lcd_spi_tx_cplt(&s_lcd_handle, hspi);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  sys_timestamp_tim_period_elapsed_callback(&s_sys_timestamp_handle, htim);
+  sys_timestamp_tim_period_elapsed(&s_sys_timestamp_handle, htim);
 }
 /* USER CODE END 4 */
 

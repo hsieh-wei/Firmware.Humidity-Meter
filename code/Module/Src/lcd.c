@@ -323,7 +323,7 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void lcd_irq_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi)
+void lcd_spi_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi)
 {
     if(handle && handle->hspi == hspi){
         HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit

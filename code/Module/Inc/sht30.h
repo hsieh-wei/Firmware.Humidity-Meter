@@ -45,6 +45,6 @@ int sht30_compute_data(SHT30_HANDLE *handle);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void sht30_irq_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
-void sht30_irq_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
+void sht30_i2c_master_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
+void sht30_i2c_master_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
 #endif // SHT30_H 

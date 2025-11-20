@@ -63,5 +63,5 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void lcd_irq_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi);
+void lcd_spi_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi);
 #endif // LCD_H 

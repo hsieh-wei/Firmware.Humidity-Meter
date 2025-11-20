@@ -28,5 +28,5 @@ int sys_timestamp_init(SYS_TIMESTAMP_HANDLE *handle);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
-void sys_timestamp_tim_period_elapsed_callback(SYS_TIMESTAMP_HANDLE *handle, TIM_HandleTypeDef *htim);
+void sys_timestamp_tim_period_elapsed(SYS_TIMESTAMP_HANDLE *handle, TIM_HandleTypeDef *htim);
 #endif // SYS_TIMESTAMP 
