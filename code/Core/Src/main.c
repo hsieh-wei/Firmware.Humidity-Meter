@@ -21,12 +21,15 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_tim.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "led.h"
@@ -34,6 +37,7 @@
 #include "pc_link.h"
 #include "sht30.h"
 #include "lcd.h"
+#include "sys_timestamp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,6 +81,10 @@ static LCD_HANDLE s_lcd_handle = {
     .dc   = {GPIOC, GPIO_PIN_1},
     .cs   = {GPIOC, GPIO_PIN_2},
     .blk  = {GPIOA, GPIO_PIN_8},
+};
+// system timestamp handle
+static SYS_TIMESTAMP_HANDLE s_sys_timestamp_handle = {
+    .htim = &htim6,
 };
 /* USER CODE END PV */
 
@@ -134,25 +142,23 @@ int main(void)
   (void)pc_link_rx_dma(&g_pc_link_handle);
   // Inject hi2c1 into sht30 handle
   (void)sht30_init(&s_sht30_handle);
-  // Inject hi2c1 into sht30 handle
+  // Inject hspi1 into lcd handle
   (void)lcd_init(&s_lcd_handle);
+  // Inject htim6 into system timestamp handle
+  (void)sys_timestamp_init(&s_sys_timestamp_handle);
+  uint8_t msg[4] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  // (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-  // (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  // (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  int lcd_fill_screen_dma_pass = 0;
-  int lcd_print_font_dma_pass = 0;
-  int lcd_print_icon_dma_pass = 0;
   while (1){
+    msg[0] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>24; //MSB, 31~24 bit
+    msg[1] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>16; //MSB, 23~16 bit
+    msg[2] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>8;  //MSB, 15~8  bit
+    msg[3] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>0;  //MSB, 7~0   bit
+    pc_link_tx_dma(&g_pc_link_handle,msg,(uint16_t)sizeof(msg));
+
+    HAL_Delay(10000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -231,6 +237,11 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
   lcd_irq_tx_cplt(&s_lcd_handle, hspi);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  sys_timestamp_tim_period_elapsed_callback(&s_sys_timestamp_handle, htim);
 }
 /* USER CODE END 4 */
 
