@@ -42,6 +42,22 @@
 NULL
 
 ### 2.3 Timers
+
+#### TIM6
+
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| X | 系統啟動 timestamp | X
+
+> 在 APB1 clock上，，目前頻率設為84MHZ，參考reference manual RCC register
+
+| 項1  | 項2 | 項3| 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode  | X | X | X | Activated
+| Configuration  | Parameter Setting | Counter Setting | Prescaler | 8400-1
+| Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 10000-1 
+
+
 #### TIM1
 先不設置
 | 腳位   | 功能設定| 外接模組腳位
