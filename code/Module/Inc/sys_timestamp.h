@@ -24,7 +24,6 @@ typedef struct {
 // API
 // --------------------------------------------------------------------------
 int sys_timestamp_init(SYS_TIMESTAMP_HANDLE *handle);
-int sys_timestamp_get_current_timestamp(SYS_TIMESTAMP_HANDLE *handle);
 
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 

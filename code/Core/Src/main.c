@@ -158,7 +158,7 @@ int main(void)
     msg[3] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>0;  //MSB, 7~0   bit
     pc_link_tx_dma(&g_pc_link_handle,msg,(uint16_t)sizeof(msg));
 
-    HAL_Delay(10000);
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -19,15 +19,6 @@ int sys_timestamp_init(SYS_TIMESTAMP_HANDLE *handle){
     return SYS_TIMESTAMP_SUCCESS;
 }
 
-int sys_timestamp_get_current_timestamp(SYS_TIMESTAMP_HANDLE *handle){
-    if (!handle || !handle->htim){
-        return SYS_TIMESTAMP_ERROR;
-    }
-    handle->timestamp = handle->htim->Instance->CNT; // Reference Manual 20.4.6
-
-    return SYS_TIMESTAMP_SUCCESS;
-}
-
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define 
 // --------------------------------------------------------------------------
