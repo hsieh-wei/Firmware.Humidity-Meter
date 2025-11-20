@@ -26,4 +26,8 @@ typedef struct {
 // --------------------------------------------------------------------------
 int button_pressed(BUTTON_HANDLE *handle);
 
+// --------------------------------------------------------------------------
+// HAL Weak Callback re define 
+// --------------------------------------------------------------------------
+void button_gpio_exti(BUTTON_HANDLE *handle, uint16_t GPIO_Pin);
 #endif

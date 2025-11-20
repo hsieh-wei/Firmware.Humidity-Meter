@@ -15,3 +15,12 @@ int button_pressed(BUTTON_HANDLE *handle)
     }; 
     return BUTTON_SUCCESS;
 }
+
+void button_gpio_exti(BUTTON_HANDLE *handle, uint16_t GPIO_Pin){
+    if(handle && handle->gpio_pin == GPIO_Pin){
+        static LED_HANDLE s_led_handle;
+        s_led_handle.gpiox = GPIOA;
+        s_led_handle.gpio_pin = GPIO_PIN_6;
+        led_toggle(&s_led_handle);
+    }
+}
