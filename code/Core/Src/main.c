@@ -21,7 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
-#include "stm32f4xx_hal.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -52,6 +52,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
 /* USER CODE BEGIN PV */
 // led handle
 static LED_HANDLE s_led_handle ={
@@ -123,6 +124,7 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   // Inject gpioa into led handle
   // Inject gpioa into button handle
@@ -152,21 +154,7 @@ int main(void)
   int lcd_print_icon_dma_pass = 0;
   while (1){
     /* USER CODE END WHILE */
-    if(lcd_fill_screen_dma_pass==0){
-      if(lcd_fill_screen_dma(&s_lcd_handle, LCD_COLOR_WHITE) == LCD_SUCCESS){
-        lcd_fill_screen_dma_pass = 1;
-      }
-    }
-    if(lcd_print_font_dma_pass==0){
-      if(lcd_print_font_dma(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) == LCD_SUCCESS){
-        lcd_print_font_dma_pass = 1;
-      }
-    }
-    if(lcd_print_icon_dma_pass==0){
-      if(lcd_print_icon_dma(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE) == LCD_SUCCESS){
-        lcd_print_icon_dma_pass = 1;
-      }
-    }
+
     /* USER CODE BEGIN 3 */
 
   }
