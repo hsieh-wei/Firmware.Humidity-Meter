@@ -43,37 +43,38 @@ NULL
 
 ### 2.3 Timers
 
+#### TIM2
+先不設置
+| 腳位   | 功能設定| 外接模組腳位
+| ---- |---- |----
+| PA0 | LCD 背光調亮度 |LCD BLK
+
+| 項1  | 項2 | 項3| 項4 | 設置
+| ---- | ---- | ---- | ---- | ---- 
+| Mode | Clock Source | X | X | Internal Clock
+| Mode | Channel 1 | X | X | PWM Generation CH1
+| Configuration  | Parameter Setting | Counter Setting | Prescaler | 84-1 
+| Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 100
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Mode | PWM Mode 1
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Pulse | 100
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Output Compare preload | Enable
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | Fast Mode | Disable
+| Configuration | Parameter Setting |  PWM Generation Channel 1 | CH Polarity | Disable
+
+
 #### TIM6
 
 | 腳位   | 功能設定| 外接模組腳位
 | ---- |---- |----
 | X | 系統啟動 timestamp | X
 
-> 在 APB1 clock上，，目前頻率設為84MHZ，參考reference manual RCC register
+> TIM6 在 APB1 clock上，，目前頻率設為84MHZ，參考reference manual RCC register 6.3.8
 
 | 項1  | 項2 | 項3| 項4 | 設置
 | ---- | ---- | ---- | ---- | ---- 
 | Mode  | X | X | X | Activated
 | Configuration  | Parameter Setting | Counter Setting | Prescaler | 8400-1
 | Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 10000-1 
-
-
-#### TIM1
-先不設置
-| 腳位   | 功能設定| 外接模組腳位
-| ---- |---- |----
-| PA8 | LCD 背光調亮度 |LCD BLK
-
-| 項1  | 項2 | 項3| 項4 | 設置
-| ---- | ---- | ---- | ---- | ---- 
-| Mode  | Parameter Setting |Clock Source | X |Internal Clock
-| Mode  | Parameter Setting | Channel 1 | X |PWM Generation CH1
-| Configuration  | Parameter Setting | Counter Setting | Prescaler | 84 
-| Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 100-1 
-| Configuration | Parameter Setting |  PWM Generation Channel 1 | Mode | PWM Mode 1
-| Configuration | Parameter Setting |  PWM Generation Channel 1 | Pulse | 50
-| Configuration | Parameter Setting |  PWM Generation Channel 1 | Output Compare preload | Enable
-| Configuration | Parameter Setting |  PWM Generation Channel 1 | Fast Mode | Disable
 
 
 ### 2.4 Connectivity
