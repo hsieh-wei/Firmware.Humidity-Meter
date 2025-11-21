@@ -214,6 +214,11 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 // Redefine Callback
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  button_gpio_exti(&s_button_handle, GPIO_Pin);
+}
+
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   pc_link_uart_tx_cplt(&g_pc_link_handle, huart);
