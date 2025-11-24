@@ -2,17 +2,34 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_spi.h"
+#include "stm32f4xx_hal_tim.h"
 #include <stdint.h>
 #include <string.h>
 
 // --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
-static int lcd_set_backlight(LCD_HANDLE *handle, uint32_t value){
+static int lcd_set_ccr(LCD_HANDLE *handle, uint32_t value){
     switch (handle->blk.channel){
         case TIM_CHANNEL_1:
+            handle->blk.htim->Instance->CCR1 = value;
+            return LCD_SUCCESS;
+
+        case TIM_CHANNEL_2:
+            handle->blk.htim->Instance->CCR2 = value;
+            return LCD_SUCCESS;
+        
+        case TIM_CHANNEL_3:
+            handle->blk.htim->Instance->CCR3 = value;
+            return LCD_SUCCESS;
+        
+        case TIM_CHANNEL_4:
+            handle->blk.htim->Instance->CCR4 = value;
+            return LCD_SUCCESS;
+
+        default:
+            return LCD_ERROR;
     }
-    if(handle->blk.channel)
 }
 
 static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
@@ -98,7 +115,7 @@ int lcd_init(LCD_HANDLE *handle)
     // Initial Control Pin
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);   // unreset status
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
-    // HAL_GPIO_WritePin(handle->blk.gpiox, handle->blk.gpio_pin, GPIO_PIN_SET);   // blk light status
+    if(lcd_set_ccr(handle, (uint32_t)100) != LCD_SUCCESS) return LCD_ERROR;;                       // blk light status 
 
     // Hardware Reset
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_RESET);
@@ -124,6 +141,18 @@ int lcd_init(LCD_HANDLE *handle)
 
     // DISPON, Turn into display On mode
     if (lcd_send_cmd(handle, 0x29) != LCD_SUCCESS) return LCD_ERROR;
+
+    return LCD_SUCCESS;
+}
+
+int lcd_set_backlight(LCD_HANDLE *handle, uint32_t value){
+    if (!handle || !handle->hspi)return LCD_ERROR;
+
+    // avoid unreasonable backlight
+    if((int)value > 100 || (int)value < 0)return LCD_ERROR;
+
+    // set ccr to change pwm pulse
+    lcd_set_ccr(handle, value);
 
     return LCD_SUCCESS;
 }

@@ -28,7 +28,7 @@ typedef struct {
 
 typedef struct {
     TIM_HandleTypeDef *htim;        // timer HAL handle (EX: &htim2) 
-    uint32_t channel;               // timer channel  (EX: TIM_CHANNEL_1) 
+    uint32_t channel;               // timer channel (EX: TIM_CHANNEL_1) 
     uint32_t backlight_value ;      // pwm arr value, it can also mean backlight lightness (0~100)
 } LCD_Backlight_HANDLE;
 
