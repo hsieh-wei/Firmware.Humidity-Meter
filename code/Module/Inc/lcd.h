@@ -3,6 +3,7 @@
 
 #include "lcd_glyphs_table.h"
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_tim.h"
 #include <stdint.h>
 
 // --------------------------------------------------------------------------
@@ -26,11 +27,17 @@ typedef struct {
 } LCD_Control_Pin_HANDLE;
 
 typedef struct {
+    TIM_HandleTypeDef *htim;        // timer HAL handle (EX: &htim2) 
+    uint32_t channel;               // timer channel  (EX: TIM_CHANNEL_1) 
+    uint32_t backlight_value ;      // pwm arr value, it can also mean backlight lightness (0~100)
+} LCD_Backlight_HANDLE;
+
+typedef struct {
     SPI_HandleTypeDef *hspi;                        // spi HAL handle (EX: &hspi1)
     LCD_Control_Pin_HANDLE rst;                     // reset
     LCD_Control_Pin_HANDLE dc;                      // 0 command, 1 parameter and data
     LCD_Control_Pin_HANDLE cs;                      // chip select
-    LCD_Control_Pin_HANDLE blk;                     // LCD backlit modify 
+    LCD_Backlight_HANDLE   blk;                     // LCD backlit modify 
     uint8_t tx_buf[LCD_WIDTH_X*LCD_HEIGHT_Y*2];     // LCD cmd para data ma buffer.Buffer size can cover the entire LCD screen size (2 bytes per pixel in RGB565 format)
     volatile int tx_busy;                           // avoid send two tx message in one time 
 } LCD_HANDLE;
@@ -50,6 +57,8 @@ typedef struct {
 #define LCD_COLOR_GRAY    0x8410
 
 int lcd_init(LCD_HANDLE *handle);
+
+int lcd_adjust_backlight(LCD_HANDLE *handle);
 
 // color can using below, Ex: LCD_COLOR_RED
 int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color); 

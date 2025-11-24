@@ -8,6 +8,13 @@
 // --------------------------------------------------------------------------
 // Internal Helpers 
 // --------------------------------------------------------------------------
+static int lcd_set_backlight(LCD_HANDLE *handle, uint32_t value){
+    switch (handle->blk.channel){
+        case TIM_CHANNEL_1:
+    }
+    if(handle->blk.channel)
+}
+
 static int lcd_send_cmd(LCD_HANDLE *handle, uint8_t cmd)
 {
     handle->tx_buf[0] = cmd;
@@ -91,7 +98,7 @@ int lcd_init(LCD_HANDLE *handle)
     // Initial Control Pin
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);   // unreset status
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
-    HAL_GPIO_WritePin(handle->blk.gpiox, handle->blk.gpio_pin, GPIO_PIN_SET);   // blk light status
+    // HAL_GPIO_WritePin(handle->blk.gpiox, handle->blk.gpio_pin, GPIO_PIN_SET);   // blk light status
 
     // Hardware Reset
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_RESET);

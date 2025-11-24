@@ -78,7 +78,7 @@ static LCD_HANDLE s_lcd_handle = {
     .rst  = {GPIOC, GPIO_PIN_0},
     .dc   = {GPIOC, GPIO_PIN_1},
     .cs   = {GPIOC, GPIO_PIN_2},
-    .blk  = {GPIOA, GPIO_PIN_8},
+    .blk  = {&htim2, TIM_CHANNEL_1, (uint32_t)100},
 };
 // system timestamp handle
 static SYS_TIMESTAMP_HANDLE s_sys_timestamp_handle = {
