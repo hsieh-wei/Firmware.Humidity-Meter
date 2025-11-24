@@ -119,9 +119,10 @@ int lcd_init(LCD_HANDLE *handle)
     if (!handle || !handle->hspi)return LCD_ERROR;
 
     // Initial Control Pin
-    HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);   // unreset status
-    HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);     // cs high, stop transmit
-    if(lcd_set_ccr(handle, (uint32_t)100) != LCD_SUCCESS) return LCD_ERROR;;                       // blk light status 
+    HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);       // unreset status
+    HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);         // cs high, stop transmit
+    if (HAL_TIM_PWM_Start(handle->blk.htim, handle->blk.channel) != HAL_OK) return LCD_ERROR;   // start pwm
+    if(lcd_set_ccr(handle, (uint32_t)100) != LCD_SUCCESS) return LCD_ERROR;;                            // blk light status 
 
     // Hardware Reset
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_RESET);
@@ -155,10 +156,10 @@ int lcd_adjust_backlight(LCD_HANDLE *handle, uint32_t value){
     if (!handle || !handle->blk.htim) return LCD_ERROR;
 
     // avoid unreasonable backlight
-    if((int)value > 100 || (int)value < 0)return LCD_ERROR;
+    if((int)value > 100U) return LCD_ERROR;
 
     // set ccr to change pwm pulse
-    lcd_set_ccr(handle, value);
+    if (lcd_set_ccr(handle, value) != LCD_SUCCESS) return LCD_ERROR;
 
     return LCD_SUCCESS;
 }
