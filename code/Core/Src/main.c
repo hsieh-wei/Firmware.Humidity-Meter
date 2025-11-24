@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
+#include "stm32f4xx_hal.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -78,7 +79,7 @@ static LCD_HANDLE s_lcd_handle = {
     .rst  = {GPIOC, GPIO_PIN_0},
     .dc   = {GPIOC, GPIO_PIN_1},
     .cs   = {GPIOC, GPIO_PIN_2},
-    .blk  = {&htim2, TIM_CHANNEL_1, (uint32_t)100},
+    .blk  = {&htim2, TIM_CHANNEL_1,},
 };
 // system timestamp handle
 static SYS_TIMESTAMP_HANDLE s_sys_timestamp_handle = {
@@ -145,23 +146,30 @@ int main(void)
   (void)lcd_init(&s_lcd_handle);
   // Inject htim6 into system timestamp handle
   (void)sys_timestamp_init(&s_sys_timestamp_handle);
-  uint8_t msg[4] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
+  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+  (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
   while (1){
-    msg[0] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>24; //MSB, 31~24 bit
-    msg[1] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>16; //MSB, 23~16 bit
-    msg[2] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>8;  //MSB, 15~8  bit
-    msg[3] = (uint8_t)(s_sys_timestamp_handle.timestamp)>>0;  //MSB, 7~0   bit
-    pc_link_tx_dma(&g_pc_link_handle,msg,(uint16_t)sizeof(msg));
-
-    HAL_Delay(1000);
+    for(int i=100; i>=0 ;i--){
+      (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
+      HAL_Delay(10);
+    }
+    for(int i=0; i<=100 ;i++){
+      (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
+      HAL_Delay(10);
+    }
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 }
