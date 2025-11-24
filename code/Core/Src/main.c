@@ -162,11 +162,11 @@ int main(void)
   while (1){
     for(int i=100; i>=0 ;i--){
       (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
-      HAL_Delay(10);
+      HAL_Delay(50);
     }
     for(int i=0; i<=100 ;i++){
       (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
-      HAL_Delay(10);
+      HAL_Delay(50);
     }
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
