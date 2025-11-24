@@ -29,7 +29,7 @@ typedef struct {
 typedef struct {
     TIM_HandleTypeDef *htim;        // timer HAL handle (EX: &htim2) 
     uint32_t channel;               // timer channel (EX: TIM_CHANNEL_1) 
-    uint32_t backlight_value ;      // pwm arr value, it can also mean backlight lightness (0~100)
+    uint32_t brightness_value ;     // pwm arr value, it can also mean backlight lightness (0~100)
 } LCD_Backlight_HANDLE;
 
 typedef struct {
@@ -58,7 +58,8 @@ typedef struct {
 
 int lcd_init(LCD_HANDLE *handle);
 
-int lcd_adjust_backlight(LCD_HANDLE *handle);
+// adjust backlight lightness
+int lcd_adjust_backlight(LCD_HANDLE *handle, uint32_t value);
 
 // color can using below, Ex: LCD_COLOR_RED
 int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color); 

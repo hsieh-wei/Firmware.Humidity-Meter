@@ -10,21 +10,27 @@
 // Internal Helpers 
 // --------------------------------------------------------------------------
 static int lcd_set_ccr(LCD_HANDLE *handle, uint32_t value){
+    if (!handle || !handle->blk.htim) return LCD_ERROR;
+
     switch (handle->blk.channel){
         case TIM_CHANNEL_1:
             handle->blk.htim->Instance->CCR1 = value;
+            handle->blk.brightness_value = value;
             return LCD_SUCCESS;
 
         case TIM_CHANNEL_2:
             handle->blk.htim->Instance->CCR2 = value;
+            handle->blk.brightness_value = value;
             return LCD_SUCCESS;
         
         case TIM_CHANNEL_3:
             handle->blk.htim->Instance->CCR3 = value;
+            handle->blk.brightness_value = value;
             return LCD_SUCCESS;
         
         case TIM_CHANNEL_4:
             handle->blk.htim->Instance->CCR4 = value;
+            handle->blk.brightness_value = value;
             return LCD_SUCCESS;
 
         default:
@@ -145,8 +151,8 @@ int lcd_init(LCD_HANDLE *handle)
     return LCD_SUCCESS;
 }
 
-int lcd_set_backlight(LCD_HANDLE *handle, uint32_t value){
-    if (!handle || !handle->hspi)return LCD_ERROR;
+int lcd_adjust_backlight(LCD_HANDLE *handle, uint32_t value){
+    if (!handle || !handle->blk.htim) return LCD_ERROR;
 
     // avoid unreasonable backlight
     if((int)value > 100 || (int)value < 0)return LCD_ERROR;
