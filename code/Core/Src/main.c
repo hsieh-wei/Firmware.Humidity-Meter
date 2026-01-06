@@ -1,20 +1,4 @@
 /* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -28,75 +12,33 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include "led.h"
-#include "button.h"
-#include "pc_link.h"
-#include "sht30.h"
-#include "lcd.h"
-#include "sys_timestamp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// led handle
-static LED_HANDLE s_led_handle ={
-  .gpiox = GPIOA,
-  .gpio_pin = GPIO_PIN_7,
-};
-// button handle
-static BUTTON_HANDLE s_button_handle ={
-  .gpiox = GPIOE,
-  .gpio_pin = GPIO_PIN_3,
-};
-// pc_link handle
-extern PC_LINK_HANDLE g_pc_link_handle;
-// sht30 handle
-static SHT30_HANDLE s_sht30_handle = {
-    .hi2c = &hi2c1,
-};
-// sht30 handle
-static LCD_HANDLE s_lcd_handle = {
-    .hspi = &hspi1,
-    .rst  = {GPIOC, GPIO_PIN_0},
-    .dc   = {GPIOC, GPIO_PIN_1},
-    .cs   = {GPIOC, GPIO_PIN_2},
-    .blk  = {&htim2, TIM_CHANNEL_1,},
-};
-// system timestamp handle
-static SYS_TIMESTAMP_HANDLE s_sys_timestamp_handle = {
-    .htim = &htim6,
-};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -107,7 +49,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -116,14 +57,12 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -135,18 +74,6 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  // Inject gpioa into led handle
-  // Inject gpioa into button handle
-  // Inject huart1 and buffer into pc_link handle,then start DMA ReceiveToIdle
-  g_pc_link_handle.huart = &huart1;
-  (void)pc_link_init(&g_pc_link_handle);
-  (void)pc_link_rx_dma(&g_pc_link_handle);
-  // Inject hi2c1 into sht30 handle
-  (void)sht30_init(&s_sht30_handle);
-  // Inject hspi1 into lcd handle
-  (void)lcd_init(&s_lcd_handle);
-  // Inject htim6 into system timestamp handle
-  (void)sys_timestamp_init(&s_sys_timestamp_handle);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -160,28 +87,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  (void)lcd_fill_screen(&s_lcd_handle, LCD_COLOR_WHITE);
-  (void)lcd_print_icon(&s_lcd_handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, '2', &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  (void)lcd_print_font(&s_lcd_handle, '7', &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-  while (1){
-    for(int i=100; i>=0 ;i--){
-      (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
-      HAL_Delay(50);
-    }
-    for(int i=0; i<=100 ;i++){
-      (void)lcd_adjust_backlight(&s_lcd_handle, (uint32_t)i);
-      HAL_Delay(50);
-    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
   /* USER CODE END 3 */
 }
 
@@ -231,41 +139,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-// Redefine Callback
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  button_gpio_exti(&s_button_handle, GPIO_Pin);
-}
-
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-  pc_link_uart_tx_cplt(&g_pc_link_handle, huart);
-}
-
-// HAL uart rx idle or full buffer
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-  pc_link_uartex_rx_event(&g_pc_link_handle, huart, Size);
-}
-
-void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-  sht30_i2c_master_tx_cplt(&s_sht30_handle, hi2c);
-}
-
-void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-  sht30_i2c_master_rx_cplt(&s_sht30_handle, hi2c);
-}
-
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
-  lcd_spi_tx_cplt(&s_lcd_handle, hspi);
-}
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  sys_timestamp_tim_period_elapsed(&s_sys_timestamp_handle, htim);
-}
 /* USER CODE END 4 */
 
 /**
@@ -279,14 +152,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM7)
   {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
   /* USER CODE END Callback 1 */
 }
 
@@ -297,11 +168,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
@@ -315,8 +181,6 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
