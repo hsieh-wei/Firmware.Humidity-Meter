@@ -75,17 +75,32 @@ int main(void) {
   MX_TIM6_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  // --------------------------------------------------------------------------
+  // Create TASK
+  // 1.Allocate memory from the Heap for Task's stack.
+  // 2.Create TCB
+  // 3.Add this Task to the Ready List
+  // --------------------------------------------------------------------------
   xTaskCreate(led_toggle_task,   // function pointer
               "LED_TOGGLE_Task", // task name using in debug
               128,               // stack size (words)
               NULL,              // parameter into task function
               1,                 // task priority
               NULL);             // handle using in suspend, delete, notify
+
+  // --------------------------------------------------------------------------
+  // 1. osKernelInitialize: Initializes the Ready, Blocked, Suspended lists of
+  // FreeRTOS.
+  // 2. MX_FREERTOS_Init:  Created CubeMX Tasks. If using native API ,this is
+  // only has a defaultTask.
+  // 3. osKernelStart: Sets up SysTick(OS Tick Timer), Creates Idle Tasks,
+  // Starts the first Task
+  // --------------------------------------------------------------------------
   /* USER CODE END 2 */
 
   /* Init scheduler */
-  osKernelInitialize(); /* Call init function for freertos objects(in
-                          cmsis_os2.c) */
+  osKernelInitialize(); /* Call init function for freertos objects (in
+                           cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
