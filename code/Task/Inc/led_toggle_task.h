@@ -1,24 +1,16 @@
+#ifndef __LED_TOGGLE_TASK__
+#define __LED_TOGGLE_TASK__
+
 #include "FreeRTOS.h"
 #include "led.h"
 #include "stm32f4xx_hal.h"
 #include "task.h"
-
-
 // --------------------------------------------------------------------------
-// static handle
+// TASK
 // --------------------------------------------------------------------------
-static LED_HANDLE s_led_handle = {.gpiox = GPIOA, .gpio_pin = GPIO_PIN_6};
-
-// --------------------------------------------------------------------------
-// Task
-// --------------------------------------------------------------------------
-void led_toggle_task(void *argument) {
-  while (1) {
-    led_toggle(&s_led_handle);
-    vTaskDelay(500);
-  }
-}
-
+void led_toggle_task(void *argument);
 // --------------------------------------------------------------------------
 // Redefine Callback
 // --------------------------------------------------------------------------
+
+#endif

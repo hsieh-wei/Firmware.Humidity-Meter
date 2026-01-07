@@ -52,12 +52,14 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd_glyphs_table.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/sys_timestamp.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_toggle_task.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Module/Inc
+    ${CMAKE_SOURCE_DIR}/Task/Inc
 )
 
 # Add project symbols (macros)
