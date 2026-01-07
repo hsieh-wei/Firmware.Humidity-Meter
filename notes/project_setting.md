@@ -126,6 +126,13 @@ NULL
 | Configuration |  DMA Setting | USART1_Tx |DMA1 Stream 7 | Memory To Periphrel 
 | Configuration | NVIC | X | X | 全部啟用 
 
+### 2.5 Middeleware and Software Packs
+
+#### FREERTOS
+
+| 項1  | 項2 | 項3 | 設置
+| ---- | ---- | ---- | ---- 
+| Mode | Intereface | X | CMSIS_V2
 ---
 
 ## Step 3：Clock Configuration 設定

@@ -154,12 +154,22 @@ https://www.youtube.com/watch?v=aWMni01XGeI
   ],
 
   // —— 只保留一個 formatter，避免再衝突（clangd 會用 clang-format）——
-  "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+  "editor.defaultFormatter": "STMicroelectronics.stm32cube-ide-clangd",// 需要到 vscode extention 中取得 STM32Cube clangd 取得 id
   "editor.formatOnSave": true,
   "files.associations": {
     "main.h": "c",
     "stm32f407xx.h": "c"
-  }
+  },
+  "cmake.cmakePath": "cube-cmake",
+  "cmake.configureArgs": [
+    "-DCMAKE_COMMAND=cube-cmake"
+  ],
+  "stm32cube-ide-clangd.path": "cube",
+  "stm32cube-ide-clangd.arguments": [
+    "starm-clangd",
+    "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/13.3.1+st.9/bin/arm-none-eabi-gcc.exe",
+    "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/13.3.1+st.9/bin/arm-none-eabi-g++.exe"
+  ]
 }
 
 ```
