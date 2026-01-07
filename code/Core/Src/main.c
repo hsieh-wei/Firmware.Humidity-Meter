@@ -75,12 +75,12 @@ int main(void) {
   MX_TIM6_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  xTaskCreate(led_toggle_task,
-              "LED_TOGGLE_Task", // task name
-              128,               // task name
-              NULL,              // task name
-              1,                 // task name
-              NULL);             // task name
+  xTaskCreate(led_toggle_task,   // function pointer
+              "LED_TOGGLE_Task", // task name using in debug
+              128,               // stack size (words)
+              NULL,              // parameter into task function
+              1,                 // task priority
+              NULL);             // handle using in suspend, delete, notify
   /* USER CODE END 2 */
 
   /* Init scheduler */
