@@ -7,17 +7,17 @@
 #include "task.h"
 
 // --------------------------------------------------------------------------
-// Argument Into Task
+// Parameter Into Task
 // --------------------------------------------------------------------------
 typedef struct {
   LED_HANDLE *target_led;
   uint32_t blinking_period;
-} LED_BLINKING_TASK_ARGUMENT;
+} LED_BLINKING_TASK_PARAMETER;
 
 // --------------------------------------------------------------------------
 // TASK
 // --------------------------------------------------------------------------
-void led_blinking_task(void *argument);
+void led_blinking_task(void *parameter);
 // --------------------------------------------------------------------------
 // Redefine Callback
 // --------------------------------------------------------------------------
