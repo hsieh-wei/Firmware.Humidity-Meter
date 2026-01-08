@@ -60,6 +60,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Module/Inc
     ${CMAKE_SOURCE_DIR}/Task/Inc
+    ${CMAKE_SOURCE_DIR}/BoardConfig/Inc
 )
 
 # Add project symbols (macros)
