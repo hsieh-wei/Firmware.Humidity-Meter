@@ -1,5 +1,4 @@
 #include "led_toggle_task.h"
-#include "led.h"
 
 // --------------------------------------------------------------------------
 // static handle

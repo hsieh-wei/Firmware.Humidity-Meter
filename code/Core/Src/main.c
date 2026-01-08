@@ -12,6 +12,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "board_config.h"
 #include "led_toggle_task.h"
 /* USER CODE END Includes */
 

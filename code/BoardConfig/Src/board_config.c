@@ -1,11 +1,8 @@
-#include "button.h"
-#include "lcd.h"
-#include "led.h"
-#include "pc_link.h"
-#include "sht30.h"
-#include "stm32f4xx_hal.h"
-#include "sys_timestamp.h"
+#include "board_config.h"
 
+// --------------------------------------------------------------------------
+// Config Board Usimg Peripheral
+// --------------------------------------------------------------------------
 // led handle
 LED_HANDLE g_led_handle_d2 = {
     .gpiox = GPIOA,
