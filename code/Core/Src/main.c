@@ -13,7 +13,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "board_config.h"
-#include "led_toggle_task.h"
+#include "led_blinking_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,7 +88,6 @@ int main(void) {
               NULL,              // parameter into task function
               1,                 // task priority
               NULL);             // handle using in suspend, delete, notify
-
   // --------------------------------------------------------------------------
   // 1. osKernelInitialize: Initializes the Ready, Blocked, Suspended lists of
   // FreeRTOS.

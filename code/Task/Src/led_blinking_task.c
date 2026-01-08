@@ -1,18 +1,25 @@
 #include "led_blinking_task.h"
 
-// --------------------------------------------------------------------------
-// static handle
-// --------------------------------------------------------------------------
-static LED_HANDLE s_led_handle_d2 = {.gpiox = GPIOA, .gpio_pin = GPIO_PIN_6};
-static LED_HANDLE s_led_handle_d3 = {.gpiox = GPIOA, .gpio_pin = GPIO_PIN_7};
-// --------------------------------------------------------------------------
 // Task
 // --------------------------------------------------------------------------
-void led_toggle_task(void *argument) {
-  led_off(&s_led_handle_d3);
+void led_blinking_task(void *argument) {
+  // avoid null pointer crash
+  if (argument == NULL) {
+    vTaskDelete(NULL); // kill itself
+  }
+  // change void pointer into argument pointer
+  LED_BLINKING_TASK_ARGUMENT *task_argument =
+      (LED_BLINKING_TASK_ARGUMENT *)argument;
+
+  // Get task argument
+  LED_HANDLE *led = task_argument->target_led;
+  uint32_t period = task_argument->blinking_period;
+
+  // infinite loop
+  led_off(led);
   while (1) {
-    led_toggle(&s_led_handle_d2);
-    vTaskDelay(500);
+    led_toggle(led);
+    vTaskDelay(pdMS_TO_TICKS(period));
   }
 }
 
