@@ -52,7 +52,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd_glyphs_table.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/sys_timestamp.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_toggle_task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/BoardConfig/Src/board_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_blinking_task.c
+
 )
 
 # Add include paths

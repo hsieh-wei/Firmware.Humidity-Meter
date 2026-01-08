@@ -82,12 +82,27 @@ int main(void) {
   // 2.Create TCB
   // 3.Add this Task to the Ready List
   // --------------------------------------------------------------------------
-  xTaskCreate(led_toggle_task,   // function pointer
-              "LED_TOGGLE_Task", // task name using in debug
-              128,               // stack size (words)
-              NULL,              // parameter into task function
-              1,                 // task priority
-              NULL);             // handle using in suspend, delete, notify
+  static LED_BLINKING_TASK_PARAMETER led_d2_task_parameter = {
+      .target_led = &g_led_handle_d2,
+      .blinking_period = 200,
+  };
+  xTaskCreate(led_blinking_task,      // function pointer
+              "LED_TOGGLE_Task",      // task name using in debug
+              128,                    // stack size (words)
+              &led_d2_task_parameter, // parameter into task function
+              1,                      // task priority
+              NULL);                  // handle using in suspend, delete, notify
+
+  static LED_BLINKING_TASK_PARAMETER led_d3_task_parameter = {
+      .target_led = &g_led_handle_d2,
+      .blinking_period = 500,
+  };
+  xTaskCreate(led_blinking_task,      // function pointer
+              "LED_TOGGLE_Task",      // task name using in debug
+              128,                    // stack size (words)
+              &led_d3_task_parameter, // parameter into task function
+              1,                      // task priority
+              NULL);                  // handle using in suspend, delete, notify
   // --------------------------------------------------------------------------
   // 1. osKernelInitialize: Initializes the Ready, Blocked, Suspended lists of
   // FreeRTOS.

@@ -8,7 +8,7 @@ void led_blinking_task(void *parameter) {
     vTaskDelete(NULL); // kill itself
   }
   // change void pointer into argument pointer
-  LED_BLINKING_TASK_ARGUMENT *task_parameter =
+  LED_BLINKING_TASK_PARAMETER *task_parameter =
       (LED_BLINKING_TASK_PARAMETER *)parameter;
 
   // Get task parameter
