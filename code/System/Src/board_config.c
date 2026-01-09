@@ -1,3 +1,6 @@
+// --------------------------------------------------------------------------
+// This file define global infrastructure which is related with hardware driver
+// --------------------------------------------------------------------------
 #include "board_config.h"
 #include "dma.h"
 #include "gpio.h"

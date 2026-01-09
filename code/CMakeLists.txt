@@ -52,7 +52,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/lcd_glyphs_table.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Src/sys_timestamp.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/BoardConfig/Src/board_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/System/Src/board_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/System/Src/system_state.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_blinking_task.c
 
 )
@@ -62,7 +63,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Module/Inc
     ${CMAKE_SOURCE_DIR}/Task/Inc
-    ${CMAKE_SOURCE_DIR}/BoardConfig/Inc
+    ${CMAKE_SOURCE_DIR}/System/Inc
 )
 
 # Add project symbols (macros)

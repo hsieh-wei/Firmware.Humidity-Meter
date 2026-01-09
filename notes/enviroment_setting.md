@@ -177,6 +177,6 @@ https://www.youtube.com/watch?v=aWMni01XGeI
 
 # 六、編譯與下載流程
 
-1. 在 VSCode：直接按偵錯 F5。
-2. 接上目標板的 ST-LINK（SWDIO/SWCLK/RST/GND），上電。
+1. 接上目標板的 ST-LINK（SWDIO/SWCLK/RST/GND），上電。
+2. 在 VSCode：直接按偵錯 F5。
 3. 若要單步/下中斷點/看暫存器，使用 cortex-debug 介面操作。
