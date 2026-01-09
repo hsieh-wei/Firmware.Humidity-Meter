@@ -1,4 +1,10 @@
 #include "board_config.h"
+#include "dma.h"
+#include "gpio.h"
+#include "i2c.h"
+#include "spi.h"
+#include "tim.h"
+#include "usart.h"
 
 // --------------------------------------------------------------------------
 // Config Board Usimg Peripheral
@@ -6,7 +12,7 @@
 // led handle
 LED_HANDLE g_led_handle_d2 = {
     .gpiox = GPIOA,
-    .gpio_pin = GPIO_PIN_7,
+    .gpio_pin = GPIO_PIN_6,
 };
 LED_HANDLE g_led_handle_d3 = {
     .gpiox = GPIOA,

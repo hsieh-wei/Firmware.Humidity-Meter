@@ -94,7 +94,7 @@ int main(void) {
               NULL);                  // handle using in suspend, delete, notify
 
   static LED_BLINKING_TASK_PARAMETER led_d3_task_parameter = {
-      .target_led = &g_led_handle_d2,
+      .target_led = &g_led_handle_d3,
       .blinking_period = 500,
   };
   xTaskCreate(led_blinking_task,      // function pointer
