@@ -36,7 +36,8 @@
 | 建構工具 | CMake |
 | 燒錄   | ST-Link |
 | 除錯   | VSCode Debug Tool |
-| 環境   | Windows 11 |
+|嵌入式作業系統| FreeRTOS |
+| 程式碼開發作業系統   | Windows 11 |
 
 ## 三、專案實作與應用
 
@@ -47,7 +48,7 @@
 | SPI         | 顯示感測資料      | ST7735 螢幕即時顯示溫濕度 |
 | UART        | 與 PC 通訊        | 參數設定、回報資料頻率與閾值，支援中斷與 DMA 傳輸 |
 | Timer / PWM | Timestamp 、 PWM | 使用 Timer 計算開機後時間、透過PWM 控制 ST7735 螢幕亮度 |
-| RTOS Kerne  | 多工管理與通訊 |使用 FreeRTOS 進行任務拆分，實作 Queue (資料傳遞)、Mutex (I2C/SPI 資源鎖定) 與 Semaphore (同步)|
+| RTOS Kernel  | 多工管理與通訊 |使用 FreeRTOS 進行任務拆分，實作 Queue (資料傳遞)、Mutex (I2C/SPI 資源鎖定) 與 Semaphore (同步)|
 
 ---
 
