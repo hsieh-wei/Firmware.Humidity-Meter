@@ -27,7 +27,7 @@ void system_state_init(void) {
   g_system_state_handle.humidity = 0;
   g_system_state_handle.temperature_alarm = 0;
   g_system_state_handle.humidity_alarm = 0;
-  g_system_state_handle.sht30_measurement_period = 100;
+  g_system_state_handle.sht30_measure_period = 100;
   g_system_state_handle.lcd_brightness = 0;
   g_system_state_handle.lcd_display_mode = 0;
 }

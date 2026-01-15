@@ -17,9 +17,9 @@ typedef struct {
   int humidity_alarm;    // 0 is not trigger, 1 is trigger
 
   // update by rx from pc task
-  uint32_t sht30_measurement_period; // period in ms
-  uint8_t lcd_brightness;            // 0~100, larger number means brighter
-  int lcd_display_mode; // 0 display temperature, 1 display humidity
+  uint32_t sht30_measure_period; // period in ms
+  uint8_t lcd_brightness;        // 0~100, larger number means brighter
+  int lcd_display_mode;          // 0 display temperature, 1 display humidity
 } SYSTEM_STATE_HANDLE;
 
 // --------------------------------------------------------------------------
