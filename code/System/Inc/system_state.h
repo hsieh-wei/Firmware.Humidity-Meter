@@ -11,6 +11,9 @@ typedef struct {
   int humidity_alarm;
   int temperature_alarm;
 
-  // update by sensor task
+  // update by rx from pc task
+  int sht30_measurement_period;
+  int lcd_brightness;
+  int lcd_display_mode;
 } SYSTEM_STATE;
 #endif // __SYSTEM_STATE_H__
