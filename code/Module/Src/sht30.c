@@ -47,7 +47,7 @@ int sht30_init(SHT30_HANDLE *handle) {
   handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(2); // minimal waiting time after soft reset
 
-  // Stop Periodic
+  // Stop Periodic Measurement Mode
   handle->tx_buf[0] = 0x30;
   handle->tx_buf[1] = 0x93;
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
@@ -65,7 +65,7 @@ int sht30_init(SHT30_HANDLE *handle) {
   handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(1); // minimal waiting time before another command
 
-  // Clear Status Register
+  // Clear SHT30 Status Register
   handle->tx_buf[0] = 0x30;
   handle->tx_buf[1] = 0x41;
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,

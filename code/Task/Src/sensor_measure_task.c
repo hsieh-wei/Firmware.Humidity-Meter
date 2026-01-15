@@ -1,4 +1,5 @@
 #include "sensor_measure_task.h"
+#include "sht30.h"
 
 // Task
 // --------------------------------------------------------------------------
@@ -12,10 +13,11 @@ void led_blinking_task(void *parameter) {
       (SENSOR_MEASURE_TASK_PARAMETER *)parameter;
 
   // Get task parameter
+  SHT30_HANDLE *sht30 = task_parameter->target_sht30;
   uint32_t period = task_parameter->measure_period;
 
+  sht30_init(sht30);
   // infinite loop
-
   while (1) {
 
     vTaskDelay(pdMS_TO_TICKS(period));

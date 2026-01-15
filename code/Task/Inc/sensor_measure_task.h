@@ -10,6 +10,7 @@
 // Parameter Into Task
 // --------------------------------------------------------------------------
 typedef struct {
+  SHT30_HANDLE *target_sht30;
   uint32_t measure_period;
 } SENSOR_MEASURE_TASK_PARAMETER;
 
