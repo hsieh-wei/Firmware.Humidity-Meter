@@ -19,7 +19,19 @@ void led_blinking_task(void *parameter) {
   sht30_init(sht30);
   // infinite loop
   while (1) {
+    if (sht30->status == SHT30_IDLE) {
+      sht30_measure_data_dma(sht30);
+    } else if (sht30->status == SHT30_TX_TRANSMITTED) {
 
+    } else if (sht30->status == SHT30_TX_DONE) {
+      sht30_get_data_dma(sht30);
+    } else if (sht30->status == SHT30_RX_REQUESTED) {
+
+    } else if (sht30->status == SHT30_RX_DONE) {
+      sht30_compute_data(sht30);
+    } else if (sht30->status == SHT30_COMPUTE_DONE) {
+      sht30_measure_data_dma(sht30);
+    }
     vTaskDelay(pdMS_TO_TICKS(period));
   }
 }
