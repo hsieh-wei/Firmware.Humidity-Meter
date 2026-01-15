@@ -9,7 +9,7 @@
 typedef enum {
   SYS_TIMESTAMP_SUCCESS = 0,
   SYS_TIMESTAMP_ERROR = -1,
-} SYS_TIMESTAMP_ERR_t;
+} SYS_TIMESTAMP_ERR;
 
 // --------------------------------------------------------------------------
 // Handle

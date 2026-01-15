@@ -10,7 +10,7 @@
 typedef enum {
   BUTTON_SUCCESS = 0,
   BUTTON_ERROR = -1,
-} BUTTON_ERR_t;
+} BUTTON_ERR;
 
 // --------------------------------------------------------------------------
 // Handle

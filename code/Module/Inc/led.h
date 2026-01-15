@@ -5,19 +5,19 @@
 #include <stdint.h>
 
 // --------------------------------------------------------------------------
-// Error Codes 
+// Error Codes
 // --------------------------------------------------------------------------
 typedef enum {
-    LED_SUCCESS  = 0,
-    LED_ERROR    = -1,
-} LED_ERR_t;
+  LED_SUCCESS = 0,
+  LED_ERROR = -1,
+} LED_ERR;
 
 // --------------------------------------------------------------------------
 // Handle
 // --------------------------------------------------------------------------
 typedef struct {
-    GPIO_TypeDef *gpiox;  // gpio HAL handle (EX: &GPIOA) 
-    uint16_t gpio_pin;    // gpio HAL pin (EX: GPIO_PIN_6) 
+  GPIO_TypeDef *gpiox; // gpio HAL handle (EX: &GPIOA)
+  uint16_t gpio_pin;   // gpio HAL pin (EX: GPIO_PIN_6)
 } LED_HANDLE;
 
 // --------------------------------------------------------------------------
