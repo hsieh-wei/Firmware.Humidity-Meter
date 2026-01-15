@@ -164,15 +164,15 @@ Project_Root/
 * **主要職責**：
     1. 定時讀取 SHT30 溫濕度數值。
     2. 根據閾值判斷是否觸發警示 (控制 LED D2/D3)。
-    3. 取得 Mutex 並更新 `SystemState`。
+    3. 取得 Mutex 並更新系統狀態。
 
-#### **2. PC RX Task**
+#### **2. RX From PC Task Task**
 * **優先級**：Above Normal
 * **觸發機制**：事件驅動 (Quene)
 * **主要職責**：
     1. 進入 Block 狀態等待 UART ISR 放入 Queue 的原始資料。
-    2. 解析指令封包 (Command Parsing)。
-    3. 修改系統設定 (如取樣頻率 `measure_period_ms`)。
+    2. 解析指令封包(包含測量頻率、螢幕亮度、顯示模式)。
+    3. 修改系統設定。
 
 #### **3. Display Task**
 
@@ -180,15 +180,13 @@ Project_Root/
 * **觸發機制**：事件驅動 (Semaphore) 或 定時刷新
 * **主要職責**：
     1. 處理按鈕中斷事件 (K0 切換顯示溫濕度, K1 調整亮度)。
-    2. 讀取 `SystemState` 數值。
+    2. 讀取系統狀態數值。
     3. 更新 SPI LCD 畫面內容。
 
-
-
-#### **4. PC Report Task**
+#### **4. TX to PC Task**
 * **優先級**：Low
 * **觸發機制**：週期性喚醒
 * **主要職責**：
-    1. 定期取得 `SystemState` 複本。
+    1. 定期取得系統狀態複本。
     2. 將狀態打包成 Log 字串。
     3. 透過 UART TX 傳送至電腦端進行監控。
