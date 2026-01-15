@@ -14,6 +14,8 @@
 /* USER CODE BEGIN Includes */
 #include "board_config.h"
 #include "led_blinking_task.h"
+#include "system_state.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,11 +79,14 @@ int main(void) {
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   // --------------------------------------------------------------------------
-  // Create TASK
-  // 1.Allocate memory from the Heap for Task's stack.
-  // 2.Create TCB
-  // 3.Add this Task to the Ready List
+  // Initial System State and Create TASK
+  // 1.1 Initial System State
+  // 2.1 Allocate memory from the Heap for Task's stack.
+  // 2.2 Create TCB
+  // 2.3 Add this Task to the Ready List
   // --------------------------------------------------------------------------
+  system_state_init();
+
   static LED_BLINKING_TASK_PARAMETER led_d2_task_parameter = {
       .target_led = &g_led_handle_d2,
       .blinking_period = 200,
