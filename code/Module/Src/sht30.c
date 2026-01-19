@@ -100,9 +100,6 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
     return SHT30_ERROR;
   }
 
-  // minimal waiting time after high repeatability measurement
-  HAL_Delay(15);
-
   // get measurement data
   if (HAL_I2C_Master_Receive_DMA(handle->hi2c, handle->i2c_address,
                                  handle->rx_buf, 6) != HAL_OK)

@@ -1,5 +1,5 @@
 #include "led_blinking_task.h"
-
+#include "board_config.h"
 // Task
 // --------------------------------------------------------------------------
 void led_blinking_task(void *parameter) {

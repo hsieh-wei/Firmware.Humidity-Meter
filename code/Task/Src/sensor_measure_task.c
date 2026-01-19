@@ -1,9 +1,10 @@
 #include "sensor_measure_task.h"
+#include "board_config.h"
 #include "sht30.h"
 
 // Task
 // --------------------------------------------------------------------------
-void led_blinking_task(void *parameter) {
+void sensor_measure_task(void *parameter) {
   // avoid null pointer crash
   if (parameter == NULL) {
     vTaskDelete(NULL); // kill itself
@@ -19,23 +20,24 @@ void led_blinking_task(void *parameter) {
   sht30_init(sht30);
   // infinite loop
   while (1) {
-    if (sht30->status == SHT30_IDLE) {
+    if (sht30->status == SHT30_IDLE || sht30->status == SHT30_COMPUTE_DONE) {
       sht30_measure_data_dma(sht30);
-    } else if (sht30->status == SHT30_TX_TRANSMITTED) {
-
     } else if (sht30->status == SHT30_TX_DONE) {
+      vTaskDelay(15); // waiting time after high repeatability measurement
       sht30_get_data_dma(sht30);
-    } else if (sht30->status == SHT30_RX_REQUESTED) {
-
     } else if (sht30->status == SHT30_RX_DONE) {
       sht30_compute_data(sht30);
-    } else if (sht30->status == SHT30_COMPUTE_DONE) {
-      sht30_measure_data_dma(sht30);
+      vTaskDelay(pdMS_TO_TICKS(period));
     }
-    vTaskDelay(pdMS_TO_TICKS(period));
   }
 }
 
 // --------------------------------------------------------------------------
 // Redefine Callback
 // --------------------------------------------------------------------------
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
+  sht30_i2c_master_tx_cplt(&g_sht30_handle, hi2c);
+}
+void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
+  sht30_i2c_master_tx_cplt(&g_sht30_handle, hi2c);
+}
