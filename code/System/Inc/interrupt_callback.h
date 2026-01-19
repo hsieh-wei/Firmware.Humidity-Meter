@@ -1,3 +1,6 @@
+#ifndef __INTERRUPT_CALLBACK_H__
+#define __INTERRUPT_CALLBACK_H__
+
 // --------------------------------------------------------------------------
 // Callback Redefine
 // --------------------------------------------------------------------------
@@ -12,3 +15,5 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+
+#endif //__INTERRUPT_CALLBACK_H__
