@@ -1,7 +1,9 @@
 #ifndef SHT30_H
 #define SHT30_H
 
+#include "FreeRTOS.h"
 #include "stm32f4xx_hal.h"
+#include "task.h"
 #include <stdint.h>
 
 // --------------------------------------------------------------------------
@@ -10,6 +12,7 @@
 typedef enum {
   SHT30_SUCCESS = 0,
   SHT30_ERROR = -1,
+  SHT30_TIMEOUT = -2,
 } SHT30_ERR;
 
 // --------------------------------------------------------------------------
@@ -44,7 +47,6 @@ int sht30_init(SHT30_HANDLE *handle);
 int sht30_measure_data_dma(SHT30_HANDLE *handle);
 int sht30_get_data_dma(SHT30_HANDLE *handle);
 int sht30_compute_data(SHT30_HANDLE *handle);
-int sht30_tx_rx_complete(SHT30_HANDLE *handle);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define
 // --------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 #include "sht30.h"
 #include "pc_link.h"
 #include "stm32f4xx_hal_i2c.h"
+#include "system_state.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -24,12 +25,28 @@ static uint8_t sht30_crc8(const uint8_t *data) {
   return crc; // XorOut=0x00
 }
 
+int sht30_wait_tx_rx_complete(SHT30_HANDLE *handle) {
+  if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(10)) ==
+      pdTRUE) {
+    return SHT30_SUCCESS;
+  }
+  return SHT30_TIMEOUT;
+}
+
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
 int sht30_init(SHT30_HANDLE *handle) {
   if (!handle || !handle->hi2c) {
     return SHT30_ERROR;
+  }
+
+  // iniial tx rx complete semaphore
+  if (handle->tx_rx_complete_semaphore == NULL) {
+    handle->tx_rx_complete_semaphore = xSemaphoreCreateBinary();
+    if (handle->tx_rx_complete_semaphore == NULL) {
+      return SHT30_ERROR;
+    }
   }
 
   // minimal waiting time after power up
@@ -101,6 +118,12 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
     return SHT30_ERROR;
   }
 
+  // minimal waiting time after high repeatability measurement
+  // **** using in bare metal ****
+  // HAL_Delay(15);
+  // ****************************
+  vTaskDelay(pdMS_TO_TICKS(15));
+
   // get measurement data
   if (HAL_I2C_Master_Receive_DMA(handle->hi2c, handle->i2c_address,
                                  handle->rx_buf, 6) != HAL_OK)
@@ -109,7 +132,6 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
   // **** using in bare metal ****
   // handle->status = SHT30_RX_REQUESTED;
   // ****************************
-
   return SHT30_SUCCESS;
 }
 
