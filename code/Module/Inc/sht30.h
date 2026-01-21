@@ -15,14 +15,17 @@ typedef enum {
 // --------------------------------------------------------------------------
 // Handle
 // --------------------------------------------------------------------------
-typedef enum {
-  SHT30_IDLE = 0,
-  SHT30_TX_TRANSMITTED = 1,
-  SHT30_TX_DONE = 2,
-  SHT30_RX_REQUESTED = 3,
-  SHT30_RX_DONE = 4,
-  SHT30_COMPUTE_DONE = 5,
-} SHT30_Measurement_State;
+
+// **** using in bare metal ****
+// typedef enum {
+//   SHT30_IDLE = 0,
+//   SHT30_TX_TRANSMITTED = 1,
+//   SHT30_TX_DONE = 2,
+//   SHT30_RX_REQUESTED = 3,
+//   SHT30_RX_DONE = 4,
+//   SHT30_COMPUTE_DONE = 5,
+// } SHT30_Measurement_State;
+// ****************************
 
 typedef struct {
   I2C_HandleTypeDef *hi2c; // I2C HAL handle (EX: &hi2c1)
@@ -31,7 +34,7 @@ typedef struct {
   uint8_t i2c_address;
   float humidity;
   float temperature;
-  volatile SHT30_Measurement_State status;
+  SemaphoreHandle_t tx_rx_complete_semaphore; // notice when tx or rx complete
 } SHT30_HANDLE;
 
 // --------------------------------------------------------------------------
@@ -41,7 +44,7 @@ int sht30_init(SHT30_HANDLE *handle);
 int sht30_measure_data_dma(SHT30_HANDLE *handle);
 int sht30_get_data_dma(SHT30_HANDLE *handle);
 int sht30_compute_data(SHT30_HANDLE *handle);
-
+int sht30_tx_rx_complete(SHT30_HANDLE *handle);
 // --------------------------------------------------------------------------
 // HAL Weak Callback re define
 // --------------------------------------------------------------------------

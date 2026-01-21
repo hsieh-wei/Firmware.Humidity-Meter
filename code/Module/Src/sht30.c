@@ -44,7 +44,6 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(2); // minimal waiting time after soft reset
 
   // Stop Periodic Measurement Mode
@@ -53,7 +52,6 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(1); // minimal waiting time before another command
 
   // Disable Heater
@@ -62,7 +60,6 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(1); // minimal waiting time before another command
 
   // Clear SHT30 Status Register
@@ -71,10 +68,11 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_TX_TRANSMITTED;
   HAL_Delay(1); // minimal waiting time before another command
 
-  handle->status = SHT30_IDLE;
+  // **** using in bare metal ****
+  // handle->status = SHT30_IDLE;
+  // ****************************
 
   return SHT30_SUCCESS;
 }
@@ -90,7 +88,10 @@ int sht30_measure_data_dma(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit_DMA(handle->hi2c, handle->i2c_address,
                                   handle->tx_buf, 2) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_TX_TRANSMITTED;
+
+  // **** using in bare metal ****
+  // handle->status = SHT30_TX_TRANSMITTED;
+  // ****************************
 
   return SHT30_SUCCESS;
 }
@@ -104,7 +105,10 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Receive_DMA(handle->hi2c, handle->i2c_address,
                                  handle->rx_buf, 6) != HAL_OK)
     return SHT30_ERROR;
-  handle->status = SHT30_RX_REQUESTED;
+
+  // **** using in bare metal ****
+  // handle->status = SHT30_RX_REQUESTED;
+  // ****************************
 
   return SHT30_SUCCESS;
 }
@@ -131,7 +135,9 @@ int sht30_compute_data(SHT30_HANDLE *handle) {
       (uint16_t)((handle->rx_buf[3] << 8) | handle->rx_buf[4]);
   handle->humidity = 100 * (float)raw_humidity / 65535.0f; // 65535 = 2^16-1
 
-  handle->status = SHT30_COMPUTE_DONE;
+  // **** using in bare metal ****
+  // handle->status = SHT30_COMPUTE_DONE;
+  // ****************************
 
   return SHT30_SUCCESS;
 }
@@ -141,12 +147,16 @@ int sht30_compute_data(SHT30_HANDLE *handle) {
 // --------------------------------------------------------------------------
 void sht30_i2c_master_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c) {
   if (handle && handle->hi2c == hi2c) {
-    handle->status = SHT30_TX_DONE;
+    // **** using in bare metal ****
+    // handle->status = SHT30_TX_DONE;
+    // ****************************
   }
 }
 
 void sht30_i2c_master_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c) {
   if (handle && handle->hi2c == hi2c) {
-    handle->status = SHT30_RX_DONE;
+    // **** using in bare metal ****
+    // handle->status = SHT30_RX_DONE;
+    // ****************************
   }
 }
