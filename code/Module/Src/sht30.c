@@ -109,6 +109,7 @@ int sht30_measure_data_dma(SHT30_HANDLE *handle) {
   // **** using in bare metal ****
   // handle->status = SHT30_TX_TRANSMITTED;
   // ****************************
+  sht30_wait_tx_rx_complete(handle);
 
   return SHT30_SUCCESS;
 }
@@ -132,6 +133,8 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
   // **** using in bare metal ****
   // handle->status = SHT30_RX_REQUESTED;
   // ****************************
+  sht30_wait_tx_rx_complete(handle);
+
   return SHT30_SUCCESS;
 }
 
@@ -172,6 +175,8 @@ void sht30_i2c_master_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c) {
     // **** using in bare metal ****
     // handle->status = SHT30_TX_DONE;
     // ****************************
+    xSemaphoreGiveFromISR(handle->tx_rx_complete_semaphore,
+                          pxHigherPriorityTaskWoken)
   }
 }
 
