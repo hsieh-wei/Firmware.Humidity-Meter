@@ -17,8 +17,6 @@ void sensor_measure_task(void *parameter) {
     // Get task parameter
     SHT30_HANDLE *sht30 = task_parameter->target_sht30;
     uint32_t period = task_parameter->measure_period;
-    uint32_t temperature_threshold = task_parameter->temperature_alarm_threshold;
-    uint32_t humidity_threshold = task_parameter->humidity_alarm_threshold;
 
     sht30_init(sht30);
     // infinite loop
@@ -28,12 +26,19 @@ void sensor_measure_task(void *parameter) {
                 sht30_compute_data(sht30);
                 g_system_state_handle.sht30_temperature = sht30->temperature;
                 g_system_state_handle.sht30_humidity = sht30->humidity;
-                //
+
+                // setting alarm led
                 if (sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||
                     sht30->temperature < g_system_state_handle.sht30_temperature_lower_threshold) {
+                    led_on(&g_led_handle_d2);
+                } else {
+                    led_off(&g_led_handle_d2);
                 }
                 if (sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||
                     sht30->temperature < g_system_state_handle.sht30_temperature_lower_threshold) {
+                    led_on(&g_led_handle_d3);
+                } else {
+                    led_off(&g_led_handle_d3);
                 }
             }
         } else {
