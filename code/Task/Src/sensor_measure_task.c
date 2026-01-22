@@ -26,7 +26,7 @@ void sensor_measure_task(void *parameter) {
         if (sht30_measure_data_dma(sht30) == SHT30_SUCCESS) {
             if (sht30_get_data_dma(sht30) == SHT30_SUCCESS) {
                 sht30_compute_data(sht30);
-                g_system_state_handle.sht30_temperature = shFt30->temperature;
+                g_system_state_handle.sht30_temperature = sht30->temperature;
                 g_system_state_handle.sht30_humidity = sht30->humidity;
                 //
                 if (sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||

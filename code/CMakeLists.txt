@@ -56,7 +56,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/System/Src/system_state.c
     ${CMAKE_CURRENT_SOURCE_DIR}/System/Src/interrupt_callback.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_blinking_task.c
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/sensor_measure_task.c
 )
 
 # Add include paths

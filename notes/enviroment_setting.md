@@ -130,55 +130,24 @@ https://www.youtube.com/watch?v=aWMni01XGeI
 }
 ```
 ## 3.  設定（`settings.json`）
-* 先安裝clangd 並且停用 stm32cube-ide-clangd
+* 先安裝microsoft c/c++ 並且停用 stm32cube-ide-clangd
 ```json
 {
-  // —— 關閉 Microsoft C/C++ 的語言功能（保留 Debug 也不影響）——
-  "C_Cpp.intelliSenseEngine": "Disabled",
-  "C_Cpp.errorSquiggles": "Disabled",
-  "C_Cpp.autocomplete": "Disabled",
-  "C_Cpp.formatting": "Disabled",
-  "C_Cpp.codeAnalysis.runAutomatically": false,
-
-  // 指定標準 clangd 為預設格式化工具
-  "[c]": {
-    "editor.defaultFormatter": "ms-vscode.cpptools"
-  },
-  "[cpp]": {
-    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
-  },
-
-  // 啟用/調整 Clangd
-  "clangd.arguments": [
-    "--background-index",
-    "--clang-tidy",
-    "--completion-style=detailed",
-    "--header-insertion=never",
-    "--cross-file-rename",
-    "--all-scopes-completion",
-    // 讓 clangd 信任交叉編譯器，找得到對應標頭
-    "--query-driver=C:/Program Files (x86)/Arm GNU Toolchain/*/bin/arm-none-eabi-*;C:/SysGCC/arm-none-eabi/bin/arm-none-eabi-*;/usr/bin/arm-none-eabi-*;/opt/*/bin/arm-none-eabi-*",
-    // 指向 compile_commands.json 的位置（依你的 build 目錄調整）
-    "--compile-commands-dir=${workspaceFolder}/build",
-    "--style=file"
-  ],
-
-  // —— 只保留一個 formatter，避免再衝突（clangd 會用 clang-format）——
-  "editor.defaultFormatter": "STMicroelectronics.stm32cube-ide-clangd",
+  // 指定使用 CMake 產生的 compile_commands.json
+  // 這樣 IntelliSense 才知道你的 include路徑在哪
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+  // 使用微軟引擎
+  "C_Cpp.intelliSenseEngine": "Default",
+  "C_Cpp.errorSquiggles": "Enabled",
+  // 排版設定
+  // 告訴它用 clangFormat 引擎，它會自動去讀你專案根目錄的 .clang-format
+  "C_Cpp.formatting": "clangFormat",
   "editor.formatOnSave": true,
-  "files.associations": {
-    "main.h": "c",
-    "stm32f407xx.h": "c"
-  },
+  // CMake 設定 (保持原樣，確保有輸出 compile_commands)
   "cmake.cmakePath": "cube-cmake",
   "cmake.configureArgs": [
-    "-DCMAKE_COMMAND=cube-cmake"
-  ],
-  "stm32cube-ide-clangd.path": "cube",
-  "stm32cube-ide-clangd.arguments": [
-    "starm-clangd",
-    "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/13.3.1+st.9/bin/arm-none-eabi-gcc.exe",
-    "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/13.3.1+st.9/bin/arm-none-eabi-g++.exe"
+    "-DCMAKE_COMMAND=cube-cmake",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
   ]
 }
 

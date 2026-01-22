@@ -8,7 +8,7 @@ TabWidth: 4                # Tab 鍵寬度
 UseTab: Never              # 永遠使用空格代替 Tab (避免不同編輯器跑版)
 
 # --- 換行設定 ---
-ColumnLimit: 120           # 你的需求：單行限制 120 字元
+ColumnLimit: 150           # 你的需求：單行限制 120 字元
 BreakBeforeBraces: Attach  # 左大括號 { 不換行 (if (x) {)
 
 # --- 指針與對齊 ---
