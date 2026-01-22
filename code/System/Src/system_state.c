@@ -23,7 +23,6 @@ void system_state_init(void) {
     }
 
     // initial system state handle
-    xSemaphoreGet(&g_system_state_mutex, 100);
     g_system_state_handle.sht30_temperature = 0;
     g_system_state_handle.sht30_humidity = 0;
     g_system_state_handle.sht30_temperature_upper_threshold = 0;
