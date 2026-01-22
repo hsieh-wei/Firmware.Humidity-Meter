@@ -20,14 +20,7 @@ void sensor_measure_task(void *parameter) {
   sht30_init(sht30);
   // infinite loop
   while (1) {
-    if (sht30->status == SHT30_IDLE || sht30->status == SHT30_COMPUTE_DONE) {
-      sht30_measure_data_dma(sht30);
-    } else if (sht30->status == SHT30_TX_DONE) {
-      vTaskDelay(15); // waiting time after high repeatability measurement
-      sht30_get_data_dma(sht30);
-    } else if (sht30->status == SHT30_RX_DONE) {
-      sht30_compute_data(sht30);
-      vTaskDelay(pdMS_TO_TICKS(period));
-    }
+    sht30_measure_data_dma(sht30);
+    vTaskDelay(pdMS_TO_TICKS(period));
   }
 }

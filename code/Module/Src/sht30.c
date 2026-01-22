@@ -1,5 +1,6 @@
 #include "sht30.h"
 #include "pc_link.h"
+#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_i2c.h"
 #include "system_state.h"
 #include <stdint.h>
@@ -53,7 +54,8 @@ int sht30_init(SHT30_HANDLE *handle) {
   }
 
   // minimal waiting time after power up
-  HAL_Delay(1);
+  // HAL_Delay(1);
+  vTaskDelay(pdMS_TO_TICKS(1));
 
   // initial variable
   handle->i2c_address = SHT30_ADDRESS;
@@ -64,7 +66,9 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  HAL_Delay(2); // minimal waiting time after soft reset
+  // minimal waiting time after soft reset
+  // HAL_Delay(2);
+  vTaskDelay(pdMS_TO_TICKS(2));
 
   // Stop Periodic Measurement Mode
   handle->tx_buf[0] = 0x30;
@@ -72,7 +76,9 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  HAL_Delay(1); // minimal waiting time before another command
+  // minimal waiting time before another command
+  // HAL_Delay(1);
+  vTaskDelay(pdMS_TO_TICKS(1));
 
   // Disable Heater
   handle->tx_buf[0] = 0x30;
@@ -80,7 +86,9 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  HAL_Delay(1); // minimal waiting time before another command
+  // minimal waiting time before another command
+  // HAL_Delay(1);
+  vTaskDelay(pdMS_TO_TICKS(1));
 
   // Clear SHT30 Status Register
   handle->tx_buf[0] = 0x30;
@@ -88,7 +96,9 @@ int sht30_init(SHT30_HANDLE *handle) {
   if (HAL_I2C_Master_Transmit(handle->hi2c, handle->i2c_address, handle->tx_buf,
                               2, 200) != HAL_OK)
     return SHT30_ERROR;
-  HAL_Delay(1); // minimal waiting time before another command
+  // minimal waiting time before another command
+  // HAL_Delay(1);
+  vTaskDelay(pdMS_TO_TICKS(1));
 
   // **** using in bare metal ****
   // handle->status = SHT30_IDLE;
