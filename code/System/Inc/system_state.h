@@ -9,12 +9,14 @@
 // --------------------------------------------------------------------------
 typedef struct {
   // update by sensor task
-  float temperature;
-  float humidity;
+  float sht30_temperature;
+  float sht30_humidity;
 
   // update by sensor task
-  int temperature_alarm; // 0 is not trigger, 1 is trigger
-  int humidity_alarm;    // 0 is not trigger, 1 is trigger
+  int sht30_temperature_alarm_upper_threshold;
+  int sht30_temperature_alarm_lower_threshold;
+  int sht30_humidity_alarm_upper_threshold;
+  int sht30_humidity_alarm_lower_threshold;
 
   // update by rx from pc task
   uint32_t sht30_measure_period; // period in ms

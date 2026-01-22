@@ -12,6 +12,8 @@
 typedef struct {
   SHT30_HANDLE *target_sht30;
   uint32_t measure_period;
+  uint32_t temperature_alarm_threshold;
+  uint32_t humidity_alarm_threshold;
 } SENSOR_MEASURE_TASK_PARAMETER;
 
 // --------------------------------------------------------------------------
