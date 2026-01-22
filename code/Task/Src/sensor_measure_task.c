@@ -23,12 +23,6 @@ void sensor_measure_task(void *parameter) {
 
     // infinite loop
     while (1) {
-        // dynamic change sensor peroid
-        if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-            period = g_system_state_handle.sht30_measure_period;
-            xSemaphoreGive(g_system_state_mutex);
-        }
-
         // sensor working and alarm judge
         if (sht30_measure_data_dma(sht30) == SHT30_SUCCESS) {
             if (sht30_get_data_dma(sht30) == SHT30_SUCCESS) {
@@ -51,6 +45,9 @@ void sensor_measure_task(void *parameter) {
                     } else {
                         led_off(&g_led_handle_d3);
                     }
+
+                    // dynamic change sensor peroid
+                    period = g_system_state_handle.sht30_measure_period;
 
                     xSemaphoreGive(g_system_state_mutex);
                 }
