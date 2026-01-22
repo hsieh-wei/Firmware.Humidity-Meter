@@ -1,6 +1,7 @@
 #ifndef __INTERRUPT_CALLBACK_H__
 #define __INTERRUPT_CALLBACK_H__
 
+#include "stm32f4xx_hal.h"
 // --------------------------------------------------------------------------
 // Callback Redefine
 // --------------------------------------------------------------------------
@@ -16,4 +17,4 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
-#endif //__INTERRUPT_CALLBACK_H__
+#endif  //__INTERRUPT_CALLBACK_H__

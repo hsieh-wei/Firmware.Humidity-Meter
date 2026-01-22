@@ -3,16 +3,16 @@
 
 #include "FreeRTOS.h"
 #include "stm32f4xx_hal.h"
-#include "task.h"
+#include "semphr.h"
 #include <stdint.h>
 
 // --------------------------------------------------------------------------
 // Error Codes
 // --------------------------------------------------------------------------
 typedef enum {
-  SHT30_SUCCESS = 0,
-  SHT30_ERROR = -1,
-  SHT30_TIMEOUT = -2,
+    SHT30_SUCCESS = 0,
+    SHT30_ERROR = -1,
+    SHT30_TIMEOUT = -2,
 } SHT30_ERR;
 
 // --------------------------------------------------------------------------
@@ -31,13 +31,13 @@ typedef enum {
 // ****************************
 
 typedef struct {
-  I2C_HandleTypeDef *hi2c; // I2C HAL handle (EX: &hi2c1)
-  uint8_t tx_buf[2];       // sht30 cmd buffer
-  uint8_t rx_buf[6];       // sht30 return measurement buffer
-  uint8_t i2c_address;
-  float humidity;
-  float temperature;
-  SemaphoreHandle_t tx_rx_complete_semaphore; // notice when tx or rx complete
+    I2C_HandleTypeDef *hi2c;  // I2C HAL handle (EX: &hi2c1)
+    uint8_t tx_buf[2];        // sht30 cmd buffer
+    uint8_t rx_buf[6];        // sht30 return measurement buffer
+    uint8_t i2c_address;
+    float humidity;
+    float temperature;
+    SemaphoreHandle_t tx_rx_complete_semaphore;  // notice when tx or rx complete
 } SHT30_HANDLE;
 
 // --------------------------------------------------------------------------
@@ -52,4 +52,4 @@ int sht30_compute_data(SHT30_HANDLE *handle);
 // --------------------------------------------------------------------------
 void sht30_i2c_master_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
 void sht30_i2c_master_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c);
-#endif // SHT30_H
+#endif  // SHT30_H
