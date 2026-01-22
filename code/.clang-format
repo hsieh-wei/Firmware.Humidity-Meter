@@ -1,0 +1,21 @@
+---
+# 基礎風格：Google (適合大多數工程師)
+BasedOnStyle: Google
+
+# --- 縮排設定 ---
+IndentWidth: 4             # 縮排使用 4 個空格
+TabWidth: 4                # Tab 鍵寬度
+UseTab: Never              # 永遠使用空格代替 Tab (避免不同編輯器跑版)
+
+# --- 換行設定 ---
+ColumnLimit: 120           # 你的需求：單行限制 120 字元
+BreakBeforeBraces: Attach  # 左大括號 { 不換行 (if (x) {)
+
+# --- 指針與對齊 ---
+PointerAlignment: Right    # 指針靠右 (int *ptr) 符合 C 語言傳統
+AlignConsecutiveMacros: true # 自動對齊連續的 #define 巨集 (看起來很整齊)
+AlignConsecutiveAssignments: false # 賦值不強制對齊 (避免修改一行導致整塊變動)
+
+# --- 嵌入式特殊需求 ---
+SortIncludes: false        # 不自動排序 #include (避免破壞 STM32 標頭檔依賴順序)
+...
