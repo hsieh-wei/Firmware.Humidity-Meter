@@ -23,13 +23,14 @@ void system_state_init(void) {
     }
 
     // initial system state handle
+    xSemaphoreGet(&g_system_state_mutex, 100);
     g_system_state_handle.sht30_temperature = 0;
     g_system_state_handle.sht30_humidity = 0;
     g_system_state_handle.sht30_temperature_upper_threshold = 0;
     g_system_state_handle.sht30_temperature_lower_threshold = 0;
     g_system_state_handle.sht30_humidity_upper_threshold = 0;
     g_system_state_handle.sht30_humidity_lower_threshold = 0;
-    g_system_state_handle.sht30_timeout_count = 0;
+    g_system_state_handle.sht30_error_timeout_count = 0;
     g_system_state_handle.sht30_measure_period = 100;
     g_system_state_handle.lcd_brightness = 0;
     g_system_state_handle.lcd_display_mode = 0;

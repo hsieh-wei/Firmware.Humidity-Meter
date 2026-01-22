@@ -27,10 +27,10 @@ static uint8_t sht30_crc8(const uint8_t *data) {
 }
 
 int sht30_wait_tx_rx_complete(SHT30_HANDLE *handle) {
-    // timeout means semaphore take will wait maximum of 15ms
+    // timeout means semaphore take will wait maximum of 20ms
     // if tx rx complete less than 15ms, return SHT30_SUCCESS
     // if tx rx complete more than 15ms, return SHT30_TIMEOUT
-    if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(10)) == pdTRUE) {
+    if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(20)) == pdTRUE) {
         return SHT30_SUCCESS;
     }
     return SHT30_TIMEOUT;

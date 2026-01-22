@@ -17,7 +17,7 @@ typedef struct {
     int sht30_temperature_lower_threshold;
     int sht30_humidity_upper_threshold;
     int sht30_humidity_lower_threshold;
-    int sht30_timeout_count;
+    int sht30_error_timeout_count;
     uint32_t sht30_measure_period;  // period in ms
 
     // update by rx from pc task
