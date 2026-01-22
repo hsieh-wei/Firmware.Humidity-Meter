@@ -42,6 +42,7 @@ void sensor_measure_task(void *parameter) {
                 }
             }
         } else {
+            g_system_state_handle.sht30_timeout_count++;
         }
         vTaskDelay(pdMS_TO_TICKS(period));
     }
