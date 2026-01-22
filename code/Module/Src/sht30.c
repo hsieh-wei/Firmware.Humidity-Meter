@@ -26,6 +26,9 @@ static uint8_t sht30_crc8(const uint8_t *data) {
 }
 
 int sht30_wait_tx_rx_complete(SHT30_HANDLE *handle) {
+  // timeout means semaphore take will wait maximum of 15ms
+  // if tx rx complete less than 15ms, return SHT30_SUCCESS
+  // if tx rx complete more than 15ms, return SHT30_TIMEOUT
   if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(10)) ==
       pdTRUE) {
     return SHT30_SUCCESS;
@@ -109,7 +112,9 @@ int sht30_measure_data_dma(SHT30_HANDLE *handle) {
   // **** using in bare metal ****
   // handle->status = SHT30_TX_TRANSMITTED;
   // ****************************
-  sht30_wait_tx_rx_complete(handle);
+  if (sht30_wait_tx_rx_complete(handle) != SHT30_SUCCESS) {
+    return SHT30_TIMEOUT;
+  }
 
   return SHT30_SUCCESS;
 }
@@ -133,7 +138,9 @@ int sht30_get_data_dma(SHT30_HANDLE *handle) {
   // **** using in bare metal ****
   // handle->status = SHT30_RX_REQUESTED;
   // ****************************
-  sht30_wait_tx_rx_complete(handle);
+  if (sht30_wait_tx_rx_complete(handle) != SHT30_SUCCESS) {
+    return SHT30_TIMEOUT;
+  }
 
   return SHT30_SUCCESS;
 }
@@ -175,8 +182,13 @@ void sht30_i2c_master_tx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c) {
     // **** using in bare metal ****
     // handle->status = SHT30_TX_DONE;
     // ****************************
-    xSemaphoreGiveFromISR(handle->tx_rx_complete_semaphore,
-                          pxHigherPriorityTaskWoken)
+
+    // task A is running and  i2c tx complete => go to isr
+    // task B is wating tx_rx_complete_semaphore
+    // if B priority higher than task A => yield = true after give semaphore
+    BaseType_t yield = pdFALSE;
+    xSemaphoreGiveFromISR(handle->tx_rx_complete_semaphore, &yield);
+    portYIELD_FROM_ISR(yield);
   }
 }
 
@@ -185,5 +197,8 @@ void sht30_i2c_master_rx_cplt(SHT30_HANDLE *handle, I2C_HandleTypeDef *hi2c) {
     // **** using in bare metal ****
     // handle->status = SHT30_RX_DONE;
     // ****************************
+    BaseType_t yield = pdFALSE;
+    xSemaphoreGiveFromISR(handle->tx_rx_complete_semaphore, &yield);
+    portYIELD_FROM_ISR(yield);
   }
 }
