@@ -10,7 +10,7 @@ static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
     }
 }
 
-static void pc_link_wait_tx_complete(PC_LINK_HANDLE *handle) {
+static int pc_link_wait_tx_complete(PC_LINK_HANDLE *handle) {
     if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
         return PC_LINK_TIMEOUT;
     }
@@ -31,6 +31,7 @@ int pc_link_init(PC_LINK_HANDLE *handle) {
         if (handle->tx_complete_semaphore == NULL) {
             return PC_LINK_ERROR;
         }
+        xSemaphoreGive(handle->tx_complete_semaphore);
     }
 
     pc_link_disable_dma_half_it(handle->huart);
