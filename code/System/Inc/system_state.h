@@ -8,22 +8,28 @@
 // System State Define
 // --------------------------------------------------------------------------
 typedef struct {
-    // update by sensor task
+    // temperature
     float sht30_temperature;
-    float sht30_humidity;
-
-    // update by rx from pc task
     int sht30_temperature_upper_threshold;
     int sht30_temperature_lower_threshold;
+
+    // humidity
+    float sht30_humidity;
     int sht30_humidity_upper_threshold;
     int sht30_humidity_lower_threshold;
-    int sht30_error_timeout_count;
-    uint32_t sht30_measure_period;  // period in ms
 
-    // update by rx from pc task
-    uint8_t lcd_brightness;       // 0~100, larger number means brighter
-    int lcd_display_mode;         // 0 display temperature, 1 display humidity
-    uint32_t lcd_refresh_period;  // period in ms
+    // lcd
+    uint8_t lcd_brightness;  // 0~100, larger number means brighter
+    int lcd_display_mode;    // 0 display temperature, 1 display humidity
+
+    // error
+    int sht30_error_timeout_count;
+    int pc_link_error_timeout_count;
+
+    // period
+    uint32_t sht30_measure_period;       // period in ms
+    uint32_t pc_link_log_report_period;  // period in ms
+    uint32_t lcd_refresh_period;         // period in ms
 } SYSTEM_STATE_HANDLE;
 
 // --------------------------------------------------------------------------

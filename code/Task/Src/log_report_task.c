@@ -23,7 +23,7 @@ void log_report_task(void *parameter) {
     pc_link_init(handle);
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
-
+    int log_buffer_len;
     while (1) {
         // get the current system state
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
@@ -32,23 +32,41 @@ void log_report_task(void *parameter) {
         }
 
         // log formatting
-        snprintf(log_buffer, sizeof(log_buffer),
-                 "[temperature] %d, threshold:%d,%d\n"
-                 "[humidity] %d, threshold:%d,%d\n"
-                 "[lcd] brightness:%d, mode:%d\n"
-                 "[error] sht30: %d"
-                 "[period]sht30 measure:%d, lcd refresh:%d",
-                 // temperature
-                 (int)(current_system_state.sht30_temperature), current_system_state.sht30_temperature_lower_threshold,
-                 current_system_state.sht30_temperature_upper_threshold,
-                 // humidity
-                 (int)(current_system_state.sht30_humidity), current_system_state.sht30_humidity_lower_threshold,
-                 current_system_state.sht30_humidity_upper_threshold,
-                 // lcd
-                 (int)current_system_state.lcd_brightness, current_system_state.lcd_display_mode,
-                 // error
-                 current_system_state.sht30_error_timeout_count,
-                 // period
-                 (int)current_system_state.sht30_measure_period, (int)current_system_state.lcd_refresh_period);
+        log_buffer_len = snprintf(log_buffer, sizeof(log_buffer),
+                                  "[temperature] %d, threshold:%d,%d\n"
+                                  "[humidity] %d, threshold:%d,%d\n"
+                                  "[lcd] brightness:%d, mode:%d\n"
+                                  "[error] sht30: %d, pc_link: %d"
+                                  "[period]sht30 measure:%d, log report:%d, lcd refresh:%d",
+                                  // temperature
+                                  (int)(current_system_state.sht30_temperature), current_system_state.sht30_temperature_lower_threshold,
+                                  current_system_state.sht30_temperature_upper_threshold,
+                                  // humidity
+                                  (int)(current_system_state.sht30_humidity), current_system_state.sht30_humidity_lower_threshold,
+                                  current_system_state.sht30_humidity_upper_threshold,
+                                  // lcd
+                                  (int)current_system_state.lcd_brightness, current_system_state.lcd_display_mode,
+                                  // error
+                                  current_system_state.sht30_error_timeout_count, current_system_state.pc_link_error_timeout_count,
+                                  // period
+                                  (int)current_system_state.sht30_measure_period, (int)current_system_state.pc_link_log_report_period,
+                                  (int)current_system_state.lcd_refresh_period);
+
+        // send log by uart
+        if (log_buffer_len > 0 && log_buffer_len < sizeof(log_buffer)) {
+            if (pc_link_tx_dma(handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) != PC_LINK_SUCCESS)
+                if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
+                    current_system_state.pc_link_error_timeout_count++;
+                    xSemaphoreGive(g_system_state_mutex);
+                }
+        } else {
+            if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
+                current_system_state.pc_link_error_timeout_count++;
+                xSemaphoreGive(g_system_state_mutex);
+            }
+        }
+
+        // period
+        vTaskDelay(pdMS_TO_TICKS(current_system_state.pc_link_log_report_period));
     }
 }

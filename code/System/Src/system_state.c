@@ -23,14 +23,26 @@ void system_state_init(void) {
     }
 
     // initial system state handle
+    // temperature
     g_system_state_handle.sht30_temperature = 0;
-    g_system_state_handle.sht30_humidity = 0;
     g_system_state_handle.sht30_temperature_upper_threshold = 27;  // human feel comfortable
     g_system_state_handle.sht30_temperature_lower_threshold = 22;  // human feel comfortable
-    g_system_state_handle.sht30_humidity_upper_threshold = 60;     // human feel comfortable
-    g_system_state_handle.sht30_humidity_lower_threshold = 40;     // human feel comfortable
-    g_system_state_handle.sht30_error_timeout_count = 0;
-    g_system_state_handle.sht30_measure_period = 100;  // initial peroid, avoid to set 0
+
+    // humidity
+    g_system_state_handle.sht30_humidity = 0;
+    g_system_state_handle.sht30_humidity_upper_threshold = 60;  // human feel comfortable
+    g_system_state_handle.sht30_humidity_lower_threshold = 40;  // human feel comfortable
+
+    // lcd
     g_system_state_handle.lcd_brightness = 0;
     g_system_state_handle.lcd_display_mode = 0;
+
+    // error
+    g_system_state_handle.sht30_error_timeout_count = 0;
+    g_system_state_handle.pc_link_error_timeout_count = 0;
+
+    // period
+    g_system_state_handle.sht30_measure_period = 100;       // initial peroid, avoid to set 0
+    g_system_state_handle.pc_link_log_report_period = 100;  // initial peroid, avoid to set 0
+    g_system_state_handle.lcd_refresh_period = 100;         // initial peroid, avoid to set 0
 }
