@@ -6,9 +6,15 @@
 // --------------------------------------------------------------------------
 static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
     if (huart && huart->hdmarx) {
-        __HAL_DMA_DISABLE_IT(huart->hdmarx,
-                             DMA_IT_HT);  // turn off DMA Half-Transfer inerrupt
+        __HAL_DMA_DISABLE_IT(huart->hdmarx, DMA_IT_HT);  // turn off DMA Half-Transfer inerrupt
     }
+}
+
+static void pc_link_wait_tx_complete(PC_LINK_HANDLE *handle) {
+    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+        return PC_LINK_TIMEOUT;
+    }
+    return PC_LINK_SUCCESS;
 }
 
 // --------------------------------------------------------------------------
@@ -26,6 +32,8 @@ int pc_link_init(PC_LINK_HANDLE *handle) {
             return PC_LINK_ERROR;
         }
     }
+
+    pc_link_disable_dma_half_it(handle->huart);
 
     // **** using in bare metal ****
     // handle->tx_busy = 0;
@@ -48,6 +56,8 @@ int pc_link_rx_dma(PC_LINK_HANDLE *handle) {
 int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
     if (!handle || !handle->huart || !handle->tx_buf) return PC_LINK_ERROR;
 
+    if (handle->tx_buf_len < len) return PC_LINK_ERROR;
+
     // **** using in bare metal ****
     // if (handle->tx_busy) return PC_LINK_ERROR;  // tx is busy
     // handle->tx_busy = 1;  // set tx busy
@@ -55,9 +65,12 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
 
     memcpy(handle->tx_buf, data, len);
 
-    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len);
-    if (status != HAL_OK) {
-        handle->tx_busy = 0;  // if fail clead busy
+    pc_link_wait_tx_complete(handle);
+
+    if (HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len) != HAL_OK) {
+        // **** using in bare metal ****
+        // handle->tx_busy = 0;  // if fail clead busy
+        // ****************************
         return PC_LINK_ERROR;
     }
     return PC_LINK_SUCCESS;
@@ -66,14 +79,6 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
 // ----------------------------------------------------------------------------
 // HAL Weak Callback re define
 // ----------------------------------------------------------------------------
-void pc_link_uart_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart) {
-    // Check whether it is the specified handler
-    if (handle && handle->huart == huart) {
-        // clear busy after send message
-        handle->tx_busy = 0;
-    }
-}
-
 void pc_link_uartex_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uint16_t size)  // rx event is able to change input length
 {
     // Check whether it is the specified handler
@@ -84,11 +89,16 @@ void pc_link_uartex_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, 
 
     // restart rx
     (void)pc_link_rx_dma(handle);
+}
 
-    // echo rx data if tx_buf has not written
-    if (handle->tx_busy == 0) {
-        uint16_t len = size;
-        if (len > handle->tx_buf_len) len = handle->tx_buf_len;
-        (void)pc_link_tx_dma(handle, handle->rx_buf, len);
+void pc_link_uart_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart) {
+    // Check whether it is the specified handler
+    if (handle && handle->huart == huart) {
+        // **** using in bare metal ****
+        // handle->tx_busy = 0;
+        // ****************************
+        BaseType_t yield = pdFALSE;
+        xSemaphoreGiveFromISR(handle->tx_complete_semaphore, &yield);
+        portYIELD_FROM_ISR(yield);
     }
 }

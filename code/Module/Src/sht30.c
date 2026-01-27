@@ -30,10 +30,10 @@ int sht30_wait_tx_rx_complete(SHT30_HANDLE *handle) {
     // timeout means semaphore take will wait maximum of 20ms
     // if tx rx complete less than 15ms, return SHT30_SUCCESS
     // if tx rx complete more than 15ms, return SHT30_TIMEOUT
-    if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(20)) == pdTRUE) {
-        return SHT30_SUCCESS;
+    if (xSemaphoreTake(handle->tx_rx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+        return SHT30_TIMEOUT;
     }
-    return SHT30_TIMEOUT;
+    return SHT30_SUCCESS;
 }
 
 // --------------------------------------------------------------------------

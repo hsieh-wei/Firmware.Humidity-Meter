@@ -12,6 +12,7 @@
 typedef enum {
     PC_LINK_SUCCESS = 0,
     PC_LINK_ERROR = -1,
+    PC_LINK_TIMEOUT = -2,
 } PC_LINK_ERR;
 
 // --------------------------------------------------------------------------
