@@ -64,9 +64,9 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
     // handle->tx_busy = 1;  // set tx busy
     // ****************************
 
-    memcpy(handle->tx_buf, data, len);
-
     pc_link_wait_tx_complete(handle);
+
+    memcpy(handle->tx_buf, data, len);
 
     if (HAL_UART_Transmit_DMA(handle->huart, handle->tx_buf, len) != HAL_OK) {
         // **** using in bare metal ****
