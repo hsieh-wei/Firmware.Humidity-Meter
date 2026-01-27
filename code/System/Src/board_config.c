@@ -33,8 +33,14 @@ BUTTON_HANDLE g_button_handle_k0 = {
 };
 
 // pc_link handle
+static uint8_t s_pc_rx_buffer[64];
+static uint8_t s_pc_tx_buffer[64];
 PC_LINK_HANDLE g_pc_link_handle = {
     .huart = &huart1,
+    .rx_buf = s_pc_rx_buffer,
+    .rx_buf_len = sizeof(s_pc_rx_buffer),
+    .tx_buf = s_pc_tx_buffer,
+    .tx_buf_len = sizeof(s_pc_tx_buffer),
 };
 
 // sht30 handle
