@@ -1,12 +1,13 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "report_log_task.h"
+#include "log_report_task.h"
 #include "pc_link.h"
 #include "system_state.h"
+#include <stdio.h>
 
 // Task
 // --------------------------------------------------------------------------
-void report_log_task(void *parameter) {
+void log_report_task(void *parameter) {
     // avoid null pointer crash
     if (parameter == NULL) {
         vTaskDelete(NULL);  // kill itself
@@ -21,7 +22,7 @@ void report_log_task(void *parameter) {
     // init
     pc_link_init(handle);
     SYSTEM_STATE_HANDLE current_system_state;
-    char log_buffer[128];
+    char log_buffer[256];
 
     while (1) {
         // get the current system state
@@ -48,6 +49,6 @@ void report_log_task(void *parameter) {
                  // error
                  current_system_state.sht30_error_timeout_count,
                  // period
-                 current_system_state.sht30_measure_period, current_system_state.lcd_refresh_period);
+                 (int)current_system_state.sht30_measure_period, (int)current_system_state.lcd_refresh_period);
     }
 }

@@ -13,6 +13,6 @@ typedef struct {
 // --------------------------------------------------------------------------
 // TASK
 // --------------------------------------------------------------------------
-void report_log_task(void *parameter);
+void log_report_task(void *parameter);
 
 #endif  //__LOG_REPORT_H__
