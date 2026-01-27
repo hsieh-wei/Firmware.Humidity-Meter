@@ -3,6 +3,8 @@
 #include "led.h"
 #include "sht30.h"
 #include "system_state.h"
+#include "semphr.h"
+#include "FreeRTOS.h"
 
 // Task
 // --------------------------------------------------------------------------

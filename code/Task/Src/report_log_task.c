@@ -1,7 +1,10 @@
 #ifndef __SENSOR_MEASURE_H__
 #define __SENSOR_MEASURE_H__
 
+#include "FreeRTOS.h"
 #include "sht30.h"
+#include "stm32f4xx_hal.h"
+#include "semphr.h"
 
 // --------------------------------------------------------------------------
 // Parameter Into Task
