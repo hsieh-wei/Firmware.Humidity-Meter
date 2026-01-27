@@ -14,6 +14,7 @@
 /* USER CODE BEGIN Includes */
 #include "board_config.h"
 #include "system_state.h"
+#include "task_config.h"
 #include "led_blinking_task.h"
 #include "sensor_measure_task.h"
 
@@ -81,20 +82,9 @@ int main(void) {
     // --------------------------------------------------------------------------
     // Initial System State and Create TASK
     // 1.1 Initial System State
-    // 2.1 Allocate memory from the Heap for Task's stack.
-    // 2.2 Create TCB
-    // 2.3 Add this Task to the Ready List
     // --------------------------------------------------------------------------
     system_state_init();
-    static SENSOR_MEASURE_TASK_PARAMETER sht30_task_parameter = {
-        .target_sht30 = &g_sht30_handle,
-    };
-    xTaskCreate(sensor_measure_task,    // function pointer
-                "SHT30_SENSOR_TASK",    // task name using in debug
-                128,                    // stack size (words)
-                &sht30_task_parameter,  // parameter into task function
-                1,                      // task priority
-                NULL);                  // handle using in suspend, delete, notify
+    tasks_create();
 
     // --------------------------------------------------------------------------
     // 1. osKernelInitialize: Initializes the Ready, Blocked, Suspended lists of
