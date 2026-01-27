@@ -1,21 +1,18 @@
-#ifndef __REPORT_LOG_H__
-#define __REPORT_LOG_H__
+#ifndef __LOG_REPORT_H__
+#define __LOG_REPORT_H__
 
-#include "FreeRTOS.h"
-#include "sht30.h"
-#include "stm32f4xx_hal.h"
-#include "semphr.h"
+#include "pc_link.h"
 
 // --------------------------------------------------------------------------
 // Parameter Into Task
 // --------------------------------------------------------------------------
 typedef struct {
-    SHT30_HANDLE *target_sht30;
-} SENSOR_MEASURE_TASK_PARAMETER;
+    PC_LINK_HANDLE *target_pc_link;
+} LOG_TASK_PARAMETER;
 
 // --------------------------------------------------------------------------
 // TASK
 // --------------------------------------------------------------------------
-void sensor_measure_task(void *parameter);
+void report_log_task(void *parameter);
 
-#endif  //__REPORT_LOG_H__
+#endif  //__LOG_REPORT_H__
