@@ -11,7 +11,7 @@ static inline void pc_link_disable_dma_half_it(UART_HandleTypeDef *huart) {
 }
 
 static int pc_link_wait_tx_complete(PC_LINK_HANDLE *handle) {
-    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(100)) != pdTRUE) {
         return PC_LINK_TIMEOUT;
     }
     return PC_LINK_SUCCESS;
@@ -64,7 +64,9 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
     // handle->tx_busy = 1;  // set tx busy
     // ****************************
 
-    pc_link_wait_tx_complete(handle);
+    if (pc_link_wait_tx_complete(handle) != PC_LINK_SUCCESS) {
+        return PC_LINK_ERROR;
+    }
 
     memcpy(handle->tx_buf, data, len);
 
@@ -72,6 +74,7 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
         // **** using in bare metal ****
         // handle->tx_busy = 0;  // if fail clead busy
         // ****************************
+        xSemaphoreGive(handle->tx_complete_semaphore);
         return PC_LINK_ERROR;
     }
     return PC_LINK_SUCCESS;
@@ -85,8 +88,7 @@ void pc_link_uartex_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, 
     // Check whether it is the specified handler
     if (!handle || huart != handle->huart) return;
 
-    // Check whether tx_buf is exist
-    if (!handle->tx_buf || handle->tx_buf_len == 0) return;
+    // TODO
 
     // restart rx
     (void)pc_link_rx_dma(handle);
