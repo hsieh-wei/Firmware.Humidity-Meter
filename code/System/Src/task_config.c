@@ -16,9 +16,9 @@ SENSOR_MEASURE_TASK_PARAMETER g_sensor_measure_task_param = {
     .target_led_d3 = &g_led_handle_d3,
 };
 
-// SENSOR_MEASURE_TASK_PARAMETER g_log_report_task_param = {
-//     . = &g_sht30_handle,
-// };
+LOG_TASK_PARAMETER g_log_report_task_param = {
+    .target_pc_link = &g_pc_link_handle,
+};
 
 // --------------------------------------------------------
 // API
@@ -28,13 +28,22 @@ SENSOR_MEASURE_TASK_PARAMETER g_sensor_measure_task_param = {
 // 1.3 Add this Task to the Ready List
 // --------------------------------------------------------
 void tasks_create(void) {
-    // Create Sensor Measure Task
+    // create sensor measure task
     BaseType_t status;
     status = xTaskCreate(sensor_measure_task,             // function pointer
-                         "SHT30_SENSOR_TASK",             // task name using in debug
+                         "SENSOR_MEASURE_TASK",           // task name using in debug
                          128,                             // stack size (words)
                          &g_sensor_measure_task_param,    // parameter into task function
                          1,                               // task priority
                          &g_sensor_measure_task_handle);  // handle using in suspend, delete, notify
+    configASSERT(status == pdPASS);
+
+    // create log report task
+    status = xTaskCreate(log_report_task,             // function pointer
+                         "LOG_REPORT_TASK",           // task name using in debug
+                         256,                         // stack size (words)
+                         &g_log_report_task_param,    // parameter into task function
+                         1,                           // task priority
+                         &g_log_report_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 }
