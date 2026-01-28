@@ -24,6 +24,8 @@ void log_report_task(void *parameter) {
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
     int log_buffer_len;
+
+    // infinite loop
     while (1) {
         // get the current system state
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
@@ -53,15 +55,20 @@ void log_report_task(void *parameter) {
                                   (int)current_system_state.lcd_refresh_period);
 
         // send log by uart
+        int tx_success = 0;
+
+        // judge format is success
         if (log_buffer_len > 0 && log_buffer_len < sizeof(log_buffer)) {
-            if (pc_link_tx_dma(handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) != PC_LINK_SUCCESS)
-                if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-                    current_system_state.pc_link_error_timeout_count++;
-                    xSemaphoreGive(g_system_state_mutex);
-                }
-        } else {
+            // judge tx is success
+            if (pc_link_tx_dma(handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) == PC_LINK_SUCCESS) {
+                tx_success = 1;
+            }
+        }
+
+        // error handle
+        if (tx_success != 1) {
             if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-                current_system_state.pc_link_error_timeout_count++;
+                g_system_state_handle.pc_link_error_timeout_count++;
                 xSemaphoreGive(g_system_state_mutex);
             }
         }
