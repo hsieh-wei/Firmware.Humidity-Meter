@@ -18,6 +18,8 @@ void sensor_measure_task(void *parameter) {
 
     // Get task parameter
     SHT30_HANDLE *sht30 = task_parameter->target_sht30;
+    LED_HANDLE *led_d2 = task_parameter->target_led_d2;
+    LED_HANDLE *led_d3 = task_parameter->target_led_d3;
 
     // initial
     sht30_init(sht30);
@@ -37,15 +39,15 @@ void sensor_measure_task(void *parameter) {
                     // setting alarm led
                     if (sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||
                         sht30->temperature < g_system_state_handle.sht30_temperature_lower_threshold) {
-                        led_on(&g_led_handle_d2);
+                        led_on(led_d2);
                     } else {
-                        led_off(&g_led_handle_d2);
+                        led_off(led_d2);
                     }
                     if (sht30->humidity > g_system_state_handle.sht30_humidity_upper_threshold ||
                         sht30->humidity < g_system_state_handle.sht30_humidity_lower_threshold) {
-                        led_on(&g_led_handle_d3);
+                        led_on(led_d3);
                     } else {
-                        led_off(&g_led_handle_d3);
+                        led_off(led_d3);
                     }
 
                     // dynamic change sensor peroid

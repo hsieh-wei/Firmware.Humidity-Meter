@@ -9,7 +9,7 @@
 // task handles define(using in suspend and resume)
 // --------------------------------------------------------
 extern TaskHandle_t g_sensor_task_handle;
-
+extern TaskHandle_t g_log_report_task_handle;
 // --------------------------------------------------------
 // task parameters
 // --------------------------------------------------------

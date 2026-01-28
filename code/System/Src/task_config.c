@@ -4,14 +4,21 @@
 // --------------------------------------------------------
 // task handles define(using in suspend and resume)
 // --------------------------------------------------------
-TaskHandle_t g_sensor_task_handle = NULL;
+TaskHandle_t g_sensor_measure_task_handle = NULL;
+TaskHandle_t g_log_report_task_handle = NULL;
 
 // --------------------------------------------------------
 // task parameters
 // --------------------------------------------------------
-SENSOR_MEASURE_TASK_PARAMETER g_sensor_task_param = {
+SENSOR_MEASURE_TASK_PARAMETER g_sensor_measure_task_param = {
     .target_sht30 = &g_sht30_handle,
+    .target_led_d2 = &g_led_handle_d2,
+    .target_led_d3 = &g_led_handle_d3,
 };
+
+// SENSOR_MEASURE_TASK_PARAMETER g_log_report_task_param = {
+//     . = &g_sht30_handle,
+// };
 
 // --------------------------------------------------------
 // API
@@ -21,13 +28,13 @@ SENSOR_MEASURE_TASK_PARAMETER g_sensor_task_param = {
 // 1.3 Add this Task to the Ready List
 // --------------------------------------------------------
 void tasks_create(void) {
-    // Create Sensor Task
+    // Create Sensor Measure Task
     BaseType_t status;
-    status = xTaskCreate(sensor_measure_task,     // function pointer
-                         "SHT30_SENSOR_TASK",     // task name using in debug
-                         128,                     // stack size (words)
-                         &g_sensor_task_param,    // parameter into task function
-                         1,                       // task priority
-                         &g_sensor_task_handle);  // handle using in suspend, delete, notify
+    status = xTaskCreate(sensor_measure_task,             // function pointer
+                         "SHT30_SENSOR_TASK",             // task name using in debug
+                         128,                             // stack size (words)
+                         &g_sensor_measure_task_param,    // parameter into task function
+                         1,                               // task priority
+                         &g_sensor_measure_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 }
