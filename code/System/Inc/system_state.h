@@ -8,6 +8,9 @@
 // System State Define
 // --------------------------------------------------------------------------
 typedef struct {
+    // system timestamp
+    int sys_timestamp_count;
+
     // temperature
     float sht30_temperature;
     int sht30_temperature_upper_threshold;

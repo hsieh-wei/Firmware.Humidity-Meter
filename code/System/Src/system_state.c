@@ -23,6 +23,9 @@ void system_state_init(void) {
     }
 
     // initial system state handle
+    // system timestamp
+    g_system_state_handle.sys_timestamp_count = 0;
+
     // temperature
     g_system_state_handle.sht30_temperature = 0;
     g_system_state_handle.sht30_temperature_upper_threshold = 27;  // human feel comfortable

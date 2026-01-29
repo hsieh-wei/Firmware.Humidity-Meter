@@ -2,6 +2,7 @@
 #include "semphr.h"
 #include "log_report_task.h"
 #include "pc_link.h"
+#include "sys_timestamp.h"
 #include "system_state.h"
 #include <stdio.h>
 
@@ -17,29 +18,37 @@ void log_report_task(void *parameter) {
     LOG_TASK_PARAMETER *task_parameter = (LOG_TASK_PARAMETER *)parameter;
 
     // Get task parameter
-    PC_LINK_HANDLE *handle = task_parameter->target_pc_link;
+    PC_LINK_HANDLE *pc_link_handle = task_parameter->target_pc_link;
+    SYS_TIMESTAMP_HANDLE *sys_timestamp_handle = task_parameter->target_sys_timestamp;
 
-    // init
-    pc_link_init(handle);
+    // init pc link
+    pc_link_init(pc_link_handle);
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
     int log_buffer_len;
+
+    // init sys timestamp
+    sys_timestamp_init(sys_timestamp_handle);
 
     // infinite loop
     while (1) {
         // get the current system state
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
+            g_system_state_handle.sys_timestamp_count = sys_timestamp_handle->timestamp;
             current_system_state = g_system_state_handle;
             xSemaphoreGive(g_system_state_mutex);
         }
 
         // log formatting
         log_buffer_len = snprintf(log_buffer, sizeof(log_buffer),
+                                  "[timestamp] %d \n"
                                   "[temperature] %d, threshold:%d,%d\n"
                                   "[humidity] %d, threshold:%d,%d\n"
                                   "[lcd] brightness:%d, mode:%d\n"
                                   "[error] sht30: %d, pc_link: %d\n"
                                   "[period]sht30 measure:%d, log report:%d, lcd refresh:%d\n",
+                                  // system timestamp
+                                  (int)(current_system_state.sys_timestamp_count),
                                   // temperature
                                   (int)(current_system_state.sht30_temperature), current_system_state.sht30_temperature_lower_threshold,
                                   current_system_state.sht30_temperature_upper_threshold,
@@ -60,7 +69,7 @@ void log_report_task(void *parameter) {
         // judge format is success
         if (log_buffer_len > 0 && log_buffer_len < sizeof(log_buffer)) {
             // judge tx is success
-            if (pc_link_tx_dma(handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) == PC_LINK_SUCCESS) {
+            if (pc_link_tx_dma(pc_link_handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) == PC_LINK_SUCCESS) {
                 tx_success = 1;
             }
         }
