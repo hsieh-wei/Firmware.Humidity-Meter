@@ -1,7 +1,7 @@
 ## 1. 判斷模組是 3 線還是 4 線 SPI
 | 面向| 3-line SPI| 4-line SPI|
 | --- | --- | --- |
-| 腳位| CSX、SCL、SDA（共 3 根 + RES/BL）| CSX、SCL、SDA、**D/CX**（共 4 根 + RES/BL
+| 腳位| CSX、SCL、SDA（共 3 根 + RES/BL）| CSX、SCL、SDA、**D/CX**
 | D/CX 來源 | **封在資料串**裡的控制位| **獨立的 D/CX 腳**
 > 看模組焊出來的腳：若有獨立 DC ，那幾乎就是4 線。
 
