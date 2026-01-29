@@ -42,11 +42,11 @@ void log_report_task(void *parameter) {
         // log formatting
         log_buffer_len = snprintf(log_buffer, sizeof(log_buffer),
                                   "[timestamp] %d \n"
-                                  "[temperature] %d, threshold:%d,%d\n"
-                                  "[humidity] %d, threshold:%d,%d\n"
-                                  "[lcd] brightness:%d, mode:%d\n"
-                                  "[error] sht30: %d, pc_link: %d\n"
-                                  "[period]sht30 measure:%d, log report:%d, lcd refresh:%d\n",
+                                  "[temperature] %d, threshold: %d , %d\n"
+                                  "[humidity] %d , threshold: %d , %d \n"
+                                  "[lcd] brightness: %d , mode: %d\n"
+                                  "[error] sht30: %d , pc_link: %d\n"
+                                  "[period]sht30 measure: %d , log report: %d , lcd refresh: %d\n",
                                   // system timestamp
                                   (int)(current_system_state.sys_timestamp_count),
                                   // temperature
