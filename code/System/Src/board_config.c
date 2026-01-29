@@ -64,4 +64,5 @@ LCD_HANDLE g_lcd_handle = {
 // system timestamp handle
 SYS_TIMESTAMP_HANDLE g_sys_timestamp_handle = {
     .htim = &htim6,
+    .timestamp = 0,
 };
