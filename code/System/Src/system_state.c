@@ -42,7 +42,7 @@ void system_state_init(void) {
     g_system_state_handle.pc_link_error_timeout_count = 0;
 
     // period
-    g_system_state_handle.sht30_measure_period = 100;       // initial peroid, avoid to set 0
-    g_system_state_handle.pc_link_log_report_period = 100;  // initial peroid, avoid to set 0
-    g_system_state_handle.lcd_refresh_period = 100;         // initial peroid, avoid to set 0
+    g_system_state_handle.sht30_measure_period = 100;        // initial peroid, avoid to set 0
+    g_system_state_handle.pc_link_log_report_period = 1000;  // initial peroid, avoid to set 0
+    g_system_state_handle.lcd_refresh_period = 100;          // initial peroid, avoid to set 0
 }

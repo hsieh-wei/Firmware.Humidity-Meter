@@ -38,8 +38,8 @@ void log_report_task(void *parameter) {
                                   "[temperature] %d, threshold:%d,%d\n"
                                   "[humidity] %d, threshold:%d,%d\n"
                                   "[lcd] brightness:%d, mode:%d\n"
-                                  "[error] sht30: %d, pc_link: %d"
-                                  "[period]sht30 measure:%d, log report:%d, lcd refresh:%d",
+                                  "[error] sht30: %d, pc_link: %d\n"
+                                  "[period]sht30 measure:%d, log report:%d, lcd refresh:%d\n",
                                   // temperature
                                   (int)(current_system_state.sht30_temperature), current_system_state.sht30_temperature_lower_threshold,
                                   current_system_state.sht30_temperature_upper_threshold,
