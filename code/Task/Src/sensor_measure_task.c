@@ -37,14 +37,14 @@ void sensor_measure_task(void *parameter) {
                     g_system_state_handle.sht30_humidity = sht30->humidity;
 
                     // setting alarm led
-                    if (sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||
-                        sht30->temperature < g_system_state_handle.sht30_temperature_lower_threshold) {
+                    if ((int)sht30->temperature > g_system_state_handle.sht30_temperature_upper_threshold ||
+                        (int)sht30->temperature < g_system_state_handle.sht30_temperature_lower_threshold) {
                         led_on(led_d2);
                     } else {
                         led_off(led_d2);
                     }
-                    if (sht30->humidity > g_system_state_handle.sht30_humidity_upper_threshold ||
-                        sht30->humidity < g_system_state_handle.sht30_humidity_lower_threshold) {
+                    if ((int)sht30->humidity > g_system_state_handle.sht30_humidity_upper_threshold ||
+                        (int)sht30->humidity < g_system_state_handle.sht30_humidity_lower_threshold) {
                         led_on(led_d3);
                     } else {
                         led_off(led_d3);
