@@ -10,15 +10,15 @@
 static void display_temperature(LCD_HANDLE *handle, int temperature) {
     char tempature_tens_digit = (char)(temperature / 10 + 48);
     char tempature_unit_digit = (char)(temperature % 10 + 48);
-    (void)lcd_fill_screen(handle, LCD_COLOR_WHITE);
-    (void)lcd_print_icon(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
-    (void)lcd_print_font(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_fill_screen_dma(handle, LCD_COLOR_WHITE);
+    (void)lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+    (void)lcd_print_font_dma(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
 }
 
 // static void display_(LCD_HANDLE *handle, int temperature) {

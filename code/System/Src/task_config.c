@@ -6,6 +6,7 @@
 // --------------------------------------------------------
 TaskHandle_t g_sensor_measure_task_handle = NULL;
 TaskHandle_t g_log_report_task_handle = NULL;
+TaskHandle_t g_lcd_monitor_task_handle;
 
 // --------------------------------------------------------
 // task parameters
@@ -19,6 +20,10 @@ SENSOR_MEASURE_TASK_PARAMETER g_sensor_measure_task_param = {
 LOG_REPORT_TASK_PARAMETER g_log_report_task_param = {
     .target_pc_link = &g_pc_link_handle,
     .target_sys_timestamp = &g_sys_timestamp_handle,
+};
+
+LCD_MONITOR_TASK_HANDLE g_lcd_monitor_task_param = {
+    .target_lcd = &g_lcd_handle,
 };
 
 // --------------------------------------------------------
@@ -46,5 +51,14 @@ void tasks_create(void) {
                          &g_log_report_task_param,    // parameter into task function
                          1,                           // task priority
                          &g_log_report_task_handle);  // handle using in suspend, delete, notify
+    configASSERT(status == pdPASS);
+
+    // create lcd monitor task
+    status = xTaskCreate(lcd_monitor_task,             // function pointer
+                         "LCD_MONITOR_TASK",           // task name using in debug
+                         1024,                         // stack size (words)
+                         &g_lcd_monitor_task_param,    // parameter into task function
+                         1,                            // task priority
+                         &g_lcd_monitor_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 }
