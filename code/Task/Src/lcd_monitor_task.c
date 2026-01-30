@@ -10,10 +10,9 @@
 static char tempature_tens_digit;
 static char tempature_unit_digit;
 static void display_temperature(LCD_HANDLE *handle) {
-    static char tempature_tens_digit;
     if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-        tempature_tens_digit = (char)((g_system_state_handle.sht30_temperature) / 10 + 48);
-        tempature_unit_digit = (char)((g_system_state_handle.sht30_temperature) % 10 + 48);
+        tempature_tens_digit = (char)(((int)g_system_state_handle.sht30_temperature) / 10 + 48);
+        tempature_unit_digit = (char)(((int)g_system_state_handle.sht30_temperature) % 10 + 48);
     }
     (void)lcd_fill_screen(handle, LCD_COLOR_WHITE);
     (void)lcd_print_icon(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);

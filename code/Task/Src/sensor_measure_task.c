@@ -25,11 +25,9 @@ void sensor_measure_task(void *parameter) {
 
     // initial
     sht30_init(sht30);
+    uint32_t period = g_system_state_handle.sht30_measure_period;
 
-    // [修正1] 給予預設值，防止第一次失敗導致 Delay 異常
-    uint32_t period = 1000;
-
-    // 用於暫存 LED 狀態，避免在 Mutex 內操作 IO (雖然 GPIO很快，但這是好習慣)
+    // avoid to operate led in mutex
     int led_d2_state = 0;
     int led_d3_state = 0;
 

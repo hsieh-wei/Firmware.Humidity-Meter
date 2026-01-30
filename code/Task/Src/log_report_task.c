@@ -27,6 +27,7 @@ void log_report_task(void *parameter) {
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
     int log_buffer_len;
+    uint32_t period = g_system_state_handle.pc_link_log_report_period;
 
     // init sys timestamp
     sys_timestamp_init(sys_timestamp_handle);
@@ -37,6 +38,7 @@ void log_report_task(void *parameter) {
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
             g_system_state_handle.sys_timestamp_count = sys_timestamp_handle->timestamp;
             current_system_state = g_system_state_handle;
+            period = current_system_state.pc_link_log_report_period;
             xSemaphoreGive(g_system_state_mutex);
         }
 
@@ -64,26 +66,28 @@ void log_report_task(void *parameter) {
                                   (int)current_system_state.sht30_measure_period, (int)current_system_state.pc_link_log_report_period,
                                   (int)current_system_state.lcd_refresh_period);
 
-        // send log by uart
-        int tx_success = 0;
-
         // judge format is success
         if (log_buffer_len > 0 && log_buffer_len < sizeof(log_buffer)) {
             // judge tx is success
-            if (pc_link_tx_dma(pc_link_handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) == PC_LINK_SUCCESS) {
-                tx_success = 1;
+            if (pc_link_tx_dma(pc_link_handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) != PC_LINK_SUCCESS) {
+                goto error_handler;
             }
-        }
-
-        // error handle
-        if (tx_success != 1) {
-            if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-                g_system_state_handle.pc_link_error_timeout_count++;
-                xSemaphoreGive(g_system_state_mutex);
-            }
+        } else {
+            goto error_handler;
         }
 
         // period
-        vTaskDelay(pdMS_TO_TICKS(current_system_state.pc_link_log_report_period));
+        vTaskDelay(pdMS_TO_TICKS(period));
+        continue;
+    // ---------------------------------------------------------
+    // Error Handler (Unified)
+    // ---------------------------------------------------------
+    error_handler:
+        if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
+            g_system_state_handle.pc_link_error_timeout_count++;
+            period = current_system_state.pc_link_log_report_period;
+            xSemaphoreGive(g_system_state_mutex);
+        }
+        vTaskDelay(pdMS_TO_TICKS(period));
     }
 }
