@@ -10,10 +10,10 @@
 // Internal Helpers
 // --------------------------------------------------------------------------
 static int lcd_wait_tx_complete(LCD_HANDLE *handle) {
-    // timeout means semaphore take will wait maximum of xxms
+    // timeout means semaphore take will wait maximum of 50ms(160*128*2*8bit/10MHz =32.7ms)
     // if tx complete less than 15ms, return SHT30_SUCCESS
     // if tx complete more than 15ms, return SHT30_TIMEOUT
-    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(50)) != pdTRUE) {
         return LCD_TIMEOUT;
     }
     return LCD_SUCCESS;
@@ -103,7 +103,6 @@ static int lcd_send_data_dma(LCD_HANDLE *handle,
     // ****************************
 
     if (HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK) {
-        xSemaphoreGive(handle->tx_complete_semaphore);
         HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
         return LCD_ERROR;
     }
@@ -216,18 +215,7 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color) {
 int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    // **** using in bare metal ****
-    // if (handle->tx_busy == 1) return LCD_ERROR;
-    // ****************************
-    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
-        return LCD_TIMEOUT;
-    }
-
-    // set coordinate
-    if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X - 1, 0, LCD_HEIGHT_Y - 1) != LCD_SUCCESS) return LCD_ERROR;
-
-    // RAMWR Memory Write
-    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    // update tx buffer
     uint8_t color_high_bit = (color >> 8) & 0xFF;
     uint8_t color_low_bit = color & 0xFF;
     for (int i = 0; i < LCD_WIDTH_X * LCD_HEIGHT_Y * 2; i++) {
@@ -237,7 +225,30 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
             handle->tx_buf[i] = color_low_bit;
     }
 
-    if (lcd_send_data_dma(handle, (uint16_t)sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;
+    // wait last time spi tx
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
+
+    // set coordinate
+    if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X - 1, 0, LCD_HEIGHT_Y - 1) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    // RAMWR Memory Write
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    if (lcd_send_data_dma(handle, (uint16_t)sizeof(handle->tx_buf)) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
 
     return LCD_SUCCESS;
 }
@@ -284,28 +295,12 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
                        uint16_t background_color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    // **** using in bare metal ****
-    // if (handle->tx_busy == 1) return LCD_ERROR;
-    // ****************************
-    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
-        return LCD_TIMEOUT;
-    }
-
-    // set coordinate
-    uint16_t x_end = x_start + lookup_table->width - 1;
-    uint16_t y_end = y_start + lookup_table->height - 1;
-    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
-    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
-    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
-
-    // RAMWR Memory Write
-    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    // update tx buffer
     uint8_t font_color_high_bit = (font_color >> 8) & 0xFF;
     uint8_t font_color_low_bit = font_color & 0xFF;
     uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
     uint8_t background_color_low_bit = background_color & 0xFF;
     int font_index = (font - 0x20) * lookup_table->height;  // ascii code "space" is 0x20, and lookup table is start at "space"
-    // start to print font
     for (int y = 0; y < lookup_table->height; y++) {
         uint16_t row_bit = lookup_table->data[font_index];  // row bit which is x data
         for (int x = 0; x < lookup_table->width; x++) {
@@ -323,7 +318,34 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
         font_index++;  // next row
     }
 
-    if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) return LCD_ERROR;
+    // wait last time spi tx
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
+
+    // set coordinate
+    uint16_t x_end = x_start + lookup_table->width - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    // RAMWR Memory Write
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
 
     return LCD_SUCCESS;
 }
@@ -369,28 +391,12 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
                        uint16_t background_color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    // **** using in bare metal ****
-    // if (handle->tx_busy == 1) return LCD_ERROR;
-    // ****************************
-    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
-        return LCD_TIMEOUT;
-    }
-
-    // set full screen coordinate
-    uint16_t x_end = x_start + lookup_table->width - 1;
-    uint16_t y_end = y_start + lookup_table->height - 1;
-    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
-    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
-    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) return LCD_ERROR;
-
-    // RAMWR Memory Write
-    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) return LCD_ERROR;
+    // update tx buffer
     uint8_t icon_color_high_bit = (icon_color >> 8) & 0xFF;
     uint8_t icon_color_low_bit = icon_color & 0xFF;
     uint8_t background_color_high_bit = (background_color >> 8) & 0xFF;
     uint8_t background_color_low_bit = background_color & 0xFF;
     int bytes_per_row = (lookup_table->width + 7) / 8;  // count how mant bytes per row
-    // start to print font
     for (int y = 0; y < lookup_table->height; y++) {
         for (int x = 0; x < lookup_table->width; x++) {
             int byte_index = x / 8;
@@ -406,7 +412,35 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
             }
         }
     }
-    if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) return LCD_ERROR;
+
+    // wait last time spi tx
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
+
+    // set coordinate
+    uint16_t x_end = x_start + lookup_table->width - 1;
+    uint16_t y_end = y_start + lookup_table->height - 1;
+    if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (x_end >= LCD_WIDTH_X || y_end >= LCD_HEIGHT_Y) return LCD_ERROR;
+    if (lcd_set_coordinate(handle, x_start, x_end, y_start, y_end) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    // RAMWR Memory Write
+    if (lcd_send_cmd(handle, 0x2C) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
+
+    if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        return LCD_ERROR;
+    }
     return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
