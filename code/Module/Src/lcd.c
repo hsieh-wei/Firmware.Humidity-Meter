@@ -101,7 +101,7 @@ static int lcd_send_data_dma(LCD_HANDLE *handle,
     //     return LCD_ERROR;
     // }
     // ****************************
-    lcd_wait_tx_complete(handle);
+
     if (HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK) {
         xSemaphoreGive(handle->tx_complete_semaphore);
         HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
@@ -143,6 +143,8 @@ int lcd_init(LCD_HANDLE *handle) {
             return LCD_ERROR;
         }
     }
+    xSemaphoreGive(handle->tx_complete_semaphore);
+
     // Initial Control Pin
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);                  // unreset status
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);                    // cs high, stop transmit
@@ -217,6 +219,9 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
     // **** using in bare metal ****
     // if (handle->tx_busy == 1) return LCD_ERROR;
     // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
 
     // set coordinate
     if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X - 1, 0, LCD_HEIGHT_Y - 1) != LCD_SUCCESS) return LCD_ERROR;
@@ -282,6 +287,9 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
     // **** using in bare metal ****
     // if (handle->tx_busy == 1) return LCD_ERROR;
     // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
 
     // set coordinate
     uint16_t x_end = x_start + lookup_table->width - 1;
@@ -364,6 +372,9 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
     // **** using in bare metal ****
     // if (handle->tx_busy == 1) return LCD_ERROR;
     // ****************************
+    if (lcd_wait_tx_complete(handle) != LCD_SUCCESS) {
+        return LCD_TIMEOUT;
+    }
 
     // set full screen coordinate
     uint16_t x_end = x_start + lookup_table->width - 1;
