@@ -1,5 +1,5 @@
-#ifndef __SENSOR_MEASURE_H__
-#define __SENSOR_MEASURE_H__
+#ifndef __SENSOR_MEASURE_TASK_H__
+#define __SENSOR_MEASURE_TASK_H__
 
 #include "sht30.h"
 #include "led.h"
@@ -18,4 +18,4 @@ typedef struct {
 // --------------------------------------------------------------------------
 void sensor_measure_task(void *parameter);
 
-#endif  //__SENSOR_MEASURE_H__
+#endif  //__SENSOR_MEASURE_TASK_H__

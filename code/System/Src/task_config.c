@@ -16,7 +16,7 @@ SENSOR_MEASURE_TASK_PARAMETER g_sensor_measure_task_param = {
     .target_led_d3 = &g_led_handle_d3,
 };
 
-LOG_TASK_PARAMETER g_log_report_task_param = {
+LOG_REPORT_TASK_PARAMETER g_log_report_task_param = {
     .target_pc_link = &g_pc_link_handle,
     .target_sys_timestamp = &g_sys_timestamp_handle,
 };

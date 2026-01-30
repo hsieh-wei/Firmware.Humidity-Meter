@@ -15,7 +15,7 @@ void log_report_task(void *parameter) {
     }
 
     // change void pointer into argument pointer
-    LOG_TASK_PARAMETER *task_parameter = (LOG_TASK_PARAMETER *)parameter;
+    LOG_REPORT_TASK_PARAMETER *task_parameter = (LOG_REPORT_TASK_PARAMETER *)parameter;
 
     // Get task parameter
     PC_LINK_HANDLE *pc_link_handle = task_parameter->target_pc_link;

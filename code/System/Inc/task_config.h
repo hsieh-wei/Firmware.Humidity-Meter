@@ -16,7 +16,7 @@ extern TaskHandle_t g_log_report_task_handle;
 // task parameters
 // --------------------------------------------------------
 extern SENSOR_MEASURE_TASK_PARAMETER g_sensor_task_param;
-extern LOG_TASK_PARAMETER g_log_report_task_param;
+extern LOG_REPORT_TASK_PARAMETER g_log_report_task_param;
 
 // --------------------------------------------------------
 // API
