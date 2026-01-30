@@ -50,7 +50,7 @@ typedef struct {
     // **** using in bare metal ****
     // volatile int tx_busy;  // avoid send two tx message in one time
     // ****************************
-    SemaphoreHandle_t tx_complete_semaphore
+    SemaphoreHandle_t tx_complete_semaphore;
 } LCD_HANDLE;
 
 // --------------------------------------------------------------------------
