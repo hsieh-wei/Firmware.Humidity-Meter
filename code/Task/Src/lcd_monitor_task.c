@@ -7,13 +7,9 @@
 // --------------------------------------------------------------------------
 // Internal Helpers
 // --------------------------------------------------------------------------
-static char tempature_tens_digit;
-static char tempature_unit_digit;
-static void display_temperature(LCD_HANDLE *handle) {
-    if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
-        tempature_tens_digit = (char)(((int)g_system_state_handle.sht30_temperature) / 10 + 48);
-        tempature_unit_digit = (char)(((int)g_system_state_handle.sht30_temperature) % 10 + 48);
-    }
+static void display_temperature(LCD_HANDLE *handle, int temperature) {
+    char tempature_tens_digit = (char)(temperature / 10 + 48);
+    char tempature_unit_digit = (char)(temperature % 10 + 48);
     (void)lcd_fill_screen(handle, LCD_COLOR_WHITE);
     (void)lcd_print_icon(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
     (void)lcd_print_font(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
@@ -24,6 +20,20 @@ static void display_temperature(LCD_HANDLE *handle) {
     (void)lcd_print_font(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
     (void)lcd_print_font(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
 }
+
+// static void display_(LCD_HANDLE *handle, int temperature) {
+//     char tempature_tens_digit = (char)(temperature / 10 + 48);
+//     char tempature_unit_digit = (char)(temperature % 10 + 48);
+//     (void)lcd_fill_screen(handle, LCD_COLOR_WHITE);
+//     (void)lcd_print_icon(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, 'e', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, 'm', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, 'p', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+//     (void)lcd_print_font(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
+// }
 // --------------------------------------------------------------------------
 // Task
 // --------------------------------------------------------------------------
@@ -42,14 +52,25 @@ void lcd_monitor_task(void *parameter) {
     // initial
     lcd_init(lcd);
     uint32_t period;
+    int current_mode = g_system_state_handle.lcd_display_mode;
+    int current_brightness = g_system_state_handle.lcd_brightness;
+    float current_temperature = g_system_state_handle.sht30_temperature;
+    float current_humidity = g_system_state_handle.sht30_humidity;
 
     // infinite loop
     while (1) {
-        display_temperature(lcd);
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
             period = g_system_state_handle.sht30_measure_period;
+            current_mode = g_system_state_handle.lcd_display_mode;
+            current_brightness = g_system_state_handle.lcd_brightness;
+            current_temperature = g_system_state_handle.sht30_temperature;
+            current_humidity = g_system_state_handle.sht30_humidity;
             xSemaphoreGive(g_system_state_mutex);
         }
+        if (current_mode == 0) {
+            display_temperature(lcd, (int)current_temperature);
+        }
+
         vTaskDelay(pdMS_TO_TICKS(period));
     }
 }
