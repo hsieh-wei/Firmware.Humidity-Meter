@@ -9,6 +9,16 @@
 // --------------------------------------------------------------------------
 // Internal Helpers
 // --------------------------------------------------------------------------
+static int lcd_wait_tx_complete(LCD_HANDLE *handle) {
+    // timeout means semaphore take will wait maximum of xxms
+    // if tx complete less than 15ms, return SHT30_SUCCESS
+    // if tx complete more than 15ms, return SHT30_TIMEOUT
+    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+        return LCD_TIMEOUT;
+    }
+    return LCD_SUCCESS;
+}
+
 static int lcd_set_ccr(LCD_HANDLE *handle, uint32_t value) {  // ccr is capture/compare register using in pwm
     if (!handle || !handle->blk.htim) return LCD_ERROR;
 
@@ -91,8 +101,12 @@ static int lcd_send_data_dma(LCD_HANDLE *handle,
     //     return LCD_ERROR;
     // }
     // ****************************
-    if (xSemaphoreTake(handle->tx_complete_semaphore, 10))
-        ;
+    lcd_wait_tx_complete(handle);
+    if (HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK) {
+        xSemaphoreGive(handle->tx_complete_semaphore);
+        HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
+        return LCD_ERROR;
+    }
     // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
     return LCD_SUCCESS;
 }
@@ -112,16 +126,6 @@ static int lcd_set_coordinate(LCD_HANDLE *handle, uint16_t x_start, uint16_t x_e
     if (lcd_send_data(handle, (uint8_t)(y_end >> 8) & 0xFF) != LCD_SUCCESS) return LCD_ERROR;    // parameter 3
     if (lcd_send_data(handle, (uint8_t)y_end & 0xFF) != LCD_SUCCESS) return LCD_ERROR;           // parameter 4
 
-    return LCD_SUCCESS;
-}
-
-int lcd_wait_tx_complete(LCD_HANDLE *handle) {
-    // timeout means semaphore take will wait maximum of xxms
-    // if tx complete less than 15ms, return SHT30_SUCCESS
-    // if tx complete more than 15ms, return SHT30_TIMEOUT
-    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
-        return LCD_TIMEOUT;
-    }
     return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
@@ -228,7 +232,6 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
             handle->tx_buf[i] = color_low_bit;
     }
 
-    lcd_wait_tx_complete(handle);
     if (lcd_send_data_dma(handle, (uint16_t)sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;
 
     return LCD_SUCCESS;
@@ -312,7 +315,6 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
         font_index++;  // next row
     }
 
-    lcd_wait_tx_complete(handle);
     if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) return LCD_ERROR;
 
     return LCD_SUCCESS;
@@ -359,7 +361,9 @@ int lcd_print_icon_dma(LCD_HANDLE *handle, const LCD_ICON_HANDLE *lookup_table, 
                        uint16_t background_color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    if (handle->tx_busy == 1) return LCD_ERROR;
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
 
     // set full screen coordinate
     uint16_t x_end = x_start + lookup_table->width - 1;
@@ -402,6 +406,11 @@ void lcd_spi_tx_cplt(LCD_HANDLE *handle, SPI_HandleTypeDef *hspi) {
         HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);  // cs high, stop transmit
         // TCHW, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
 
-        handle->tx_busy = 0;
+        // **** using in bare metal ****
+        // handle->tx_busy = 0;
+        // ****************************
+        BaseType_t yield = pdFALSE;
+        xSemaphoreGiveFromISR(handle->tx_complete_semaphore, &yield);
+        portYIELD_FROM_ISR(yield);
     }
 }
