@@ -59,6 +59,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/led_blinking_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/sensor_measure_task.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/log_report_task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Task/Src/lcd_monitor_task.c
 )
 
 # Add include paths

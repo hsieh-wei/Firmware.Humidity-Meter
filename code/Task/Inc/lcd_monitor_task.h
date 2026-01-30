@@ -1,5 +1,5 @@
-#ifndef __LOG_REPORT_H__
-#define __LOG_REPORT_H__
+#ifndef __LCD_MONITOR_TASK_H__
+#define __LCD_MONITOR_TASK_H__
 
 #include "lcd.h"
 
@@ -13,6 +13,6 @@ typedef struct {
 // --------------------------------------------------------------------------
 // TASK
 // --------------------------------------------------------------------------
-void log_report_task(void *parameter);
+void lcd_monitor_task(void *parameter);
 
-#endif  //__LOG_REPORT_H__
+#endif  //__LCD_MONITOR_TASK_H__
