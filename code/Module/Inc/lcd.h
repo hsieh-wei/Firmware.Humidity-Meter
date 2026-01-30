@@ -3,8 +3,9 @@
 
 #include "lcd_glyphs_table.h"
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_tim.h"
 #include <stdint.h>
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 // --------------------------------------------------------------------------
 // Error Codes
@@ -12,6 +13,7 @@
 typedef enum {
     LCD_SUCCESS = 0,
     LCD_ERROR = -1,
+    LCD_TIMEOUT = -2,
 } LCD_ERR;
 
 // --------------------------------------------------------------------------
@@ -45,7 +47,10 @@ typedef struct {
     // size (2 bytes per pixel in RGB565 format)
     uint8_t tx_buf[LCD_WIDTH_X * LCD_HEIGHT_Y * 2];
 
-    volatile int tx_busy;  // avoid send two tx message in one time
+    // **** using in bare metal ****
+    // volatile int tx_busy;  // avoid send two tx message in one time
+    // ****************************
+    SemaphoreHandle_t tx_complete_semaphore
 } LCD_HANDLE;
 
 // --------------------------------------------------------------------------

@@ -82,13 +82,17 @@ static int lcd_send_data_dma(LCD_HANDLE *handle,
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_RESET);  // cs low, ready to transmit
 
     // TCSS, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
-    handle->tx_busy = 1;  // set tx busy
-    if (HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK) {
-        handle->tx_busy = 0;  // clear tx busy
-        HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
-        return LCD_ERROR;
-    }
 
+    // **** using in bare metal ****
+    // handle->tx_busy = 1;  // set tx busy
+    // if (HAL_SPI_Transmit_DMA(handle->hspi, handle->tx_buf, (uint16_t)data_size) != HAL_OK) {
+    //     handle->tx_busy = 0;  // clear tx busy
+    //     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);
+    //     return LCD_ERROR;
+    // }
+    // ****************************
+    if (xSemaphoreTake(handle->tx_complete_semaphore, 10))
+        ;
     // TCSH, Guaranteed by SPI timing and HAL, the program does not need to insert delays manually.
     return LCD_SUCCESS;
 }
@@ -110,12 +114,31 @@ static int lcd_set_coordinate(LCD_HANDLE *handle, uint16_t x_start, uint16_t x_e
 
     return LCD_SUCCESS;
 }
+
+int lcd_wait_tx_complete(LCD_HANDLE *handle) {
+    // timeout means semaphore take will wait maximum of xxms
+    // if tx complete less than 15ms, return SHT30_SUCCESS
+    // if tx complete more than 15ms, return SHT30_TIMEOUT
+    if (xSemaphoreTake(handle->tx_complete_semaphore, pdMS_TO_TICKS(20)) != pdTRUE) {
+        return LCD_TIMEOUT;
+    }
+    return LCD_SUCCESS;
+}
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
 int lcd_init(LCD_HANDLE *handle) {
-    if (!handle || !handle->hspi) return LCD_ERROR;
+    if (!handle || !handle->hspi) {
+        return LCD_ERROR;
+    }
 
+    // iniial tx complete semaphore
+    if (handle->tx_complete_semaphore == NULL) {
+        handle->tx_complete_semaphore = xSemaphoreCreateBinary();
+        if (handle->tx_complete_semaphore == NULL) {
+            return LCD_ERROR;
+        }
+    }
     // Initial Control Pin
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);                  // unreset status
     HAL_GPIO_WritePin(handle->cs.gpiox, handle->cs.gpio_pin, GPIO_PIN_SET);                    // cs high, stop transmit
@@ -124,17 +147,21 @@ int lcd_init(LCD_HANDLE *handle) {
 
     // Hardware Reset
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_RESET);
-    HAL_Delay(1);  // ensure reset pulse duration > 10us
+    // HAL_Delay(1);  // ensure reset pulse duration > 10us
+    vTaskDelay(pdMS_TO_TICKS(1));
     HAL_GPIO_WritePin(handle->rst.gpiox, handle->rst.gpio_pin, GPIO_PIN_SET);
-    HAL_Delay(5);  // It is necessary to wait 5m sec after releasing RESX before sending commands.
+    // HAL_Delay(5);  // It is necessary to wait 5m sec after releasing RESX before sending commands.
+    vTaskDelay(pdMS_TO_TICKS(5));
 
     // SWRESET, Software Reset
     if (lcd_send_cmd(handle, 0x01) != LCD_SUCCESS) return LCD_ERROR;
-    HAL_Delay(120);  // no matter what mode,it will be necessary to wait 120ms before sending next command
+    // HAL_Delay(120);  // no matter what mode,it will be necessary to wait 120ms before sending next command
+    vTaskDelay(pdMS_TO_TICKS(120));
 
     // SLPOUT, Turn into sleep out mode
     if (lcd_send_cmd(handle, 0x11) != LCD_SUCCESS) return LCD_ERROR;
-    HAL_Delay(120);  // no matter what mode,it will be necessary to wait 120ms before sending next command
+    // HAL_Delay(120);  // no matter what mode,it will be necessary to wait 120ms before sending next command
+    vTaskDelay(pdMS_TO_TICKS(120));
 
     // MADCTL, Memory access control
     if (lcd_send_cmd(handle, 0x36) != LCD_SUCCESS) return LCD_ERROR;
@@ -166,7 +193,7 @@ int lcd_adjust_backlight(LCD_HANDLE *handle, uint32_t value) {
 int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    // set full screen coordinate
+    // set coordinate
     if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X - 1, 0, LCD_HEIGHT_Y - 1) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write
@@ -183,9 +210,11 @@ int lcd_fill_screen(LCD_HANDLE *handle, uint16_t color) {
 int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    if (handle->tx_busy == 1) return LCD_ERROR;
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
 
-    // set full screen coordinate
+    // set coordinate
     if (lcd_set_coordinate(handle, 0, LCD_WIDTH_X - 1, 0, LCD_HEIGHT_Y - 1) != LCD_SUCCESS) return LCD_ERROR;
 
     // RAMWR Memory Write
@@ -199,6 +228,7 @@ int lcd_fill_screen_dma(LCD_HANDLE *handle, uint16_t color) {
             handle->tx_buf[i] = color_low_bit;
     }
 
+    lcd_wait_tx_complete(handle);
     if (lcd_send_data_dma(handle, (uint16_t)sizeof(handle->tx_buf)) != LCD_SUCCESS) return LCD_ERROR;
 
     return LCD_SUCCESS;
@@ -208,7 +238,7 @@ int lcd_print_font(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *lookup_
                    uint16_t background_color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    // set full screen coordinate
+    // set coordinate
     uint16_t x_end = x_start + lookup_table->width - 1;
     uint16_t y_end = y_start + lookup_table->height - 1;
     if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
@@ -246,9 +276,11 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
                        uint16_t background_color) {
     if (!handle || !handle->hspi) return LCD_ERROR;
 
-    if (handle->tx_busy == 1) return LCD_ERROR;
+    // **** using in bare metal ****
+    // if (handle->tx_busy == 1) return LCD_ERROR;
+    // ****************************
 
-    // set full screen coordinate
+    // set coordinate
     uint16_t x_end = x_start + lookup_table->width - 1;
     uint16_t y_end = y_start + lookup_table->height - 1;
     if (x_start >= LCD_WIDTH_X || y_start >= LCD_HEIGHT_Y) return LCD_ERROR;
@@ -280,6 +312,7 @@ int lcd_print_font_dma(LCD_HANDLE *handle, char font, const LCD_FONT_HANDLE *loo
         font_index++;  // next row
     }
 
+    lcd_wait_tx_complete(handle);
     if ((lcd_send_data_dma(handle, (uint16_t)lookup_table->width * lookup_table->height * 2)) != LCD_SUCCESS) return LCD_ERROR;
 
     return LCD_SUCCESS;
