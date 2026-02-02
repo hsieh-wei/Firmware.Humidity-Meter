@@ -27,21 +27,21 @@ typedef enum {
 typedef struct {
     GPIO_TypeDef *gpiox;  // gpio HAL handle (EX: &GPIOA)
     uint16_t gpio_pin;    // gpio HAL pin (EX: GPIO_PIN_6)
-} LCD_Control_Pin_HANDLE;
+} LCD_CONTROL_PIN_HANDLE;
 
 typedef struct {
     TIM_HandleTypeDef *htim;    // timer HAL handle (EX: &htim2)
     uint32_t channel;           // timer channel (EX: TIM_CHANNEL_1)
     uint32_t brightness_value;  // pwm arr value, it can also mean backlight
                                 // lightness (0~100)
-} LCD_Backlight_HANDLE;
+} LCD_BACKLIGHT_HANDLE;
 
 typedef struct {
     SPI_HandleTypeDef *hspi;     // spi HAL handle (EX: &hspi1)
-    LCD_Control_Pin_HANDLE rst;  // reset
-    LCD_Control_Pin_HANDLE dc;   // 0 command, 1 parameter and data
-    LCD_Control_Pin_HANDLE cs;   // chip select
-    LCD_Backlight_HANDLE blk;    // LCD backlight modify
+    LCD_CONTROL_PIN_HANDLE rst;  // reset
+    LCD_CONTROL_PIN_HANDLE dc;   // 0 command, 1 parameter and data
+    LCD_CONTROL_PIN_HANDLE cs;   // chip select
+    LCD_BACKLIGHT_HANDLE blk;    // LCD backlight modify
 
     // LCD cmd data buffer.Buffer size can cover the entire LCD screen
     // size (2 bytes per pixel in RGB565 format)
