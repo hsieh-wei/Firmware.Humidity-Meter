@@ -22,8 +22,10 @@ LOG_REPORT_TASK_PARAMETER g_log_report_task_param = {
     .target_sys_timestamp = &g_sys_timestamp_handle,
 };
 
-LCD_MONITOR_TASK_HANDLE g_lcd_monitor_task_param = {
+LCD_MONITOR_TASK_PARAMETER g_lcd_monitor_task_param = {
     .target_lcd = &g_lcd_handle,
+    .target_button_k0 = &g_button_handle_k0,
+    .target_button_k1 = &g_button_handle_k1,
 };
 
 // --------------------------------------------------------
@@ -56,7 +58,7 @@ void tasks_create(void) {
     // create lcd monitor task
     status = xTaskCreate(lcd_monitor_task,             // function pointer
                          "LCD_MONITOR_TASK",           // task name using in debug
-                         1024,                         // stack size (words)
+                         128,                          // stack size (words)
                          &g_lcd_monitor_task_param,    // parameter into task function
                          1,                            // task priority
                          &g_lcd_monitor_task_handle);  // handle using in suspend, delete, notify
