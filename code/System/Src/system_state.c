@@ -43,6 +43,7 @@ void system_state_init(void) {
     // error
     g_system_state_handle.sht30_error_timeout_count = 0;
     g_system_state_handle.pc_link_error_timeout_count = 0;
+    g_system_state_handle.lcd_monitor_timeout_count = 0;
 
     // period
     g_system_state_handle.sht30_measure_period = 100;        // initial peroid, avoid to set 0

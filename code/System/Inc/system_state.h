@@ -28,6 +28,7 @@ typedef struct {
     // error
     int sht30_error_timeout_count;
     int pc_link_error_timeout_count;
+    int lcd_monitor_timeout_count;
 
     // period
     uint32_t sht30_measure_period;       // period in ms

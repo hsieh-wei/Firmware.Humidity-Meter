@@ -42,7 +42,7 @@ static void display_humidity(LCD_HANDLE *handle, int humidity, int is_mode_chang
     char humidity_unit_digit = (char)(humidity % 10 + 48);
 
     // different_mode_as_last, 0 is same, 1 is different
-    if (is_mode_changed != 1) {
+    if (is_mode_changed != 0) {
         (void)lcd_fill_screen_dma(handle, LCD_COLOR_WHITE);
         (void)lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
         (void)lcd_print_font_dma(handle, 'H', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
@@ -69,8 +69,6 @@ void lcd_monitor_task(void *parameter) {
 
     // Get task parameter
     LCD_HANDLE *lcd = task_parameter->target_lcd;
-    BUTTON_HANDLE *button_k0 = task_parameter->target_button_k0;
-    BUTTON_HANDLE *button_k1 = task_parameter->target_button_k1;
 
     // initial
     lcd_init(lcd);
@@ -96,6 +94,7 @@ void lcd_monitor_task(void *parameter) {
         } else if (current_mode == 1) {
             display_humidity(lcd, (int)current_humidity, last_mode ^ current_mode);
         }
+        lcd_adjust_backlight(lcd, current_brightness);
 
         last_mode = current_mode;
         vTaskDelay(pdMS_TO_TICKS(period));
