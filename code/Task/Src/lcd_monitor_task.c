@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------
 // Internal Helpers
 // --------------------------------------------------------------------------
-static void display_temperature(LCD_HANDLE *handle, int temperature, int different_mode_as_last) {
+static void display_temperature(LCD_HANDLE *handle, int temperature, int is_mode_changed) {
     // avoid artifacts
     if (temperature < 0) temperature = 0;
     if (temperature > 99) temperature = 99;
@@ -18,7 +18,7 @@ static void display_temperature(LCD_HANDLE *handle, int temperature, int differe
     char tempature_unit_digit = (char)(temperature % 10 + 48);
 
     // different_mode_as_last, 0 is same, 1 is different
-    if (different_mode_as_last == 1) {
+    if (is_mode_changed != 0) {
         (void)lcd_fill_screen_dma(handle, LCD_COLOR_WHITE);
         (void)lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
         (void)lcd_print_font_dma(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
@@ -32,7 +32,7 @@ static void display_temperature(LCD_HANDLE *handle, int temperature, int differe
     (void)lcd_print_font_dma(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
 }
 
-static void display_humidity(LCD_HANDLE *handle, int humidity, int different_mode_as_last) {
+static void display_humidity(LCD_HANDLE *handle, int humidity, int is_mode_changed) {
     // avoid artifacts
     if (humidity < 0) humidity = 0;
     if (humidity > 99) humidity = 99;
@@ -42,7 +42,7 @@ static void display_humidity(LCD_HANDLE *handle, int humidity, int different_mod
     char humidity_unit_digit = (char)(humidity % 10 + 48);
 
     // different_mode_as_last, 0 is same, 1 is different
-    if (different_mode_as_last == 1) {
+    if (is_mode_changed != 1) {
         (void)lcd_fill_screen_dma(handle, LCD_COLOR_WHITE);
         (void)lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE);
         (void)lcd_print_font_dma(handle, 'H', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE);
