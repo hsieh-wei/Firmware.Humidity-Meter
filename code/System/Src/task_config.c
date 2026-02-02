@@ -58,7 +58,7 @@ void tasks_create(void) {
     // create lcd monitor task
     status = xTaskCreate(lcd_monitor_task,             // function pointer
                          "LCD_MONITOR_TASK",           // task name using in debug
-                         128,                          // stack size (words)
+                         256,                          // stack size (words)
                          &g_lcd_monitor_task_param,    // parameter into task function
                          1,                            // task priority
                          &g_lcd_monitor_task_handle);  // handle using in suspend, delete, notify
