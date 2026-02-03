@@ -20,12 +20,12 @@ static int pc_link_wait_tx_complete(PC_LINK_HANDLE *handle) {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
-int pc_link_init(PC_LINK_HANDLE *handle) {
+int pc_link_tx_init(PC_LINK_HANDLE *handle) {
     if (!handle || !handle->huart || !handle->rx_buf || handle->rx_buf_len == 0 || !handle->tx_buf || handle->tx_buf_len == 0) {
         return PC_LINK_ERROR;
     }
 
-    // iniial tx complete semaphore
+    // intial tx complete semaphore
     if (handle->tx_complete_semaphore == NULL) {
         handle->tx_complete_semaphore = xSemaphoreCreateBinary();
         if (handle->tx_complete_semaphore == NULL) {
@@ -35,6 +35,18 @@ int pc_link_init(PC_LINK_HANDLE *handle) {
     }
 
     pc_link_disable_dma_half_it(handle->huart);
+
+    // **** using in bare metal ****
+    // handle->tx_busy = 0;
+    // ****************************
+
+    return PC_LINK_SUCCESS;
+}
+
+int pc_link_rx_init(PC_LINK_HANDLE *handle) {
+    if (!handle || !handle->huart || !handle->rx_buf || handle->rx_buf_len == 0 || !handle->tx_buf || handle->tx_buf_len == 0) {
+        return PC_LINK_ERROR;
+    }
 
     // **** using in bare metal ****
     // handle->tx_busy = 0;

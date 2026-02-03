@@ -23,7 +23,7 @@ void log_report_task(void *parameter) {
     SYS_TIMESTAMP_HANDLE *sys_timestamp_handle = task_parameter->target_sys_timestamp;
 
     // init pc link
-    pc_link_init(pc_link_handle);
+    pc_link_tx_init(pc_link_handle);
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
     int log_buffer_len;

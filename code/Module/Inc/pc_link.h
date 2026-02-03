@@ -41,7 +41,8 @@ typedef struct {
 // --------------------------------------------------------------------------
 // API
 // --------------------------------------------------------------------------
-int pc_link_init(PC_LINK_HANDLE *handle);
+int pc_link_tx_init(PC_LINK_HANDLE *handle);
+int pc_link_rx_init(PC_LINK_HANDLE *handle);
 int pc_link_rx_dma(PC_LINK_HANDLE *handle);
 int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len);
 
