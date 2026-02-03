@@ -42,3 +42,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     sys_timestamp_tim_period_elapsed(&g_sys_timestamp_handle, htim);
     // you can add another uart callback below
 }
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    // you can add another uart callback below
+}
