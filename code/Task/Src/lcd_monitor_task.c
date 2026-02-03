@@ -20,16 +20,19 @@ static int display_temperature(LCD_HANDLE *handle, int temperature, int is_mode_
     // different_mode_as_last, 0 is same, 1 is different
     if (is_mode_changed != 0) {
         if (lcd_fill_screen_dma(handle, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'E', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'M', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'P', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_RED, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'T', &LCD_Font_11x18, 45, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'E', &LCD_Font_11x18, 61, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'M', &LCD_Font_11x18, 77, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'P', &LCD_Font_11x18, 93, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
     }
 
-    if (lcd_print_font_dma(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_print_font_dma(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_print_font_dma(handle, tempature_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS)
+        return LCD_ERROR;
+    if (lcd_print_font_dma(handle, tempature_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_PURPLE, LCD_COLOR_WHITE) != LCD_SUCCESS)
+        return LCD_ERROR;
+    return LCD_SUCCESS;
 }
 
 static int display_humidity(LCD_HANDLE *handle, int humidity, int is_mode_changed) {
@@ -44,16 +47,17 @@ static int display_humidity(LCD_HANDLE *handle, int humidity, int is_mode_change
     // different_mode_as_last, 0 is same, 1 is different
     if (is_mode_changed != 0) {
         if (lcd_fill_screen_dma(handle, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_icon_dma(handle, &LCD_Thermometer_30X30, 10, 45, LCD_COLOR_BLACK, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'H', &LCD_Font_11x18, 45, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'U', &LCD_Font_11x18, 61, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'M', &LCD_Font_11x18, 77, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, 'I', &LCD_Font_11x18, 93, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-        if (lcd_print_font_dma(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_icon_dma(handle, &LCD_Water_Drop_30X30, 10, 45, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'H', &LCD_Font_11x18, 45, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'U', &LCD_Font_11x18, 61, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'M', &LCD_Font_11x18, 77, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, 'I', &LCD_Font_11x18, 93, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+        if (lcd_print_font_dma(handle, ':', &LCD_Font_11x18, 109, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
     }
 
-    if (lcd_print_font_dma(handle, humidity_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
-    if (lcd_print_font_dma(handle, humidity_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_BLUE, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_print_font_dma(handle, humidity_tens_digit, &LCD_Font_11x18, 125, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+    if (lcd_print_font_dma(handle, humidity_unit_digit, &LCD_Font_11x18, 141, 51, LCD_COLOR_GREEN, LCD_COLOR_WHITE) != LCD_SUCCESS) return LCD_ERROR;
+    return LCD_SUCCESS;
 }
 // --------------------------------------------------------------------------
 // Task
@@ -93,15 +97,16 @@ void lcd_monitor_task(void *parameter) {
 
         // Draw Logic
         if (current_mode == 0) {
-            if (display_temperature(lcd, (int)current_temperature, last_mode ^ current_mode)) goto error_handler;
+            if (display_temperature(lcd, (int)current_temperature, last_mode ^ current_mode) != LCD_SUCCESS) goto error_handler;
         } else if (current_mode == 1) {
-            if (display_humidity(lcd, (int)current_humidity, last_mode ^ current_mode)) goto error_handler;
+            if (display_humidity(lcd, (int)current_humidity, last_mode ^ current_mode) != LCD_SUCCESS) goto error_handler;
         }
-        if (lcd_adjust_backlight(lcd, current_brightness)) goto error_handler;
+        if (lcd_adjust_backlight(lcd, current_brightness) != LCD_SUCCESS) goto error_handler;
 
         last_mode = current_mode;
-        vTaskDelay(pdMS_TO_TICKS(period));
 
+        vTaskDelay(pdMS_TO_TICKS(period));
+        continue;
     error_handler:
         if (xSemaphoreTake(g_system_state_mutex, portMAX_DELAY) == pdTRUE) {
             g_system_state_handle.lcd_monitor_timeout_count++;

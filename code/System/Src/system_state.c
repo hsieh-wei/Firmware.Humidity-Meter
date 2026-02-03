@@ -37,7 +37,7 @@ void system_state_init(void) {
     g_system_state_handle.sht30_humidity_lower_threshold = 40;  // human feel comfortable
 
     // lcd
-    g_system_state_handle.lcd_brightness = 0;
+    g_system_state_handle.lcd_brightness = 100;
     g_system_state_handle.lcd_display_mode = 0;
 
     // error
