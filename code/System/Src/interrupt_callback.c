@@ -54,6 +54,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     }
 
     // interrupt router
+    // eNotifyAction enum function
+    // eNoAction(Binary Semaphore)
+    // eSetBits(Event Groups)
+    // eIncrement(Counting Semaphore)
+    // eSetValueWithOverwrite(Mailbox)
+    // eSetValueWithoutOverwrite(Queue)
     if (g_button_handle_k0.gpio_pin == GPIO_Pin) {
         xTaskNotifyFromISR(g_button_process_task_handle, BUTTON_K0_NOTIFY, eSetBits, &yield);
     } else if (g_button_handle_k1.gpio_pin == GPIO_Pin) {
