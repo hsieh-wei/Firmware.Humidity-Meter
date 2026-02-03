@@ -4,6 +4,8 @@
 #include "pc_link.h"
 #include "sys_timestamp.h"
 #include "lcd.h"
+#include "task_config.h"
+#include "button_process_task.h"
 
 // --------------------------------------------------------------------------
 // Callback Redefine
@@ -45,10 +47,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     BaseType_t yield = pdFALSE;
+
+    // check task handle is valid
+    if (g_button_process_task_handle == NULL) {
+        return;
+    }
+
+    // interrupt router
     if (g_button_handle_k0.gpio_pin == GPIO_Pin) {
-        //
+        xTaskNotifyFromISR(g_button_process_task_handle, BUTTON_K0_NOTIFY, eSetBits, &yield);
     } else if (g_button_handle_k1.gpio_pin == GPIO_Pin) {
-        //
+        xTaskNotifyFromISR(g_button_process_task_handle, BUTTON_K1_NOTIFY, eSetBits, &yield);
     }
     // you can add another gpio callback below
     portYIELD_FROM_ISR(yield);

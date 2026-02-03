@@ -67,4 +67,13 @@ void tasks_create(void) {
                          1,                            // task priority
                          &g_lcd_monitor_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
+
+    // create button process task
+    status = xTaskCreate(button_process_task,             // function pointer
+                         "BUTTON_PROCESS_TASK",           // task name using in debug
+                         128,                             // stack size (words)
+                         &g_button_process_task_param,    // parameter into task function
+                         1,                               // task priority
+                         &g_button_process_task_handle);  // handle using in suspend, delete, notify
+    configASSERT(status == pdPASS);
 }
