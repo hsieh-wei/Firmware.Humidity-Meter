@@ -45,13 +45,16 @@ void log_report_task(void *parameter) {
         // log formatting
         log_buffer_len = snprintf(log_buffer, sizeof(log_buffer),
                                   "[timestamp] %d \n"
+                                  "[error] sht30: %d , pc_link: %d, lcd_monitor: %d\n"
                                   "[temperature] %d, threshold: %d , %d\n"
                                   "[humidity] %d , threshold: %d , %d \n"
                                   "[lcd] brightness: %d , mode: %d\n"
-                                  "[error] sht30: %d , pc_link: %d, lcd_monitor: %d\n"
-                                  "[period]sht30 measure: %d , log report: %d , lcd refresh: %d\n",
+                                  "[period] sht30 measure: %d , log report: %d , lcd refresh: %d\n",
                                   // system timestamp
                                   (int)(current_system_state.sys_timestamp_count),
+                                  // error
+                                  current_system_state.sht30_error_timeout_count, current_system_state.pc_link_error_timeout_count,
+                                  current_system_state.lcd_monitor_timeout_count,
                                   // temperature
                                   (int)(current_system_state.sht30_temperature), current_system_state.sht30_temperature_lower_threshold,
                                   current_system_state.sht30_temperature_upper_threshold,
@@ -60,9 +63,6 @@ void log_report_task(void *parameter) {
                                   current_system_state.sht30_humidity_upper_threshold,
                                   // lcd
                                   (int)current_system_state.lcd_brightness, current_system_state.lcd_display_mode,
-                                  // error
-                                  current_system_state.sht30_error_timeout_count, current_system_state.pc_link_error_timeout_count,
-                                  current_system_state.lcd_monitor_timeout_count,
                                   // period
                                   (int)current_system_state.sht30_measure_period, (int)current_system_state.pc_link_log_report_period,
                                   (int)current_system_state.lcd_refresh_period);

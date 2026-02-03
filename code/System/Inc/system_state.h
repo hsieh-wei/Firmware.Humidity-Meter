@@ -11,6 +11,11 @@ typedef struct {
     // system timestamp
     int sys_timestamp_count;
 
+    // error
+    int sht30_error_timeout_count;
+    int pc_link_error_timeout_count;
+    int lcd_monitor_timeout_count;
+
     // temperature
     float sht30_temperature;
     int sht30_temperature_upper_threshold;
@@ -25,15 +30,11 @@ typedef struct {
     uint8_t lcd_brightness;  // 0~100, larger number means brighter
     int lcd_display_mode;    // 0 display temperature, 1 display humidity
 
-    // error
-    int sht30_error_timeout_count;
-    int pc_link_error_timeout_count;
-    int lcd_monitor_timeout_count;
-
     // period
     uint32_t sht30_measure_period;       // period in ms
     uint32_t pc_link_log_report_period;  // period in ms
     uint32_t lcd_refresh_period;         // period in ms
+
 } SYSTEM_STATE_HANDLE;
 
 // --------------------------------------------------------------------------

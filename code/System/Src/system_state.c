@@ -26,6 +26,11 @@ void system_state_init(void) {
     // system timestamp
     g_system_state_handle.sys_timestamp_count = 0;
 
+    // error
+    g_system_state_handle.sht30_error_timeout_count = 0;
+    g_system_state_handle.pc_link_error_timeout_count = 0;
+    g_system_state_handle.lcd_monitor_timeout_count = 0;
+
     // temperature
     g_system_state_handle.sht30_temperature = 0;
     g_system_state_handle.sht30_temperature_upper_threshold = 27;  // human feel comfortable
@@ -39,11 +44,6 @@ void system_state_init(void) {
     // lcd
     g_system_state_handle.lcd_brightness = 100;
     g_system_state_handle.lcd_display_mode = 0;
-
-    // error
-    g_system_state_handle.sht30_error_timeout_count = 0;
-    g_system_state_handle.pc_link_error_timeout_count = 0;
-    g_system_state_handle.lcd_monitor_timeout_count = 0;
 
     // period
     g_system_state_handle.sht30_measure_period = 100;        // initial peroid, avoid to set 0
