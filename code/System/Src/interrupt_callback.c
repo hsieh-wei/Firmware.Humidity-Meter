@@ -30,7 +30,7 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
     lcd_spi_tx_cplt(&g_lcd_handle, hspi);
-    // you can add another uart callback below
+    // you can add another spi callback below
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -40,9 +40,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     }
 
     sys_timestamp_tim_period_elapsed(&g_sys_timestamp_handle, htim);
-    // you can add another uart callback below
+    // you can add another tim callback below
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-    // you can add another uart callback below
+    BaseType_t yield = pdFALSE;
+    if (g_button_handle_k0.gpio_pin == GPIO_Pin) {
+        //
+    } else if (g_button_handle_k1.gpio_pin == GPIO_Pin) {
+        //
+    }
+    // you can add another gpio callback below
+    portYIELD_FROM_ISR(yield);
 }

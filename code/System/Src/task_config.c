@@ -6,7 +6,8 @@
 // --------------------------------------------------------
 TaskHandle_t g_sensor_measure_task_handle = NULL;
 TaskHandle_t g_log_report_task_handle = NULL;
-TaskHandle_t g_lcd_monitor_task_handle;
+TaskHandle_t g_lcd_monitor_task_handle = NULL;
+TaskHandle_t g_button_process_task_handle = NULL;
 
 // --------------------------------------------------------
 // task parameters
@@ -24,6 +25,9 @@ LOG_REPORT_TASK_PARAMETER g_log_report_task_param = {
 
 LCD_MONITOR_TASK_PARAMETER g_lcd_monitor_task_param = {
     .target_lcd = &g_lcd_handle,
+};
+
+BUTTON_PROCESS_TASK_PARAMETER g_button_process_task_param = {
     .target_button_k0 = &g_button_handle_k0,
     .target_button_k1 = &g_button_handle_k1,
 };
