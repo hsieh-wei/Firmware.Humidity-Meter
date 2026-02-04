@@ -33,7 +33,7 @@ BUTTON_HANDLE g_button_handle_k0 = {
 };
 
 // pc_link handle
-static uint8_t s_pc_rx_buffer[32];
+static uint8_t s_pc_rx_buffer[15];
 static uint8_t s_pc_tx_buffer[256];
 PC_LINK_HANDLE g_pc_link_handle = {
     .huart = &huart1,

@@ -4,6 +4,8 @@
 #include "stm32f4xx_hal.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "stream_buffer.h"
+#include "command_issue_task.h"
 #include <stdint.h>
 
 // --------------------------------------------------------------------------

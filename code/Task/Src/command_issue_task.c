@@ -1,12 +1,12 @@
 #include "command_issue_task.h"
 #include "FreeRTOS.h"
-#include "queue.h"
+#include "stream_buffer.h"
 #include "pc_link.h"
 
 // --------------------------------------------------------------------------
 // Notify Element
 // --------------------------------------------------------------------------
-QueueHandle_t command_queue = NULL;
+StreamBufferHandle_t command_stream_buffer = NULL;
 
 // --------------------------------------------------------------------------
 // define command rule
@@ -67,13 +67,17 @@ void command_issue_task(void *parameter) {
     PC_LINK_HANDLE *pc_link = task_parameter->target_pc_link;
 
     // initial queue
-    command_queue = xQueueCreate(128, sizeof(uint8_t));
-    configASSERT(command_queue != NULL);
+    command_stream_buffer = xQueuexStreamBufferCreateCreate(30, 3 * sizeof(uint8_t));
+    configASSERT(command_stream_buffer != NULL);
 
     // init pc link
+    uint8_t cmd_process_buffer[3];
     pc_link_rx_init(pc_link);
 
     // infinite loop
     while (1) {
+        if (xStreamBufferReceive() == pdTRUE) {
+            // 執行指令解析 (Switch Case 邏輯)
+        }
     }
 }

@@ -98,10 +98,15 @@ void pc_link_uartex_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, 
     // Check whether it is the specified handler
     if (!handle || huart != handle->huart) return;
 
-    // TODO
+    // send data to queue
+    BaseType_t yield = pdFALSE;
+    xStreamBufferSendFromISR(command_stream_buffer, handle->rx_buf, size, yield);
 
     // restart rx
     (void)pc_link_rx_dma(handle);
+
+    // ContextSwitch if need
+    portYIELD_FROM_ISR(yield);
 }
 
 void pc_link_uart_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart) {
