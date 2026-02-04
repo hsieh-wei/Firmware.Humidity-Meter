@@ -48,9 +48,7 @@ int pc_link_rx_init(PC_LINK_HANDLE *handle) {
         return PC_LINK_ERROR;
     }
 
-    // **** using in bare metal ****
-    // handle->tx_busy = 0;
-    // ****************************
+    pc_link_rx_dma(handle);
 
     return PC_LINK_SUCCESS;
 }
