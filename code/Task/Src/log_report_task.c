@@ -19,11 +19,11 @@ void log_report_task(void *parameter) {
     LOG_REPORT_TASK_PARAMETER *task_parameter = (LOG_REPORT_TASK_PARAMETER *)parameter;
 
     // Get task parameter
-    PC_LINK_HANDLE *pc_link_handle = task_parameter->target_pc_link;
+    PC_LINK_HANDLE *pc_link = task_parameter->target_pc_link;
     SYS_TIMESTAMP_HANDLE *sys_timestamp_handle = task_parameter->target_sys_timestamp;
 
     // init pc link
-    pc_link_tx_init(pc_link_handle);
+    pc_link_tx_init(pc_link);
     SYSTEM_STATE_HANDLE current_system_state;
     char log_buffer[256];
     int log_buffer_len;
@@ -70,7 +70,7 @@ void log_report_task(void *parameter) {
         // judge format is success
         if (log_buffer_len > 0 && log_buffer_len < sizeof(log_buffer)) {
             // judge tx is success
-            if (pc_link_tx_dma(pc_link_handle, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) != PC_LINK_SUCCESS) {
+            if (pc_link_tx_dma(pc_link, (uint8_t *)log_buffer, (uint16_t)log_buffer_len) != PC_LINK_SUCCESS) {
                 goto error_handler;
             }
         } else {

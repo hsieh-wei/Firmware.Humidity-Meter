@@ -15,10 +15,10 @@ void command_issue_task(void *parameter) {
     COMMAND_ISSUE_TASK_PARAMETER *task_parameter = (COMMAND_ISSUE_TASK_PARAMETER *)parameter;
 
     // Get task parameter
-    PC_LINK_HANDLE *pc_link_handle = task_parameter->target_pc_link;
+    PC_LINK_HANDLE *pc_link = task_parameter->target_pc_link;
 
     // init pc link
-
+    pc_link_rx_init(pc_link);
     // infinite loop
     while (1) {
     }
