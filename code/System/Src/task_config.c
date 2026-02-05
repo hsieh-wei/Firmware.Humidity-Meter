@@ -8,6 +8,7 @@ TaskHandle_t g_sensor_measure_task_handle = NULL;
 TaskHandle_t g_log_report_task_handle = NULL;
 TaskHandle_t g_lcd_monitor_task_handle = NULL;
 TaskHandle_t g_button_process_task_handle = NULL;
+TaskHandle_t g_command_issue_task_handle = NULL;
 
 // --------------------------------------------------------
 // task parameters
@@ -66,6 +67,15 @@ void tasks_create(void) {
                          &g_lcd_monitor_task_param,    // parameter into task function
                          1,                            // task priority
                          &g_lcd_monitor_task_handle);  // handle using in suspend, delete, notify
+    configASSERT(status == pdPASS);
+
+    // create button process task
+    status = xTaskCreate(button_process_task,             // function pointer
+                         "BUTTON_PROCESS_TASK",           // task name using in debug
+                         128,                             // stack size (words)
+                         &g_button_process_task_param,    // parameter into task function
+                         1,                               // task priority
+                         &g_button_process_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 
     // create button process task
