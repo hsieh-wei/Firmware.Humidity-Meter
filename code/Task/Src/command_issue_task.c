@@ -15,15 +15,12 @@ StreamBufferHandle_t command_stream_buffer = NULL;
 // --------------------------------------------------------------------------
 // cmd [0] = item, cmd [1] = sub item, cmd [2] = value
 // item, sub item
-// 0,0 = temperature,sht30_temperature_upper_threshold
-// 0,1 = temperature,sht30_temperature_lower_threshold
-// 1,0 = humidity,sht30_humidity_upper_threshold;
-// 1,1 = humidity,sht30_humidity_lower_threshold
-// 2,0 = lcd,lcd_brightness
-// 2,1 = lcd,lcd_display_mode
-// 3,0 = period,sht30_measure_period
-// 3,1 = period,pc_link_log_report_period
-// 3,2 = period,lcd_refresh_period
+// 00,00 = temperature,sht30_temperature_upper_threshold
+// 00,01 = temperature,sht30_temperature_lower_threshold
+// 01,00 = humidity,sht30_humidity_upper_threshold;
+// 01,01 = humidity,sht30_humidity_lower_threshold
+// 02,00 = lcd,lcd_brightness
+// 02,01 = lcd,lcd_display_mode
 
 typedef enum {
     CMD_ITEM_TEMPERATURE = 0,
@@ -46,12 +43,6 @@ typedef enum {
     CMD_SUB_LCD_BRIGHTNESS = 0,
     CMD_SUB_LCD_MODE = 1,
 } CMD_SUB_LCD;
-
-typedef enum {
-    CMD_SUB_PERIOD_SHT30 = 0,
-    CMD_SUB_PERIOD_LOG = 1,
-    CMD_SUB_PERIOD_LCD = 2,
-} CMD_SUB_PERIOD;
 
 // --------------------------------------------------------------------------
 // Task
@@ -89,34 +80,34 @@ void command_issue_task(void *parameter) {
                         switch (cmd_process_buffer[1]) {
                             case CMD_SUB_TEMPERATURE_UPPER_THERSHOLD:
                                 g_system_state_handle.sht30_temperature_upper_threshold = cmd_process_buffer[2];
+                                break;
                             case CMD_SUB_TEMPERATURE_LOWER_THERSHOLD:
                                 g_system_state_handle.sht30_temperature_lower_threshold = cmd_process_buffer[2];
+                                break;
                         }
+                        break;
                     case CMD_ITEM_HUMIDITY:
                         switch (cmd_process_buffer[1]) {
                             case CMD_SUB_HUMIDITY_UPPER_THERSHOLD:
                                 g_system_state_handle.sht30_humidity_upper_threshold = cmd_process_buffer[2];
+                                break;
                             case CMD_SUB_HUMIDITY_LOWER_THERSHOLD:
                                 g_system_state_handle.sht30_humidity_lower_threshold = cmd_process_buffer[2];
+                                break;
                         }
+                        break;
                     case CMD_ITEM_LCD:
                         switch (cmd_process_buffer[1]) {
                             case CMD_SUB_LCD_BRIGHTNESS:
                                 g_system_state_handle.lcd_brightness = cmd_process_buffer[2];
+                                break;
                             case CMD_SUB_LCD_MODE:
                                 g_system_state_handle.lcd_display_mode = cmd_process_buffer[2];
+                                break;
                         }
-                    case CMD_ITEM_PERIOD:
-                        switch (cmd_process_buffer[1]) {
-                            case CMD_SUB_PERIOD_SHT30:
-                                g_system_state_handle.sht30_measure_period = cmd_process_buffer[2];
-                            case CMD_SUB_PERIOD_LOG:
-                                g_system_state_handle.pc_link_log_report_period = cmd_process_buffer[2];
-                            case CMD_SUB_PERIOD_LCD:
-                                g_system_state_handle.lcd_refresh_period = cmd_process_buffer[2];
-                        }
+                        break;
                 }
-                xSemaphoreGive(command_stream_buffer);
+                xSemaphoreGive(g_system_state_mutex);
             }
         }
     }
