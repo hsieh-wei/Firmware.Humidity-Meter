@@ -5,7 +5,7 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "stream_buffer.h"
-#include "command_issue_task.h"
+// #include "command_issue_task.h"
 #include <stdint.h>
 
 // --------------------------------------------------------------------------

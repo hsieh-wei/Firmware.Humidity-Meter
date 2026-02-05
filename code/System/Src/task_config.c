@@ -36,7 +36,10 @@ BUTTON_PROCESS_TASK_PARAMETER g_button_process_task_param = {
 COMMAND_ISSUE_TASK_PARAMETER g_command_issue_task_param = {
     .target_pc_link = &g_pc_link_handle,
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6ec2a107c20fcc9eb1f25eb3aca5984f2f9af45c
 // --------------------------------------------------------
 // API
 // Create Task include

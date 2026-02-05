@@ -16,7 +16,19 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 }
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-    pc_link_uartex_rx_event(&g_pc_link_handle, huart, Size);
+    if (huart == g_pc_link_handle.huart) {
+        if (command_stream_buffer != NULL) {
+            // send data to queue
+            BaseType_t yield = pdFALSE;
+            xStreamBufferSendFromISR(command_stream_buffer, g_pc_link_handle.rx_buf, Size, &yield);
+            // ContextSwitch if need
+            portYIELD_FROM_ISR(yield);
+        }
+
+        // restart rx
+        (void)pc_link_rx_dma(&g_pc_link_handle);
+    }
+
     // you can add another uart callback below
 }
 
