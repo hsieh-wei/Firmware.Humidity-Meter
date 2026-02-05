@@ -95,18 +95,7 @@ int pc_link_tx_dma(PC_LINK_HANDLE *handle, const uint8_t *data, uint16_t len) {
 // ----------------------------------------------------------------------------
 void pc_link_uartex_rx_event(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart, uint16_t size)  // rx event is able to change input length
 {
-    // Check whether it is the specified handler
-    if (!handle || huart != handle->huart) return;
-
-    // send data to queue
-    BaseType_t yield = pdFALSE;
-    xStreamBufferSendFromISR(command_stream_buffer, handle->rx_buf, size, yield);
-
-    // restart rx
-    (void)pc_link_rx_dma(handle);
-
-    // ContextSwitch if need
-    portYIELD_FROM_ISR(yield);
+    return;
 }
 
 void pc_link_uart_tx_cplt(PC_LINK_HANDLE *handle, UART_HandleTypeDef *huart) {

@@ -33,6 +33,9 @@ BUTTON_PROCESS_TASK_PARAMETER g_button_process_task_param = {
     .target_button_k1 = &g_button_handle_k1,
 };
 
+COMMAND_ISSUE_TASK_PARAMETER g_command_issue_task_param = {
+    .target_pc_link = &g_pc_link_handle,
+};
 // --------------------------------------------------------
 // API
 // Create Task include
@@ -78,12 +81,12 @@ void tasks_create(void) {
                          &g_button_process_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 
-    // create button process task
-    status = xTaskCreate(button_process_task,             // function pointer
-                         "BUTTON_PROCESS_TASK",           // task name using in debug
-                         128,                             // stack size (words)
-                         &g_button_process_task_param,    // parameter into task function
-                         1,                               // task priority
-                         &g_button_process_task_handle);  // handle using in suspend, delete, notify
+    // create command issue task
+    status = xTaskCreate(command_issue_task,             // function pointer
+                         "COMMAND_ISSUE_TASK",           // task name using in debug
+                         128,                            // stack size (words)
+                         &g_command_issue_task_param,    // parameter into task function
+                         1,                              // task priority
+                         &g_command_issue_task_handle);  // handle using in suspend, delete, notify
     configASSERT(status == pdPASS);
 }

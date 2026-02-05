@@ -69,7 +69,7 @@ void command_issue_task(void *parameter) {
     PC_LINK_HANDLE *pc_link = task_parameter->target_pc_link;
 
     // initial queue
-    command_stream_buffer = xQueuexStreamBufferCreateCreate(30 * sizeof(uint8_t), 3 * sizeof(uint8_t));
+    command_stream_buffer = xStreamBufferCreate(30 * sizeof(uint8_t), 3 * sizeof(uint8_t));
     configASSERT(command_stream_buffer != NULL);
 
     // init pc link
