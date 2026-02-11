@@ -66,8 +66,8 @@ Project_Root/
 
 ### 4.1 環境設置
 
-1. **硬體連接**：請參考 [硬體接線表](./notes/0_hardware_connection.md) 完成模組連線。
-2. **軟體安裝**：請參考 [開發環境建置指南](./notes/0_development_enviroment_setting.md) 安裝 VSCode 與 Toolchain。
+1. **硬體連接**：請參考 [硬體接線表](./notes/1_hardware_connection.md) 完成模組連線。
+2. **軟體安裝**：請參考 [開發環境建置指南](./notes/1_development_enviroment_setting.md) 安裝 VSCode 與 Toolchain。
 3. **編譯專案**：將 VSCode 工作目錄切換到 `./code`，在左側檔案列表對 `CMakeLists.txt` 按下右鍵，選擇 `Build All Projects`。
 4. **燒錄執行**：連接 ST-Link，在 VSCode 中點擊 `Run and Debug` (或按 F5) 執行燒錄與除錯。
 
