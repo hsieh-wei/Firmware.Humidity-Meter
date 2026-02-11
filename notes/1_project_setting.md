@@ -11,7 +11,7 @@
 
 ### 2.1 System Core
 
-#### System 
+#### SYS 
 | 腳位   | 功能設定 | 外接模組腳位
 | ---- | ---- | ---- 
 | SWDIO  | ST-Link 燒錄 |ST-Link SWDIO
@@ -20,10 +20,17 @@
 | GND  | ST-Link 燒錄 |ST-Link GND
 | 3V3  | ST-Link 燒錄 |ST-Link 3.3 V
 
-| 模組  | 選項設定
+#### SYS 
+| 選項  | 選項設定
 | --- | ---- |
-| SYS | Serial Wire (SWD)                           
-| RCC | HSE = Crystal/Ceramic Resonator` <br> LSE 不勾選 
+| Debug | Serial Wire 
+| Timebase Source | Tim7                
+
+#### RCC
+| 選項  | 選項設定
+| --- | ---- |
+| HSE |  Crystal/Ceramic Resonator
+| LSE |  Disable
 
 #### GPIO 
 
@@ -31,20 +38,15 @@
 | ---- | ---- | ---- |---- |----
 | PA6  | LED | Output Push Pull| No pull-up and pull-down| X
 | PA7  | LED | Output Push Pull| No pull-up and pull-down| X
-| PA8  | LCD 背光恆亮 | Output Push Pull| No pull-up and pull-down| LCD BLK
 | PC0  | LCD 初始化  | Output Push Pull| No pull-up and pull-down| LCD RST
 | PC1  | LCD 數據/指令控制 | Output Push Pull| No pull-up and pull-down| LCD DC
 | PC2  | LCD Slave Select| Output Push Pull| No pull-up and pull-down| LCD CS
 | PE3  | BTN | External Interrupt| pull-up|X
 | PE4  | BTN | External Interrupt| pull-up|X
 
-### 2.2 Analog
-NULL
-
-### 2.3 Timers
+### 2.2 Timers
 
 #### TIM2
-先不設置
 | 腳位   | 功能設定| 外接模組腳位
 | ---- |---- |----
 | PA0 | LCD 背光調亮度 |LCD BLK
@@ -77,7 +79,7 @@ NULL
 | Configuration  | Parameter Setting | Counter Setting | Counter Peroid | 10000-1 
 
 
-### 2.4 Connectivity
+### 2.3 Connectivity
 #### I2C1
 | 腳位   | 功能設定| 外接模組腳位
 | ---- |---- |----
@@ -106,7 +108,7 @@ NULL
 | Configuration | Parameter Setting | Basic Paremeters | Data Size | 100000 
 | Configuration | Parameter Setting | Clock Paremeters | Prescaler | 4 
 | Configuration | Parameter Setting | Clock Paremeters | CPOL | Low
-| Configuration | Parameter Setting | Clock Paremeters | CPOL | 1 Edge  
+| Configuration | Parameter Setting | Clock Paremeters | CPHA | 1 Edge  
 | Configuration | NVIC | X | X | 全部啟用 
 
 #### USART1
@@ -119,14 +121,14 @@ NULL
 | ---- | ---- | ---- | ---- | ---- 
 | Mode  | Mode | X | X | Asynchronous
 | Configuration | Parameter Setting | Basic Paremeters | Baud Rate | 115200 Bits/s 
-| Configuration | Parameter Setting | Basic Paremeters | Word Length | 115200 Bits/s 
+| Configuration | Parameter Setting | Basic Paremeters | Word Length | 8 Bits (Including Parity) 
 | Configuration | Parameter Setting | Basic Paremeters | Parity | None
 | Configuration | Parameter Setting | Basic Paremeters | Stop Bits| 1
 | Configuration |  DMA Setting | USART1_Rx |DMA1 Stream 2 | Periphrel To Memory 
 | Configuration |  DMA Setting | USART1_Tx |DMA1 Stream 7 | Memory To Periphrel 
 | Configuration | NVIC | X | X | 全部啟用 
 
-### 2.5 Middeleware and Software Packs
+### 2.4 Middeleware and Software Packs
 
 #### FREERTOS
 
@@ -144,7 +146,7 @@ NULL
 | PLLM          | 8                | VCO Input = 25 / 25 = 1 MHz      |
 | PLLN          | 336              | VCO Output = 1 × 336 = 336 MHz |
 | PLLP          | 2                | SYSCLK = 336 / 2 = 168 MHz     |
-| PLLQ          | 7                | USB Clock = 336 / 7 = 48 MHz   |
+| PLLQ          | 4                | USB Clock = 336 / 4 = 84 MHz   |
 | AHB Prescaler | 1                | HCLK = 168 MHz                 |
 | APB1          | 4                | PCLK1 = 42 MHz                 |
 | APB2          | 2                | PCLK2 = 84 MHz                 |
