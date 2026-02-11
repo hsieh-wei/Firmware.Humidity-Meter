@@ -1,4 +1,14 @@
 # STM32 溫濕度計
+## DEMO
+
+* 按鈕、LCD螢幕、溫溼度計展示
+![按鈕、LCD螢幕、溫溼度計](.\demo\button_lcd_sht30.MOV)
+
+* UART LOG 展示
+![UART LOG 展示](.\demo\uart_log.MOV)
+
+* UART 指令控制展示
+![UART 指令控制展示](.\demo\uart_command.MOV)
 
 ## 一、專案目標
 
