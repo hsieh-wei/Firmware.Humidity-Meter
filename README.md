@@ -54,20 +54,20 @@ Project_Root/
 #### **Code (`/code`)**
 
 * **定位**：實際執行的 STM32 韌體專案。所有的編譯 (Build)、燒錄 (Flash)、除錯 (Debug) 皆在此目錄下進行。
-* [點此查看專案軟體架構與 RTOS 設計說明](https://www.google.com/search?q=./code/README.md)
+* [點此查看專案軟體架構與 RTOS 設計說明](./code/README.md)
 
 #### **Notes (`/notes`)**
 
 * **定位**：開發過程的知識庫，紀錄環境建置、硬體參數與外部參考資料。
-* [點此查看開發筆記與環境建置指南](https://www.google.com/search?q=./notes/README.md)
+* [點此查看開發筆記與環境建置指南](./notes/README.md)
 
 ---
 ## 四、快速上手 (User Manual)
 
 ### 4.1 環境設置
 
-1. **硬體連接**：請參考 [硬體接線表](https://www.google.com/search?q=./notes/0_hardware_connection.md) 完成模組連線。
-2. **軟體安裝**：請參考 [開發環境建置指南](https://www.google.com/search?q=./notes/0_development_enviroment_setting.md) 安裝 VSCode 與 Toolchain。
+1. **硬體連接**：請參考 [硬體接線表](./notes/0_hardware_connection.md) 完成模組連線。
+2. **軟體安裝**：請參考 [開發環境建置指南](./notes/0_development_enviroment_setting.md) 安裝 VSCode 與 Toolchain。
 3. **編譯專案**：將 VSCode 工作目錄切換到 `./code`，在左側檔案列表對 `CMakeLists.txt` 按下右鍵，選擇 `Build All Projects`。
 4. **燒錄執行**：連接 ST-Link，在 VSCode 中點擊 `Run and Debug` (或按 F5) 執行燒錄與除錯。
 
