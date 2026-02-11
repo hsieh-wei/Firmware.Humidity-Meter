@@ -50,12 +50,11 @@ https://www.youtube.com/watch?v=aWMni01XGeI
 ---
 
 # 五、建立/修正 VSCode 設定檔
-
-## 1.  `C/C++` IntelliSense 設定（`c_cpp_properties.json`）
+## 1. 在.vscode/中加入以下檔案
+### 1.1  `C/C++` IntelliSense 設定（`c_cpp_properties.json`）
 
 ```json
 {
-    "version": 4,
     "configurations": [
         {
             "name": "STM32F4",
@@ -80,22 +79,29 @@ https://www.youtube.com/watch?v=aWMni01XGeI
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 // 以下是自己新增的檔案
-                "${workspaceFolder}/Module/Inc"
+                "${workspaceFolder}/Module/Inc",
+                "${workspaceFolder}/Task/Inc",
+                "${workspaceFolder}/System/Inc",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/Core/Inc",
                     "${workspaceFolder}/Drivers",
                     // 以下是自己新增的檔案
-                    "${workspaceFolder}/Module/Inc"
+                    "${workspaceFolder}/Module/Inc",
+                    "${workspaceFolder}/Task/Inc",
+                    "${workspaceFolder}/System/Inc"
                 ]
-            }
+            },
+            "compileCommands": "${workspaceFolder}/build/Debug/compile_commands.json"
         }
-    ]
+    ],
+    "version": 4
 }
 ```
 
-## 2. 偵錯啟動（`launch.json`）
+### 1.2 偵錯啟動（`launch.json`）
 
 ```json
 {
@@ -129,7 +135,7 @@ https://www.youtube.com/watch?v=aWMni01XGeI
   ]
 }
 ```
-## 3.  設定（`settings.json`）
+### 1.3  設定（`settings.json`）
 * 先安裝microsoft c/c++ 並且停用 stm32cube-ide-clangd
 ```json
 {
@@ -150,7 +156,29 @@ https://www.youtube.com/watch?v=aWMni01XGeI
     "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
   ]
 }
+```
+## 2. 設定 clang format
+### 新增.clang-format 在根目錄中
+```txt
+# 基礎風格：Google (適合大多數工程師)
+BasedOnStyle: Google
 
+# --- 縮排設定 ---
+IndentWidth: 4             # 縮排使用 4 個空格
+TabWidth: 4                # Tab 鍵寬度
+UseTab: Never              # 永遠使用空格代替 Tab (避免不同編輯器跑版)
+
+# --- 換行設定 ---
+ColumnLimit: 150           # 你的需求：單行限制 120 字元
+BreakBeforeBraces: Attach  # 左大括號 { 不換行 (if (x) {)
+
+# --- 指針與對齊 ---
+PointerAlignment: Right    # 指針靠右 (int *ptr) 符合 C 語言傳統
+AlignConsecutiveMacros: true # 自動對齊連續的 #define 巨集 (看起來很整齊)
+AlignConsecutiveAssignments: false # 賦值不強制對齊 (避免修改一行導致整塊變動)
+
+# --- 嵌入式特殊需求 ---
+SortIncludes: false        # 不自動排序 #include (避免破壞 STM32 標頭檔依賴順序)
 ```
 ---
 
