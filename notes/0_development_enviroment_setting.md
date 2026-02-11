@@ -1,5 +1,5 @@
+# Reference 
 https://www.youtube.com/watch?v=aWMni01XGeI
-
 # 目標與版本前置
 
 * 目標板：STM32F407VE（可替換為你的實際型號）
