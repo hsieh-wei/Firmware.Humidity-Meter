@@ -6,6 +6,7 @@
 #include "lcd.h"
 #include "task_config.h"
 #include "button_process_task.h"
+#include "command_issue_task.h"
 
 // --------------------------------------------------------------------------
 // Callback Redefine
