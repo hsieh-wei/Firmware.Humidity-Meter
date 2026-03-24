@@ -44,15 +44,34 @@ code/
 
 ## 3. RTOS 任務設計 (Task Design)
 
-本系統共規劃 5 個任務，採用分配優先級原則為`執行時間短、需即時反應者優先級高`。
+本系統共規劃 5 個任務，優先級分配原則為**執行時間短、需即時反應者優先級高**。以下為系統任務總覽與各別流程設計：
 
-| 任務名稱 | 優先級 | 觸發機制 | 週期/頻率 | 主要職責 |
+### 3.1 任務總覽表
+
+| 任務名稱 | 優先級 | 觸發機制 | 週期 / 頻率 | 主要職責 |
 | --- | --- | --- | --- | --- |
-| **Button Process** | **1** | Event (Task Notify) | 非同步 | 處理按鍵去彈跳、即時切換 LCD 模式或亮度。 |
-| **Command Issue** | **2** | Event (Stream Buffer) | 非同步 | 接收 UART 串流，解析 3-Byte ~ 15 Byte 指令並修改系統設定。 |
-| **Sensor Measure** | **3** | Time Delay | 週期性 | 讀取 I2C SHT30 數據、更新 System State、控制 LED 警示。 |
-| **LCD Monitor** | **4** | Time Delay | 週期性 | 根據系統狀態繪製圖形介面 (Temp/Hum)。 |
+| **Button Process** | **1** | Event (Task Notify) | 非同步 | 處理按鍵事件，即時切換 LCD 模式或亮度。 |
+| **Command Issue** | **2** | Event (Stream Buffer) | 非同步 | 使用 UART 接收串流，解析 3~15 Byte 指令並修改系統設定。 |
+| **Sensor Measure** | **3** | Time Delay | 週期性 | 定期透過 I2C 讀取 SHT30 溫濕度數據，並判斷是否超出閾值以控制 LED 警示。 |
+| **LCD Monitor** | **4** | Time Delay | 週期性 | 負責 ST7735 畫面更新，接收其他任務的狀態變更通知並重繪顯示介面。|
 | **Log Report** | **4** | Time Delay | 週期性 | 將系統狀態格式化為 String，透過 UART DMA 發送 Log。 |
+
+### 3.2 核心任務流程圖
+
+#### 1. 按鈕處理任務 (Button Process)
+<img src="../figure/button_process.png" width="400">
+
+#### 2. 指令解析任務 (Command Issue)
+<img src="../figure/command_issue.png" width="400">
+
+#### 3. 感測器量測任務 (Sensor Measure)
+<img src="../figure/sensor_measure.png" width="400">
+
+#### 4. 螢幕顯示任務 (LCD Monitor)
+<img src="../figure/lcd_monitor.png" width="400">
+
+#### 5. 日誌回報任務 (Log Report)
+<img src="../figure/log_report.png" width="400">
 ---
 
 ## 4. IPC 與資源管理 (Inter-Process Communication)
