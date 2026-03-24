@@ -4,14 +4,6 @@
 ## 硬體架構圖
 ![硬體架構圖](./figure/硬體架構圖.png)
 
-## 系統流程圖
-<!-- ![硬體架構圖](./figure/button_process.png)
-![硬體架構圖](./figure/command_issue.png)
-![硬體架構圖](./figure/lcd_monitor.png)
-![硬體架構圖](./figure/log_report.png)
-![硬體架構圖](./figure/sensor_measure.png) -->
-<img src="./figure/sensor_measure.png" width="400">
-
 ## 一、專案目標
 
 本專案是一個基於 STM32F407VET6 微控制器的嵌入式系統實作，整合了 FreeRTOS 即時作業系統。系統能夠**透過 I2C 讀取 SHT30 溫溼度數據**，利用**SPI 驅動 ST7735 彩色螢幕進行即時顯示**，並支援透過 **UART 與電腦進行雙向通訊與控制**。
@@ -73,7 +65,7 @@ Project_Root/
 * [點此查看開發筆記與環境建置指南](./notes/README.md)
 
 ---
-## 四、快速上手 (User Manual)
+## 四、快速上手
 
 ### 4.1 環境設置
 
