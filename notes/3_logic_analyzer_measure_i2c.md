@@ -49,10 +49,9 @@ PulseView 是基於 sigrok 專案的開源前端介面，負責波形繪製與�
 3. 點選 `Run` 進入等待狀態，隨後使用 Vscode 操作 MCU 開始傳輸即可獲得傳輸資料，下方 `i2c_measure_data`、`i2c_get_data` 作為範例
 
 #### i2c_measure_data
-![i2c_get_data](../figure/i2c_get_data.png)
-
-#### i2c_get_data
 ![i2c_measure_data](../figure/i2c_measure_data.png)
 
+#### i2c_get_data
+![i2c_get_data](../figure/i2c_get_data.png)
 
 
